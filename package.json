@@ -1,0 +1,21 @@
+{
+  "name": "debates",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "postinstall": "husky install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+      "@typescript-eslint/eslint-plugin": "5.45.0",
+      "@typescript-eslint/parser": "5.45.0",
+      "commitlint": "^17.3.0",
+      "eslint": "8.28.0",
+      "eslint-plugin-react": "7.31.11",
+      "husky": "^8.0.2",
+      "typescript": "^4.9.3"
+  }
+}
