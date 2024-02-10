@@ -31,9 +31,6 @@ export const authOptions: AuthOptions = {
         strategy: "jwt",
     },
     callbacks: {
-        // async signIn(user, account, profile) {
-        //   return 
-        // }
         async jwt(data) {
             // Persist the OAuth access_token to the token right after signin
 
