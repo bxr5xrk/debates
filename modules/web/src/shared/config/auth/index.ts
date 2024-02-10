@@ -1,3 +1,5 @@
+import { ENV } from "@/platform/env";
+import { baseFetcher } from "@/shared/api/fetcher";
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
@@ -12,15 +14,18 @@ export const authOptions: AuthOptions = {
                 nickname: { label: "Nickname", type: "text" },
             },
             async authorize(credentials) {
-                // const users = [{ id: "1", email: "toor@gmail.com", password: "toor" }];
-
                 if (!credentials?.email || !credentials?.password) {
                     return Promise.resolve(null);
                 }
 
-                // const user = users.find((user) => user.email === credentials.email);
+                const isSignUp = !!credentials?.name && !!credentials?.nickname;
 
-                if (user && user.password === credentials.password) {
+                const user = await baseFetcher({
+                    method: "POST",
+                    data: credentials,
+                })(isSignUp ? "/auth/sign-up" : "/auth/sign-in");
+
+                if (user) {
                     return Promise.resolve(user);
                 }
 
@@ -28,7 +33,7 @@ export const authOptions: AuthOptions = {
             }
         })
     ],
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: ENV.NEXTAUTH_SECRET,
     session: {
         strategy: "jwt",
     },
