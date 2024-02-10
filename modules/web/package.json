@@ -12,10 +12,12 @@
     "lint:fix": "eslint src/**/*.{ts,tsx,js} --fix"
   },
   "dependencies": {
+    "@auth/typeorm-adapter": "^1.4.3",
     "next": "14.1.0",
     "next-auth": "^4.24.5",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@types/node": "^20",

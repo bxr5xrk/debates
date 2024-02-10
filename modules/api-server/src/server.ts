@@ -8,7 +8,7 @@ import { BadRequest, NotFound } from "lib/exceptions";
 import { ENV } from "platform/env";
 import { BAD_REQUEST_CODE, MILLISECONDS_IN_SECOND, MINUTES_IN_HOUR, NOT_FOUND_CODE, SECONDS_IN_MINUTE } from "lib/const";
 import { initDependencies } from "dependencies";
-import { applicationApi } from "api";
+import { applicationApi, authApi } from "api";
 
 const SESSION_OPTIONS = {
   secret: "secret1234567891011121314151617181920",
@@ -34,6 +34,7 @@ export async function initServer(): Promise<FastifyInstance> {
 
   // Register API 
   server.register(applicationApi, { prefix: "/api" });
+  server.register(authApi, { prefix: "/api" });
 
   server.setErrorHandler(errorHandler);
 
