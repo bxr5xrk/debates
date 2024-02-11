@@ -1,11 +1,9 @@
-import { Auth } from "@/features/auth";
+import { Page } from "@/shared/layout/page";
 
-export function Home(): JSX.Element {
-   
+export function HomePage(): JSX.Element {
     return (
-        <div>
+        <Page>
       home page
-            <Auth />
-        </div>
+        </Page>
     );
 }

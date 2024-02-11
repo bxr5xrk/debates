@@ -7,7 +7,7 @@ interface MutationFetcherArgs<T> {
 
 const instance = axios.create({
     baseURL: ENV.NEXT_PUBLIC_API_URI,
-    withCredentials: true
+    withCredentials: true,
 });
 
 export function baseFetcher(config: AxiosRequestConfig) {
@@ -15,7 +15,7 @@ export function baseFetcher(config: AxiosRequestConfig) {
         config.url ??= url;
 
         try {
-            const response = await instance.request(config);
+            const response = await instance.request({ ...config, withCredentials: true });
 
             return response.data;
         } catch (error) {
@@ -38,6 +38,7 @@ export function mutationFetcher<T>(config: AxiosRequestConfig<T>) {
             const response = await instance.request({
                 ...config,
                 data: arg,
+                withCredentials: true,
             });
 
             return response;

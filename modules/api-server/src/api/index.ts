@@ -16,4 +16,5 @@ export async function authApi(server: FastifyInstance): Promise<void> {
   server.post("/auth/sign-up", auth.signUp);
   server.post("/auth/sign-in", auth.signIn);
   server.get("/auth/whoami", auth.whoami);
+  server.post("/auth/sign-out", auth.signOut);
 }
