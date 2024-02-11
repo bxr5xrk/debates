@@ -1,10 +1,11 @@
 import { db } from "connectors/db";
-import { User } from "db/models/user";
+import { User } from "db/models/user.entity";
 import { CreateUserPayload, UpdateUserPayload } from "./types";
 
 class UserService {
+  private userRepository = db.getRepository(User);
   public async getUsers(): Promise<User[]> {
-    return db.getRepository(User).find();
+    return this.userRepository.find();
   }
 
   public async getUserById(id: number): Promise<User | null> {
@@ -12,7 +13,7 @@ class UserService {
       throw new Error("Id is required");
     }
 
-    const user = await db.getRepository(User).findOneBy({
+    const user = await this.userRepository.findOneBy({
       id
     })
 
@@ -24,8 +25,8 @@ class UserService {
   }
 
   public async createUser(user: CreateUserPayload): Promise<User> {
-    const newUser = db.getRepository(User).create(user);
-    return db.getRepository(User).save(newUser);
+    const newUser = this.userRepository.create(user);
+    return this.userRepository.save(newUser);
   }
 
   public async updateUser(id: number, user: UpdateUserPayload): Promise<User> {
@@ -33,7 +34,7 @@ class UserService {
       throw new Error("Id is required");
     }
 
-    const existingUser = await db.getRepository(User).findOneBy({
+    const existingUser = await this.userRepository.findOneBy({
       id
     })
 
@@ -41,8 +42,8 @@ class UserService {
       throw new Error("User not found");
     }
 
-    const updatedUser = db.getRepository(User).merge(existingUser, user);
-    return db.getRepository(User).save(updatedUser);
+    const updatedUser = this.userRepository.merge(existingUser, user);
+    return this.userRepository.save(updatedUser);
   }
 }
 
