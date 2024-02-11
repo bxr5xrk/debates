@@ -1,4 +1,4 @@
-import { defineHandler } from "api/lib";
+import { defineHandler, getResponse } from "api/lib";
 import { Server } from "platform/types";
 import { SUCCESS_CODE } from "lib/const";
 
@@ -9,7 +9,7 @@ async function handler({ server, session, params, body }: Server.Request, rep: S
       return rep.status(SUCCESS_CODE).send(null);
   }
 
-  return rep.status(SUCCESS_CODE).send(user);
+  return rep.status(SUCCESS_CODE).send(getResponse("success", user));
 }
 
 export const whoami = defineHandler({

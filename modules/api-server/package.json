@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "npm run clear && tsc",
-    "clear": "rm -rf build"
+    "clear": "rm -rf build",
+    "lint:check": "eslint 'src/**/*.{ts,tsx,js}'",
+    "ts:check": "tsc --pretty --strict true",
+    "lint:fix": "eslint src/**/*.{ts,tsx,js} --fix"
   },
   "keywords": [],
   "license": "ISC",

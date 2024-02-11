@@ -1,44 +1,19 @@
-import { db } from "connectors/db";
-import { User } from "db/models/user";
 import { SignInPayload, SignUpPayload, UserWithoutPassword } from "./types";
 import { compare, hash } from "bcrypt";
+import { userService } from "services/user";
 
 class AuthService {
-  public async getUserByEmail(email: string): Promise<User | null> {
-    if (!email) {
-      throw new Error("Email is required");
-    }
-
-    const user = await db.getRepository(User).findOneBy({
-      email
-    })
-
-    return user;
-  }
-
-  public async getUserByNickname(nickname: string): Promise<User | null> {
-    if (!nickname) {
-      throw new Error("Username is required");
-    }
-
-    const user = await db.getRepository(User).findOneBy({
-      nickname
-    })
-
-    return user;
-  }
-
   public async signUp(payload: SignUpPayload): Promise<UserWithoutPassword | undefined> {
-    const { email, password, nickname } = payload;
+    const { email, nickname, password } = payload;
 
     try {
-      const existingEmail = await this.getUserByEmail(email);
+      const existingEmail = await userService.getUserByEmail(email);
 
       if (existingEmail) {
         throw new Error("User with this email already exists");
       }
 
-      const existingNickname = await this.getUserByNickname(nickname);
+      const existingNickname = await userService.getUserByNickname(nickname);
 
       if (existingNickname) {
         throw new Error("User with this nickname already exists");
@@ -46,12 +21,10 @@ class AuthService {
 
       const hashedPassword = await hash(password, 10);
 
-      const newUser = db.getRepository(User).create({
+      const { password: savedPassword, ...rest } = await userService.createUser({
         ...payload,
         password: hashedPassword
       });
-
-      const { password: savedPassword, ...rest } = await db.getRepository(User).save(newUser);
 
       return rest
     } catch (error) {
@@ -65,7 +38,7 @@ class AuthService {
     const { email, password } = payload;
 
     try {
-      const user = await this.getUserByEmail(email);
+      const user = await userService.getUserByEmail(email);
 
       if (!user) {
         throw new Error("User with this email does not exist");

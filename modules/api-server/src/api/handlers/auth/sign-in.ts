@@ -1,4 +1,4 @@
-import { EMAIL_REGEX, defineHandler, defineSchema } from "api/lib";
+import { EMAIL_REGEX, defineHandler, defineSchema, getResponse } from "api/lib";
 import { Type as type } from "@sinclair/typebox";
 import { Server } from "platform/types";
 import { authService } from "services/auth";
@@ -21,7 +21,7 @@ async function handler({ server, session, params, body }: Server.Request<typeof 
     email: user?.email,
   });
 
-  return rep.status(200).send(user);
+  return rep.status(200).send(getResponse("success", user));
 }
 
 export const signIn = defineHandler({

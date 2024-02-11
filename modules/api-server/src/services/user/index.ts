@@ -3,6 +3,30 @@ import { User } from "db/models/user";
 import { CreateUserPayload, UpdateUserPayload } from "./types";
 
 class UserService {
+  public async getUserByEmail(email: string): Promise<User | null> {
+    if (!email) {
+      throw new Error("Email is required");
+    }
+
+    const user = await db.getRepository(User).findOneBy({
+      email
+    })
+
+    return user;
+  }
+
+  public async getUserByNickname(nickname: string): Promise<User | null> {
+    if (!nickname) {
+      throw new Error("Username is required");
+    }
+
+    const user = await db.getRepository(User).findOneBy({
+      nickname
+    })
+
+    return user;
+  }
+
   public async getUsers(): Promise<User[]> {
     return db.getRepository(User).find();
   }
