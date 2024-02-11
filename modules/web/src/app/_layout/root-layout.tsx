@@ -5,7 +5,7 @@ import { Footer } from "@/widgets/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export async function Layout(props: PropsWithChildren): Promise<JSX.Element> {
+export async function RootLayout(props: PropsWithChildren): Promise<JSX.Element> {
     const { children } = props;
 
     return (
