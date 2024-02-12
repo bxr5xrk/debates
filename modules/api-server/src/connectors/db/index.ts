@@ -1,3 +1,5 @@
+import { Friend } from "db/models/friend";
+import { Invite } from "db/models/invite";
 import { User } from "db/models/user";
 import { ENV } from "platform/env";
 import { DataSource } from "typeorm";
@@ -8,5 +10,5 @@ export const db = new DataSource({
   ssl: true,
   synchronize: true,
   logging: true,
-  entities: [User],
+  entities: [User, Friend, Invite],
 });
