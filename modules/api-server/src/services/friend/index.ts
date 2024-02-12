@@ -20,8 +20,9 @@ class FriendService {
       throw new Error("FriendId is required");
     }
 
-    const friend = await this.friendRepository.findOneBy({
-      id: friendId
+    const friend = await this.friendRepository.findOne({
+      where: {id: friendId},
+      relations: ['friend']
     })
 
     if (!friend) {
@@ -38,11 +39,11 @@ class FriendService {
 
     const friend = await this.friendRepository.findOne({
       where: {user: {id: userId}, friend: {id: friendId}},
-      relations: ['user', 'friend'],
+      relations: ['user', 'friend', 'invite'],
     });
 
     if (!friend) {
-      throw new Error('Invite not found');
+      throw new Error('Friend not found');
     }
 
     return friend;

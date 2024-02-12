@@ -2,6 +2,7 @@ import { db } from "connectors/db";
 import { InviteStatusEnum } from "db/enums/invite-status.enum";
 import { Invite } from "db/models/invite.entity";
 import { CreateInvitePayload, UpdateInvitePayload } from "./types";
+import { In } from "typeorm";
 
 class InviteService {
   private inviteRepository = db.getRepository(Invite);
@@ -29,8 +30,9 @@ class InviteService {
       throw new Error("InviteId is required");
     }
 
-    const invite = await this.inviteRepository.findOneBy({
-      id: inviteId
+    const invite = await this.inviteRepository.findOne({
+      where: {id: inviteId},
+      relations: ['sender', 'receiver']
     });
 
     if (!invite) {
@@ -47,11 +49,12 @@ class InviteService {
 
     const invite = await this.inviteRepository.findOne({
       where: [
-        {sender: {id: senderId}, receiver: {id: receiverId}, status: InviteStatusEnum.PENDING},
-        {sender: {id: senderId}, receiver: {id: receiverId}, status: InviteStatusEnum.ACCEPTED},
+        { sender: { id: senderId }, receiver: { id: receiverId }, status: In([InviteStatusEnum.PENDING, InviteStatusEnum.ACCEPTED]) },
+        { sender: { id: receiverId }, receiver: { id: senderId }, status: In([InviteStatusEnum.PENDING, InviteStatusEnum.ACCEPTED]) },
       ],
       relations: ['sender', 'receiver'],
     });
+    
 
     return invite;
   }

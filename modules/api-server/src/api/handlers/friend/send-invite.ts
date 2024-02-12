@@ -1,25 +1,22 @@
-import { defineHandler, defineSchema } from "api/lib";
-import { Type as type } from "@sinclair/typebox";
+import { defineHandler, getResponse } from "api/lib";
 import { Server } from "platform/types";
 import { userService } from "services/user";
 import { inviteService } from "services/invite";
-import { InviteStatusEnum } from "db/enums/invite-status.enum";
 
-const schema = defineSchema({
-  body: type.Object({
-    senderId: type.Number(),
-    receiverId: type.Number(),
-  })
-});
+async function handler({ server, session, params, body }: Server.Request, rep: Server.Reply): Promise<Server.Reply> {
+  const user = session.get("user") as { id: number; } | null;
 
-async function handler({ server, session, params, body }: Server.Request<typeof schema>, rep: Server.Reply): Promise<Server.Reply> {
-  const sender = await userService.getUserById(body.senderId);
+  if (!user){
+    throw Error("User is unauthorized");
+  }
+
+  const sender = await userService.getUserById(user.id);
 
   if(!sender){
     throw Error("Sender not found")
   }
 
-  const receiver = await userService.getUserById(body.receiverId);
+  const receiver = await userService.getUserById((params as { userId: number }).userId);
 
   if(!receiver){
     throw Error("Receiver not found")
@@ -32,11 +29,10 @@ async function handler({ server, session, params, body }: Server.Request<typeof 
   }{
     const invite = await inviteService.createInvite({sender, receiver});
   
-    return rep.status(200).send(invite);
+    return rep.status(200).send(getResponse("success", invite));
   }
 }
 
 export const sendInvite = defineHandler({
-  schema,
   handler
 });
