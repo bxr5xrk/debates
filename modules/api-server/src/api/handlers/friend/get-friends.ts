@@ -3,10 +3,7 @@ import { Server } from "platform/types";
 import { friendService } from "services/friend";
 
 async function handler({ server, session, params, body }: Server.Request, rep: Server.Reply): Promise<Server.Reply> {
-  const user = session.get("user") as { id: number; } | null;
-  if (!user){
-    throw new Error("User is unauthorized");
-  }
+  const user = session.get("user") as { id: number };
 
   const friends = await friendService.getFriends(user.id)
   

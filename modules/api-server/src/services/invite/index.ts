@@ -46,7 +46,7 @@ class InviteService {
 
   public async findInviteByUsers(senderId: number, receiverId: number): Promise<Invite | null> {
     if (!senderId || !receiverId) {
-      throw new Error("Ids is required");
+      throw new Error("Ids are required");
     }
 
     const invite = await this.inviteRepository.findOne({
@@ -89,7 +89,7 @@ class InviteService {
     }
 
     await this.inviteRepository.delete(inviteId);
-    return { success: true }; 
+    return true; 
   }
 
   public async acceptInvite(id: number, userId: number): Promise<Invite> {
