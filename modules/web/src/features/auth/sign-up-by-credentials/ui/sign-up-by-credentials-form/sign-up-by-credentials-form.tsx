@@ -27,12 +27,12 @@ export function SignUpByCredentialsForm(): JSX.Element {
     }
 
     return (
-        <form onSubmit={onSubmit}>
-            <input type="text" name="name" required minLength={2} id="name" placeholder="Name" ref={nameRef} />
-            <input type="text" name="nickname" required minLength={2} id="nickname" placeholder="Nickname" ref={nicknameRef} />
-            <input type="email" name="email" required id="email" minLength={2} placeholder="Email" ref={emailRef} />
-            <input type="password" name="password" required minLength={2} id="password" placeholder="Password" ref={passwordRef} />
-            <button type="submit">submit</button>
+        <form className="flex flex-col w-full gap-2" onSubmit={onSubmit}>
+            <input className="border rounded-lg border-slate-700 p-2" type="text" name="name" required minLength={2} id="name" placeholder="Name" ref={nameRef} />
+            <input className="border rounded-lg border-slate-700 p-2" type="text" name="nickname" required minLength={2} id="nickname" placeholder="Nickname" ref={nicknameRef} />
+            <input className="border rounded-lg border-slate-700 p-2" type="email" name="email" required id="email" minLength={2} placeholder="Email" ref={emailRef} />
+            <input className="border rounded-lg border-slate-700 p-2" type="password" name="password" required minLength={2} id="password" placeholder="Password" ref={passwordRef} />
+            <button className="bg-slate-700 text-white w-fit mx-auto p-2 rounded-lg font-medium" type="submit">submit</button>
         </form>
     );
 }
