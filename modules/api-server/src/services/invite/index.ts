@@ -1,8 +1,10 @@
 import { db } from "connectors/db";
-import { InviteStatusEnum } from "db/enums/invite-status.enum";
-import { Invite } from "db/models/invite.entity";
+import { InviteStatusEnum } from "db/enums/invite-status";
+import { Invite } from "db/models/invite";
 import { CreateInvitePayload, UpdateInvitePayload } from "./types";
 import { In } from "typeorm";
+import { friendService } from "services/friend";
+import { userService } from "services/user";
 
 class InviteService {
   private inviteRepository = db.getRepository(Invite);
@@ -89,7 +91,64 @@ class InviteService {
     await this.inviteRepository.delete(inviteId);
     return { success: true }; 
   }
-  
+
+  public async acceptInvite(id: number, userId: number): Promise<Invite> {
+    const invite = await this.getInvite(id);
+
+    if(invite.receiver.id !== userId){
+      throw new Error("You are not receiver");
+    }
+
+    if(invite.status === InviteStatusEnum.ACCEPTED){
+      throw new Error("Invite is already accepted");
+    } 
+
+    const updatedInvite = await this.updateInvite(invite.id, {
+      status: InviteStatusEnum.ACCEPTED
+    });
+    await friendService.createFriend({
+      user: updatedInvite.sender, friend: updatedInvite.receiver, invite: updatedInvite
+    })
+    await friendService.createFriend({
+      user: updatedInvite.receiver, friend: updatedInvite.sender, invite: updatedInvite
+    })
+    return updatedInvite;
+  }
+
+  public async rejectInvite(id: number, userId: number): Promise<Invite> {
+    const invite = await this.getInvite(id);
+
+    if(invite.receiver.id !== userId){
+      throw new Error("You are not receiver");
+    }
+
+    const updatedInvite = await this.updateInvite(id, {
+      status: InviteStatusEnum.REJECTED
+    });
+
+    return updatedInvite;
+  }
+
+  public async sendInvite(senderId: number, receiverId: number): Promise<Invite>{
+    const sender = await userService.getUserById(senderId);
+
+    if(!sender){
+      throw new Error("Sender not found")
+    }
+
+    const receiver = await userService.getUserById(receiverId);
+
+    if(!receiver){
+      throw new Error("Receiver not found")
+    }
+    const existingInvite = await this.findInviteByUsers(senderId, receiverId)
+
+    if (existingInvite){
+      throw Error("Invite is already exist");
+    }
+
+    return await inviteService.createInvite({sender, receiver});
+  }
 }
 
 export const inviteService = new InviteService();

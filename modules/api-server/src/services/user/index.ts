@@ -1,5 +1,5 @@
 import { db } from "connectors/db";
-import { User } from "db/models/user.entity";
+import { User } from "db/models/user";
 import { CreateUserPayload, UpdateUserPayload } from "./types";
 
 class UserService {

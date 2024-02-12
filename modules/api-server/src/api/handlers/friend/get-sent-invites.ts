@@ -5,7 +5,7 @@ import { inviteService } from "services/invite";
 async function handler({ server, session, params, body }: Server.Request, rep: Server.Reply): Promise<Server.Reply> {
   const user = session.get("user") as { id: number; } | null;
   if (!user){
-    throw Error("User is unauthorized");
+    throw new Error("User is unauthorized");
   }
   const invites = await inviteService.getSentInvites(user.id)
   

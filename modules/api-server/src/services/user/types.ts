@@ -1,4 +1,4 @@
-import { User } from "db/models/user.entity";
+import { User } from "db/models/user";
 
 export type CreateUserPayload = Pick<User, "email" | "password" | "name" | "nickname">;
 

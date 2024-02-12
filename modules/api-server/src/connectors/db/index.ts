@@ -1,6 +1,6 @@
-import { Friend } from "db/models/friend.entity";
-import { Invite } from "db/models/invite.entity";
-import { User } from "db/models/user.entity";
+import { Friend } from "db/models/friend";
+import { Invite } from "db/models/invite";
+import { User } from "db/models/user";
 import { ENV } from "platform/env";
 import { DataSource } from "typeorm";
 

@@ -1,6 +1,7 @@
 import { db } from "connectors/db";
-import { Friend } from "db/models/friend.entity";
+import { Friend } from "db/models/friend";
 import { CreateFriendPayload } from "./types";
+import { inviteService } from "services/invite";
 
 class FriendService {
   private friendRepository = db.getRepository(Friend);
@@ -15,7 +16,7 @@ class FriendService {
     });
   }
 
-  public async getFriend(friendId: number): Promise<Friend>{
+  public async getFriendById(friendId: number): Promise<Friend>{
     if (!friendId) {
       throw new Error("FriendId is required");
     }
@@ -54,13 +55,23 @@ class FriendService {
     return this.friendRepository.save(newFriend);
   }
 
-  public async deleteFriend(friendId: number): Promise<any> {
+  public async deleteFriend(friendId: number, userId: number): Promise<any> {
     if (!friendId) {
       throw new Error("FriendId is required");
     }
 
-    await this.friendRepository.delete(friendId);
-    return { success: true }; 
+    const firstSideFriend = await this.getFriendById(friendId);
+
+    if (!firstSideFriend){
+      throw new Error("Friend not found");
+    }
+
+    const secondSideFriend = await this.findFriendByUsers(firstSideFriend.friend.id, userId);
+    await this.friendRepository.delete(firstSideFriend.id);
+    await this.friendRepository.delete(secondSideFriend.id);
+    await inviteService.deleteInvite(secondSideFriend.invite.id);
+
+    return true; 
   }
 }
 

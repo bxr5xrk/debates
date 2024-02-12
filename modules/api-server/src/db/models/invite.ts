@@ -7,8 +7,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { User } from './user.entity';
-import { InviteStatusEnum } from 'db/enums/invite-status.enum';
+import { User } from './user';
+import { InviteStatusEnum } from 'db/enums/invite-status';
 
 @Entity()
 export class Invite {

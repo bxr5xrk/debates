@@ -6,8 +6,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from './user.entity';
-import { Invite } from './invite.entity';
+import { User } from './user';
+import { Invite } from './invite';
 
 @Entity()
 export class Friend {
