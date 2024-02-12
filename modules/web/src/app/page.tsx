@@ -1,7 +1,7 @@
-import { Home } from "@/router/home";
+import { HomePage } from "@/router/home";
 
-export default function HomePage() {
+export default function Home(): JSX.Element {
     return (
-        <Home />
+        <HomePage />
     );
 }

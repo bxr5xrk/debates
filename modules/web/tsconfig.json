@@ -42,6 +42,9 @@
       ],
       "@/entities": [
         "./src/entities"
+      ],
+      "@/platform": [
+        "./src/platform"
       ]
     }
   },

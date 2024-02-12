@@ -4,6 +4,30 @@ import { CreateUserPayload, UpdateUserPayload } from "./types";
 
 class UserService {
   private userRepository = db.getRepository(User);
+  public async getUserByEmail(email: string): Promise<User | null> {
+    if (!email) {
+      throw new Error("Email is required");
+    }
+
+    const user = await this.userRepository.findOneBy({
+      email
+    })
+
+    return user;
+  }
+
+  public async getUserByNickname(nickname: string): Promise<User | null> {
+    if (!nickname) {
+      throw new Error("Username is required");
+    }
+
+    const user = await this.userRepository.findOneBy({
+      nickname
+    })
+
+    return user;
+  }
+
   public async getUsers(): Promise<User[]> {
     return this.userRepository.find();
   }
