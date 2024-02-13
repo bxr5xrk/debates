@@ -6,6 +6,11 @@ export const ENV = {
     CORS_ORIGIN: new RegExp(process.env.CORS_ORIGIN || "http://127.0.0.1:3000"),
   },
   PG: {
-    CONNECTION_STRING: process.env.PG_CONNECTION_STRING
+    CONNECTION_STRING: process.env.PG_CONNECTION_STRING,
+    HOST: process.env.POSTGRESDB_HOST || "localhost",
+    PORT: parseInt(process.env.POSTGRESDB_LOCAL_PORT || "5432"),
+    USER: process.env.POSTGRESDB_USER,
+    PASSWORD: process.env.POSTGRESDB_ROOT_PASSWORD,
+    DATABASE: process.env.POSTGRESDB_DATABASE,
   }
 }

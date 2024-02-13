@@ -10,7 +10,7 @@ import {
 import { User } from './user';
 import { InviteStatusEnum } from 'db/enums/invite-status';
 
-@Entity({ synchronize: false })
+@Entity()
 export class Invite {
   @PrimaryGeneratedColumn()
   id: number;
