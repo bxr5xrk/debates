@@ -1,8 +1,8 @@
-import { 
-  Entity, 
-  PrimaryGeneratedColumn, 
-  ManyToOne, 
-  JoinColumn, 
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn
@@ -10,7 +10,7 @@ import {
 import { User } from './user';
 import { InviteStatusEnum } from 'db/enums/invite-status';
 
-@Entity()
+@Entity({ synchronize: false })
 export class Invite {
   @PrimaryGeneratedColumn()
   id: number;

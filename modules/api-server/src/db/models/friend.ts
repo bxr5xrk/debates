@@ -9,7 +9,7 @@ import {
 import { User } from './user';
 import { Invite } from './invite';
 
-@Entity()
+@Entity({ synchronize: false })
 export class Friend {
   @PrimaryGeneratedColumn()
   id: number;
