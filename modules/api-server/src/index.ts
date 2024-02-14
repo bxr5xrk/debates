@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import "dotenv/config";
 import "source-map-support/register";
 import { initServer } from "./server";

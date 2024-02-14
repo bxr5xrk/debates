@@ -5,9 +5,12 @@ import { ENV } from "platform/env";
 import { DataSource } from "typeorm";
 
 export const db = new DataSource({
-  url: ENV.PG.CONNECTION_STRING,
   type: "postgres",
-  ssl: true,
+  host: ENV.PG.HOST,
+  port: ENV.PG.PORT,
+  username: ENV.PG.USER,
+  password: ENV.PG.PASSWORD,
+  database: ENV.PG.DATABASE,
   synchronize: true,
   logging: true,
   entities: [User, Friend, Invite],

@@ -1,3 +1,5 @@
+"use client";
+
 import { API } from "@/shared/api/api-routes";
 import { baseFetcher } from "@/shared/api/fetcher";
 import { AxiosError } from "axios";

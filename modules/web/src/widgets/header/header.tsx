@@ -36,21 +36,23 @@ export function Header(): JSX.Element {
     const isLoggedIn = data?.data?.id;
 
     return (
-        <header>
-            <nav className="flex gap-2">
-                {navItems.map((item) => {
-                    if ((isLoggedIn && item.hideIfLogged) || (!isLoggedIn && item.protect)) {
-                        return null;
-                    }
+        <header className="flex border-b w-full">
+            <div className="w-full px-2 py-4 max-w-screen-2xl mx-auto">
+                <nav className="flex gap-2">
+                    {navItems.map((item) => {
+                        if ((isLoggedIn && item.hideIfLogged) || (!isLoggedIn && item.protect)) {
+                            return null;
+                        }
 
-                    return (
-                        <Link href={item.href} key={item.href} className={cl(pathname === item.href && "font-bold")}>
-                            {item.label}
-                        </Link>
-                    );
-                })}
-                <SignOutAction />
-            </nav>
+                        return (
+                            <Link scroll={false} href={item.href} key={item.href} className={cl(pathname === item.href && "font-bold")}>
+                                {item.label}
+                            </Link>
+                        );
+                    })}
+                    <SignOutAction />
+                </nav>
+            </div>
         </header>
     );
 }
