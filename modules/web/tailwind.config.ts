@@ -12,10 +12,6 @@ const config: Config = {
       fontSize: {
         "115": "115px",
         "70": "70px",
-        "45": "45px",
-        "40": "40px",
-        "25": "25px",
-        "15": "15px",
       },
       backgroundColor: {
         white: "#f8fafc",
