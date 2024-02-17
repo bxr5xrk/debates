@@ -1,3 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+:root {
+  --arvo-font: "Arvo", serif;
+}
+
 a,
 hr {
   color: inherit;
@@ -40,6 +46,7 @@ ul {
 ::before {
   box-sizing: border-box;
   border: 0 solid #e5e7eb;
+  font-family: var(--arvo-font);
 }
 ::after,
 ::before {
@@ -50,6 +57,7 @@ html {
   -webkit-text-size-adjust: 100%;
   -moz-tab-size: 4;
   tab-size: 4;
+  background-color: #f8fafc;
 }
 body {
   line-height: inherit;
