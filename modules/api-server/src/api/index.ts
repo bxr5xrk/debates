@@ -31,8 +31,8 @@ export async function applicationApi(server: FastifyInstance): Promise<void> {
   server.put("/rooms/:id/set-judje/:userId", room.setJudje);
   server.put("/rooms/:id/set-own-team", room.setOwnTeam);
   server.put("/rooms/:id/set-user-team/:userId", room.setUserTeam);
-  server.put("/rooms/start/:id", room.startRoom);
-  server.put("/rooms/end/:id", room.endRoom);
+  server.put("/rooms/:id/start", room.startRoom);
+  server.put("/rooms/:id/end", room.endRoom);
   server.get("/rooms/received-invites", invite.getReceivedGameInvites);
   server.get("/rooms/sent-invites", invite.getSentGameInvites);
   server.get("/rooms/own-history", room.getOwnRoomHistory);
