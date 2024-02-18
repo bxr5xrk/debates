@@ -1,14 +1,15 @@
 import { defineHandler, getResponse } from "api/lib";
 import { Server } from "platform/types";
-import { inviteService } from "services/invite";
+import { roomService } from "services/room";
 
 async function handler({ server, session, params, body }: Server.Request, rep: Server.Reply): Promise<Server.Reply> {
+  const roomCode = (params as { code: string }).code;
   const user = session.get("user") as { id: number };
-  const invites = await inviteService.getReceivedInvites(user.id)
-  
-  return rep.status(200).send(getResponse("success", invites));
+
+  const room = await roomService.joinRoom(user.id, roomCode)
+  return rep.status(200).send(getResponse("success", room));
 }
 
-export const getReceivedInvites = defineHandler({
+export const joinRoom = defineHandler({
   handler
 });

@@ -1,6 +1,7 @@
 import { db } from "connectors/db";
 import { User } from "db/models/user";
 import { CreateUserPayload, UpdateUserPayload } from "./types";
+import { In } from "typeorm";
 
 class UserService {
   private userRepository = db.getRepository(User);
@@ -46,6 +47,16 @@ class UserService {
     }
 
     return user;
+  }
+
+  public async getUsersByIds(ids: number[]): Promise<User[]> {
+    if (!ids) {
+      throw new Error("Ids are required");
+    }
+
+    const users = await this.userRepository.find({ where: { id: In(ids) } });
+  
+    return users;
   }
 
   public async createUser(user: CreateUserPayload): Promise<User> {
