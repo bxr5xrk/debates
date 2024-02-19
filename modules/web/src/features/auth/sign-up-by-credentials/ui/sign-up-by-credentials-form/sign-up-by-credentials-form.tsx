@@ -1,131 +1,103 @@
 "use client";
 
-import { FormEvent, useRef } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { useSignUp } from "../../api";
 import { useAfterFetch } from "@/shared/hooks";
 import { API } from "@/shared/api/api-routes";
-import Image from "next/image";
+import ProfilePhoto from "./ProfilePhoto";
+import RegistrationFormData from "./RegistrationFormData";
+import axios from "axios";
+import InputData from "./InputData";
+
+export interface RegistrationData {
+    name: string;
+    surname: string;
+    nickname: string;
+    email: string;
+    password: string;
+    passwordConfirmation: string;
+}
 
 export function SignUpByCredentialsForm(): JSX.Element {
-    const emailRef = useRef<HTMLInputElement>(null);
-    const passwordRef = useRef<HTMLInputElement>(null);
-    const nameRef = useRef<HTMLInputElement>(null);
-    const nicknameRef = useRef<HTMLInputElement>(null);
+    const [registrationData, setRegistrationData] = useState<RegistrationData>({
+        name: "",
+        surname: "",
+        nickname: "",
+        email: "",
+        password: "",
+        passwordConfirmation: "",
+    });
+    const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+    console.log("Prof photo: " + profilePhoto);
+    console.table(registrationData);
+    // const emailRef = useRef<HTMLInputElement>(null);
+    // const passwordRef = useRef<HTMLInputElement>(null);
+    // const nameRef = useRef<HTMLInputElement>(null);
+    // const nicknameRef = useRef<HTMLInputElement>(null);
     const { trigger } = useSignUp();
     const { onAfterFetch } = useAfterFetch({
         revalidate: [API.AUTH_ROUTES.whoami],
         redirect: "/dashboard",
     });
 
+    const isEmailValid = (email: string) => !!email.length;
+
     async function onSubmit(e: FormEvent): Promise<void> {
         e.preventDefault();
+        e.stopPropagation();
 
-        const email = emailRef.current?.value ?? "";
-        const password = passwordRef.current?.value ?? "";
-        const name = nameRef.current?.value ?? "";
-        const nickname = nicknameRef.current?.value ?? "";
+        // messages will be added instead of console.log
+        if (!isEmailValid(registrationData.email)) {
+            console.log("email");
+            return;
+        }
 
-        const res = await trigger({ email, password, name, nickname });
+        if (!registrationData.password.trim()) {
+            console.log("password missed");
+            return;
+        }
 
-        onAfterFetch(
-            ["Signed up successfully", "Failed to sign in"],
-            res.status
-        );
+        if (
+            !registrationData.name.trim() &&
+            !registrationData.surname.trim() &&
+            !registrationData.nickname.trim()
+        ) {
+            console.log("name");
+            return;
+        }
+
+        if (
+            registrationData.password !== registrationData.passwordConfirmation
+        ) {
+            console.log("password");
+            return;
+        }
+
+        // const res = await trigger({ profilePhoto, ...registrationData });
+
+        // onAfterFetch(
+        //     ["Signed up successfully", "Failed to sign in"],
+        //     res.status
+        // );
+        axios
+            .post("https://httpbin.org/post", registrationData)
+            .then((response) => {
+                console.log(response.status, response.data);
+            });
     }
 
     return (
-        <form className="flex flex-col justify-center items-center w-full gap-5" onSubmit={onSubmit}>
-            <div>
-                <label className="flex rounded-full justify-center items-center w-full" htmlFor="image">
-                    <span className="group block relative w-3/5 cursor-pointer rounded-full border-4 border-slate-700 hover:bg-slate-700 ease-in-out duration-300 overflow-hidden">
-                        <span className="z-20 block absolute top-2/4 left-2/4 -translate-y-1/2 -translate-x-1/2 text-transparent text-center font-bold text-2xl uppercase ease-in-out duration-300 group-hover:text-white">Add photo</span>
-                        <Image
-                            className="object-cover scale-75"
-                            src={`/sign-up-page/profile-photo.svg`}
-                            alt="profile-photo"
-                            width="440"
-                            height="440"
-                            priority
-                        />
-                    </span>
-                </label>
-                <input
-                    className="hidden"
-                    type="file"
-                    name="image"
-                    id="image"
-                    required
-                    accept="image/*"
+        <div>
+            <form
+                className="flex flex-col justify-center items-center w-full gap-5 lg:flex-row lg:justify-end lg:items-start lg:pt-15"
+                onSubmit={onSubmit}
+            >
+                <ProfilePhoto setProfilePhoto={setProfilePhoto} />
+                <RegistrationFormData
+                    registrationData={registrationData}
+                    setRegistrationData={setRegistrationData}
                 />
-            </div>
-            <div className="flex flex-col w-full gap-3">
-                <input
-                    className="border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4"
-                    type="text"
-                    name="name"
-                    required
-                    minLength={2}
-                    id="name"
-                    placeholder="Name"
-                    ref={nameRef}
-                />
-                <input
-                    className="border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4"
-                    type="text"
-                    name="name"
-                    required
-                    minLength={2}
-                    id="surname"
-                    placeholder="Surname"
-                    ref={nameRef}
-                />
-                <input
-                    className="border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4"
-                    type="text"
-                    name="nickname"
-                    required
-                    minLength={2}
-                    id="nickname"
-                    placeholder="Nickname"
-                    ref={nicknameRef}
-                />
-                <input
-                    className="border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4"
-                    type="email"
-                    name="email"
-                    required
-                    id="email"
-                    minLength={2}
-                    placeholder="Email"
-                    ref={emailRef}
-                />
-                <input
-                    className="border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4"
-                    type="password"
-                    name="password"
-                    required
-                    minLength={2}
-                    id="password"
-                    placeholder="Password"
-                    ref={passwordRef}
-                />
-                <input
-                    className="border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4"
-                    type="password"
-                    name="password"
-                    required
-                    minLength={2}
-                    id="password"
-                    placeholder="Repeat the password"
-                    ref={passwordRef}
-                />
-                <button
-                    className="bg-slate-700 text-white text-lg w-full mx-auto p-4 rounded-lg font-medium sm:text-xl sm:p-4"
-                    type="submit"
-                >
-                    Create account
-                </button>
-            </div>
-        </form>
+            </form>
+        </div>
     );
 }
