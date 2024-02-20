@@ -7,6 +7,7 @@ import { In } from "typeorm";
 import { userService } from "services/user";
 import { User } from "db/models/user";
 import { TeamsEnum } from "db/enums/teams";
+import { CODE_CHARSET, CODE_LENGTH } from "lib/const";
 
 class RoomService {
   private roomRepository = db.getRepository(Room);
@@ -42,15 +43,13 @@ class RoomService {
   }
 
   public async createRoom(ownerId: number, room: CreateRoomPayload): Promise<Room> {
-    const codeLength = 12;
-    const codeCharset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const owner = await userService.getUserById(ownerId);
 
     if (!owner) {
       throw new Error("Owner not found");
     }
 
-    const generatedCode = await this.generateUniqueCode(codeLength, codeCharset);
+    const generatedCode = await this.generateUniqueCode(CODE_LENGTH, CODE_CHARSET);
 
     const roomPayload = {...room, owner, members: [owner], code: generatedCode};
 

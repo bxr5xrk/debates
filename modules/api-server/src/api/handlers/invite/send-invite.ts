@@ -19,11 +19,13 @@ async function handler({ server, session, params, body }: Server.Request<typeof 
     throw new Error("RoomId is required");
   }
 
-  const invite = body.type === InviteTypeEnum.FRIEND
-    ? await inviteService.sendFriendInvite(user.id, userId)
-    : body.type === InviteTypeEnum.GAME && body.roomId 
-      ? await inviteService.sendGameInvite(user.id, userId, body.roomId) 
-      : null;
+  let invite;
+
+  if (body.type === InviteTypeEnum.FRIEND) {
+    invite = await inviteService.sendFriendInvite(user.id, userId);
+  } else if (body.type === InviteTypeEnum.GAME && body.roomId) {
+    invite = await inviteService.sendGameInvite(user.id, userId, body.roomId);
+  }
 
   return rep.status(200).send(getResponse("success", invite));
 }
