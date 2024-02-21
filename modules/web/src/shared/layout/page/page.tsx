@@ -20,7 +20,7 @@ export function Page(props: PropsWithChildren<PageProps>): JSX.Element {
     }
 
     return (
-        <main {...meta} className={cl("p-2 w-full h-full max-w-screen-2xl mx-auto", className)}>
+        <main {...meta} className={cl("p-2 w-full h-full max-w-screen-2xl mx-auto bg-slate-50", className)}>
             {children}
         </main>
     );

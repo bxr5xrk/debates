@@ -5,7 +5,7 @@ export function SignInPage(): JSX.Element {
 
     return (
         <Page className="flex items-center justify-center">
-            <div className="max-w-64 p-4 border border-slate-700 rounded-lg">
+            <div className="max-w-full p-4">
                 <SignInByCredentialsForm />
             </div>
         </Page>

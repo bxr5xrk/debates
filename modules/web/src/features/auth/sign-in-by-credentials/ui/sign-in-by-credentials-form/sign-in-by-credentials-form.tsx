@@ -1,20 +1,41 @@
 "use client";
 
-import { FormEvent, useRef } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { useSignIn } from "../../api";
 import { useAfterFetch } from "@/shared/hooks";
 import { API } from "@/shared/api/api-routes";
 import { cl } from "@/shared/lib/cl";
+import { LoginFormData } from "./LoginFormData";
 
-type SignInByCredentialsFormProps = React.DetailedHTMLProps<React.FormHTMLAttributes<HTMLFormElement>, HTMLFormElement>
+type SignInByCredentialsFormProps = React.DetailedHTMLProps<
+    React.FormHTMLAttributes<HTMLFormElement>,
+    HTMLFormElement
+>;
 
-export function SignInByCredentialsForm(props: SignInByCredentialsFormProps): JSX.Element {
+export interface LoginData {
+    email: string;
+    password: string;
+}
+
+export function SignInByCredentialsForm(
+    props: SignInByCredentialsFormProps
+): JSX.Element {
     const { className, ...meta } = props;
 
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const { trigger } = useSignIn();
-    const { onAfterFetch } = useAfterFetch({ revalidate: [API.AUTH_ROUTES.whoami], redirect: "/dashboard" });
+    const { onAfterFetch } = useAfterFetch({
+        revalidate: [API.AUTH_ROUTES.whoami],
+        redirect: "/dashboard",
+    });
+
+    const [loginData, setLoginData] = useState<LoginData>({
+        email: "",
+        password: "",
+    });
+
+    console.table(loginData);
 
     async function onSubmit(e: FormEvent): Promise<void> {
         e.preventDefault();
@@ -24,14 +45,22 @@ export function SignInByCredentialsForm(props: SignInByCredentialsFormProps): JS
 
         const res = await trigger({ email, password });
 
-        onAfterFetch(["Signed in successfully", "Failed to sign in"], res.status);
+        onAfterFetch(
+            ["Signed in successfully", "Failed to sign in"],
+            res.status
+        );
     }
 
     return (
-        <form className={cl("flex flex-col w-full gap-2", className)} onSubmit={onSubmit} {...meta}>
-            <input className="border rounded-lg border-slate-700 p-2" type="email" name="email" required id="email" minLength={2} placeholder="Email" ref={emailRef} />
-            <input className="border rounded-lg border-slate-700 p-2" type="password" name="password" required minLength={2} id="password" placeholder="Password" ref={passwordRef} />
-            <button className="bg-slate-700 text-white w-fit mx-auto p-2 rounded-lg font-medium" type="submit">submit</button>
+        <form
+            className={cl(
+                "flex flex-col justify-center items-center w-full gap-5 lg:pt-15",
+                className
+            )}
+            onSubmit={onSubmit}
+            {...meta}
+        >
+            <LoginFormData loginData={loginData} setLoginData={setLoginData} />
         </form>
     );
 }
