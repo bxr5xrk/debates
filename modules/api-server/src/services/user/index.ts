@@ -26,11 +26,6 @@ class UserService {
       nickname
     })
 
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-
     return user;
   }
 

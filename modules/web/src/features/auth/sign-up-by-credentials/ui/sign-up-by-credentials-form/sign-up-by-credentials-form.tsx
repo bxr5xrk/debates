@@ -11,7 +11,7 @@ export function SignUpByCredentialsForm(): JSX.Element {
     const nameRef = useRef<HTMLInputElement>(null);
     const nicknameRef = useRef<HTMLInputElement>(null);
     const { trigger } = useSignUp();
-    const { onAfterFetch } = useAfterFetch({ revalidate: [API.AUTH_ROUTES.whoami], redirect: "/dashboard" });
+    const { onAfterFetch } = useAfterFetch({ revalidate: [API.AUTH_ROUTES.whoami], redirect: "/" });
 
     async function onSubmit(e: FormEvent): Promise<void> {
         e.preventDefault();
@@ -23,7 +23,7 @@ export function SignUpByCredentialsForm(): JSX.Element {
 
         const res = await trigger({ email, password, name, nickname });
 
-        onAfterFetch(["Signed up successfully", "Failed to sign in"], res.status);
+        onAfterFetch(["Signed up successfully", "Failed to sign up"], res.status);
     }
 
     return (

@@ -11,11 +11,6 @@ export enum InviteTypeEnum {
   GAME = 'game',
 }
 
-export interface Friend {
-  id: number;
-  user: User;
-}
-
 export interface Invite {
   id: number;
   sender: User;

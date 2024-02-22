@@ -1,8 +1,6 @@
 "use client";
 
 import { useWhoami } from "@/features/auth";
-import { FriendsList } from "@/features/friends";
-import { InvitesList } from "@/features/friends/invites-list";
 
 export function HomePrivate(): JSX.Element {
     const { data, isLoading } = useWhoami();
@@ -22,8 +20,7 @@ export function HomePrivate(): JSX.Element {
 
     return (
         <div>
-            <FriendsList />
-            <InvitesList />
+            <p>{JSON.stringify(data)}</p>
         </div>
     );
 }

@@ -1,6 +1,4 @@
-import { AcceptInviteAction } from "@/features/friends/invite-accept";
 import { useSentInvites } from "../../api";
-import { RejectInviteAction } from "@/features/friends/invite-reject";
 
 export function SentInvitesList(): JSX.Element {
     const { data } = useSentInvites();
@@ -13,14 +11,9 @@ export function SentInvitesList(): JSX.Element {
                 {invites?.map((invite) => (
                     <li key={invite.id} className="bg-gray-100 p-4 rounded-lg">
                         <p>from</p>
-                        <p>{invite.sender.name}</p>
-                        <p>{invite.sender.nickname}</p>
-                        <p>{invite.sender.email}</p>
-
-                        <div className="grid grid-cols-2 gap-2">
-                            <AcceptInviteAction inviteId={invite.id} />
-                            <RejectInviteAction inviteId={invite.id} />
-                        </div>
+                        <p>{invite.receiver.name}</p>
+                        <p>{invite.receiver.nickname}</p>
+                        <p>{invite.receiver.email}</p>
                     </li>
                 ))}
             </ul>

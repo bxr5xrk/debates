@@ -9,7 +9,7 @@ interface AcceptInviteActionProps {
 export function AcceptInviteAction(props: AcceptInviteActionProps): JSX.Element {
     const { inviteId } = props;
     const { trigger, isMutating } = useInviteAccept(inviteId);
-    const { onAfterFetch } = useAfterFetch({ revalidate: [API.FRIENDS_ROUTES.invites] });
+    const { onAfterFetch } = useAfterFetch({ revalidate: [API.FRIENDS_ROUTES.invites, API.FRIENDS_ROUTES.friends] });
 
     async function onAccept(): Promise<void> {
         const res = await trigger();

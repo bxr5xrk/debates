@@ -1,6 +1,9 @@
+"use client";
+
 import { AcceptInviteAction } from "@/features/friends/invite-accept";
 import { useInvites } from "../../api";
 import { RejectInviteAction } from "@/features/friends/invite-reject";
+import { SendInviteForm } from "@/features/friends/invite-send";
 
 export function InvitesList(): JSX.Element {
     const { data } = useInvites();
@@ -8,6 +11,7 @@ export function InvitesList(): JSX.Element {
 
     return (
         <div className="border border-slate-300 p-10 rounded-md">
+            <SendInviteForm />
             <p>invites list</p>
             <ul className="grid grid-cols-3 gap-4">
                 {invites?.map((invite) => (

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { Header } from "@/widgets/header";
 import { Footer } from "@/widgets/footer";
 import { cl } from "@/shared/lib/cl";
+import { Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,6 +15,7 @@ export async function RootLayout(props: PropsWithChildren): Promise<JSX.Element>
             <Header />
             {children}
             <Footer />
+            <Toaster richColors closeButton />
         </body>
     );
 }

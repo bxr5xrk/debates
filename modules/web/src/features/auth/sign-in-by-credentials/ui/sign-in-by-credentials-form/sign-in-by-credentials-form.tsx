@@ -14,7 +14,7 @@ export function SignInByCredentialsForm(props: SignInByCredentialsFormProps): JS
     const emailRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
     const { trigger } = useSignIn();
-    const { onAfterFetch } = useAfterFetch({ revalidate: [API.AUTH_ROUTES.whoami], redirect: "/dashboard" });
+    const { onAfterFetch } = useAfterFetch({ revalidate: [API.AUTH_ROUTES.whoami], redirect: "/" });
 
     async function onSubmit(e: FormEvent): Promise<void> {
         e.preventDefault();

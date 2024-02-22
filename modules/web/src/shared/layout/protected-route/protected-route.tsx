@@ -6,9 +6,9 @@ import { PropsWithChildren } from "react";
 
 export function ProtectedRoute(props: PropsWithChildren): JSX.Element {
     const { children } = props;
-    const { data } = useWhoami();
+    const { data, isLoading } = useWhoami();
 
-    if (!data?.data.id) {
+    if (!isLoading && !data?.data.id) {
         redirect('/');
     }
 
