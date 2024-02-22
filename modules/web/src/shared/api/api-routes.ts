@@ -5,6 +5,10 @@ const AUTH_ROUTES = {
     whoami: "/auth/whoami",
 } as const;
 
+const USER = {
+    me: "/me"
+} as const;
+
 const FRIENDS_ROUTES = {
     friends: "/friends",
     inviteSend: "/invite-send",
@@ -14,5 +18,6 @@ const FRIENDS_ROUTES = {
 
 export const API = {
     AUTH_ROUTES,
-    FRIENDS_ROUTES
+    FRIENDS_ROUTES,
+    USER
 } as const;

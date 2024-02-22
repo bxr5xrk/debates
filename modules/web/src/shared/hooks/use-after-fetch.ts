@@ -2,7 +2,7 @@ import { useRouter } from "next/navigation";
 import { isString } from "../lib/type-guards";
 import { useSWRConfig } from "swr";
 import { Status } from "../const/status";
-import { ExternalToast, toast } from "sonner";
+import { toast } from "sonner";
 
 function useRedirect(): {
     onRedirect: (redirect?: string) => void;
@@ -45,13 +45,13 @@ export function useAfterFetch(props: UseAfterFetchProps): {
         const [success, error] = message;
 
         if (status === Status.SUCCESS) {
-            toast.success(success, toastProps);
+            toast.success(success);
 
             onRevalidate();
             onRedirect(redirect);
             onSuccess?.();
         } else {
-            toast.error(error, toastProps);
+            toast.error(error);
         }
     }
 
@@ -68,8 +68,3 @@ export function errorMessage(res: unknown): string {
 
     return res;
 }
-
-const toastProps: ExternalToast = {
-    duration: 3000,
-    position: "top-center",
-};

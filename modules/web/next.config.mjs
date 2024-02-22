@@ -4,6 +4,14 @@ const nextConfig = {
         ignoreDuringBuilds: true,
     },
     reactStrictMode: true,
+    images: {
+        remotePatterns: [
+            {
+                protocol:'https',
+                hostname: 'i.ibb.co',
+            }
+        ],
+    },
 };
 
 export default nextConfig;

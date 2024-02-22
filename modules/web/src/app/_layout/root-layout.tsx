@@ -15,7 +15,7 @@ export async function RootLayout(props: PropsWithChildren): Promise<JSX.Element>
             <Header />
             {children}
             <Footer />
-            <Toaster richColors closeButton />
+            <Toaster richColors closeButton duration={3000} position="top-center" />
         </body>
     );
 }

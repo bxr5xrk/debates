@@ -30,6 +30,31 @@ export function baseFetcher(config: AxiosRequestConfig) {
     };
 }
 
+export function formDataFetcher<T>(config: AxiosRequestConfig<T>) {
+    return async (url: string, { arg }: MutationFetcherArgs<T>) => {
+        config.url ??= url;
+
+        try {
+            const response = await instance.request({
+                ...config,
+                data: arg,
+                headers: { 'Content-Type': 'multipart/form-data' },
+                withCredentials: true,
+            });
+
+            return response;
+        } catch (error) {
+            if (error instanceof AxiosError) {
+                const errorMessage = error.response?.data ?? error.response?.statusText;
+
+                console.error(errorMessage);
+
+                return errorMessage;
+            }
+        }
+    };
+}
+
 export function mutationFetcher<T>(config: AxiosRequestConfig<T>) {
     return async (url: string, { arg }: MutationFetcherArgs<T>) => {
         config.url ??= url;

@@ -2,6 +2,7 @@ import { db } from "connectors/db";
 import { User } from "db/models/user";
 import { CreateUserPayload, UpdateUserPayload } from "./types";
 import { In } from "typeorm";
+import { UserWithoutPassword } from "globals";
 
 class UserService {
   private userRepository = db.getRepository(User);
@@ -33,7 +34,7 @@ class UserService {
     return this.userRepository.find();
   }
 
-  public async getUserById(id?: number): Promise<User | null> {
+  public async getUserById(id?: number): Promise<UserWithoutPassword | null> {
     if (!id) {
       throw new Error("Id is required");
     }
@@ -46,7 +47,9 @@ class UserService {
       throw new Error("User not found");
     }
 
-    return user;
+    const { password: savedPassword, ...rest } = user;
+
+    return rest;
   }
 
   public async getUsersByIds(ids: number[]): Promise<User[]> {
@@ -55,7 +58,7 @@ class UserService {
     }
 
     const users = await this.userRepository.find({ where: { id: In(ids) } });
-  
+
     return users;
   }
 
@@ -64,21 +67,29 @@ class UserService {
     return this.userRepository.save(newUser);
   }
 
-  public async updateUser(id: number, user: UpdateUserPayload): Promise<User> {
-    if (!id) {
-      throw new Error("Id is required");
+  public async updateUser(id: number, user: UpdateUserPayload): Promise<UserWithoutPassword | undefined> {
+    try {
+      if (!id) {
+        throw new Error("Id is required");
+      }
+
+      const existingUser = await this.userRepository.findOneBy({ id })
+
+      if (!existingUser) {
+        throw new Error("User not found");
+      }
+
+      const updatedUser = this.userRepository.merge(existingUser, user);
+      const newUser = await this.userRepository.save(updatedUser);
+
+      const { password: savedPassword, ...rest } = newUser;
+
+      return rest;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
     }
-
-    const existingUser = await this.userRepository.findOneBy({
-      id
-    })
-
-    if (!existingUser) {
-      throw new Error("User not found");
-    }
-
-    const updatedUser = this.userRepository.merge(existingUser, user);
-    return this.userRepository.save(updatedUser);
   }
 }
 

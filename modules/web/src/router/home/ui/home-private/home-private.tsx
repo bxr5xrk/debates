@@ -1,5 +1,6 @@
 "use client";
 
+import { UserInfo } from "@/entities/user";
 import { useWhoami } from "@/features/auth";
 
 export function HomePrivate(): JSX.Element {
@@ -20,7 +21,7 @@ export function HomePrivate(): JSX.Element {
 
     return (
         <div>
-            <p>{JSON.stringify(data)}</p>
+            <UserInfo />
         </div>
     );
 }

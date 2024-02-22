@@ -2,3 +2,32 @@
 @tailwind components;
 @tailwind utilities;
 @import url('./reset.css');
+
+.base-button {
+  padding: 10px;
+  border-radius: 10px;
+  position: relative;
+  z-index: 10;
+  background-color: white;
+}
+
+.base-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid black;
+  border-radius: 10px;
+  z-index: -1;
+  background-color: white;
+}
+
+.base-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid black;
+  border-radius: 10px;
+  z-index: -1;
+  background-color: black;
+  transform: translateX(3px) translateY(3px);
+}
