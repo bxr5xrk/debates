@@ -9,16 +9,14 @@ import { authMiddleware } from "./middleware/authorization";
 export async function applicationApi(server: FastifyInstance): Promise<void> {
   server.addHook("onRequest", authMiddleware);
 
-  server.get("/users", user.getUsers);
-  server.get("/users/:id", user.getUser);
-  server.post("/users", user.createUser);
-  server.put("/users/:id", user.updateUser);
-
+  server.get("/me", user.getUser);
+  server.get("/user/:id", user.getUser);
+  server.put("/user", user.updateUser);
 
   server.get("/invites/:id", invite.getInvite);
-  server.post("/invites/send/:userId", invite.sendInvite);
-  server.put("/invites/accept/:id", invite.acceptInvite);
-  server.put("/invites/reject/:id", invite.rejectInvite);
+  server.put("/invites/:id/accept", invite.acceptInvite);
+  server.put("/invites/:id/reject", invite.rejectInvite);
+  server.post("/invites/send", invite.sendInvite);
 
   server.get("/friends", friend.getFriends);
   server.get("/friends/:id", friend.getFriend);

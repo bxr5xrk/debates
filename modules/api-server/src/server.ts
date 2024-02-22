@@ -9,6 +9,7 @@ import { ENV } from "platform/env";
 import { BAD_REQUEST_CODE, MILLISECONDS_IN_SECOND, MINUTES_IN_HOUR, NOT_FOUND_CODE, SECONDS_IN_MINUTE } from "lib/const";
 import { initDependencies } from "dependencies";
 import { applicationApi, authApi } from "api";
+import fastifyMultipart from "@fastify/multipart";
 
 const SESSION_OPTIONS = {
   secret: "secret1234567891011121314151617181920",
@@ -31,6 +32,9 @@ export async function initServer(): Promise<FastifyInstance> {
   });
   server.register(cookie);
   server.register(session, SESSION_OPTIONS);
+  server.register(fastifyMultipart, {
+    attachFieldsToBody: "keyValues"
+  })
 
   // Register API 
   server.register(applicationApi, { prefix: "/api" });

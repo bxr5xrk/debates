@@ -3,8 +3,10 @@ import { Server } from "platform/types";
 import { userService } from "services/user";
 
 async function handler({ server, session, params }: Server.Request, rep: Server.Reply): Promise<Server.Reply> {
-  const user = await userService.getUserById((params as { id: number }).id);
-  
+  const userId = (session.get("user") as { id: number }).id;
+
+  const user = await userService.getUserById(userId);
+
   return rep.status(200).send(getResponse("success", user));
 }
 

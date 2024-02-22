@@ -1,3 +1,4 @@
 export const ENV = {
     NEXT_PUBLIC_API_URI: process.env.NEXT_PUBLIC_API_URI,
+    UPLOAD_IMAGE_API_KEY: 'aa906837762d4b97ad0edf30512b1727',
 };

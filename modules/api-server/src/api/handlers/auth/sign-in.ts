@@ -19,6 +19,7 @@ async function handler({ server, session, params, body }: Server.Request<typeof 
   session.set("user", {
     id: user?.id,
     email: user?.email,
+    nickname: user?.nickname,
   });
 
   return rep.status(200).send(getResponse("success", user));

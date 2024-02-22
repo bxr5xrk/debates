@@ -14,6 +14,9 @@ export class User {
   @Column("varchar")
   name: string;
 
+  @Column("varchar", { nullable: true })
+  picture: string;
+
   @Column("varchar", { unique: true, nullable: false })
   nickname: string;
 

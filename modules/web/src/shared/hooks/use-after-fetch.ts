@@ -2,10 +2,11 @@ import { useRouter } from "next/navigation";
 import { isString } from "../lib/type-guards";
 import { useSWRConfig } from "swr";
 import { Status } from "../const/status";
+import { toast } from "sonner";
 
 function useRedirect(): {
-  onRedirect: (redirect?: string) => void;
-  } {
+    onRedirect: (redirect?: string) => void;
+    } {
     const { push } = useRouter();
 
     function onRedirect(redirect?: string): void {
@@ -20,13 +21,13 @@ function useRedirect(): {
 }
 
 interface UseAfterFetchProps {
-  revalidate?: string[];
-  redirect?: string;
+    revalidate?: string[];
+    redirect?: string;
 }
 
 export function useAfterFetch(props: UseAfterFetchProps): {
-  onAfterFetch: (message: [string, string], status?: number, onSuccess?: VoidFunction) => void;
-  onRevalidate: VoidFunction;
+    onAfterFetch: (message: [string, string], status?: number, onSuccess?: VoidFunction) => void;
+    onRevalidate: VoidFunction;
 } {
     const { revalidate, redirect } = props;
     const { mutate } = useSWRConfig();
@@ -41,16 +42,16 @@ export function useAfterFetch(props: UseAfterFetchProps): {
     }
 
     function onAfterFetch(message: [string, string], status?: number, onSuccess?: VoidFunction): void {
-    // const [success, error] = message;
+        const [success, error] = message;
 
         if (status === Status.SUCCESS) {
-            // toast.success(success);
+            toast.success(success);
 
             onRevalidate();
             onRedirect(redirect);
             onSuccess?.();
         } else {
-            // toast.error(error);
+            toast.error(error);
         }
     }
 

@@ -5,6 +5,7 @@ export const ENV = {
     HOST: process.env.HOST || "127.0.0.1",
     CORS_ORIGIN: new RegExp(process.env.CORS_ORIGIN || "http://127.0.0.1:3000"),
   },
+  UPLOAD_IMAGE_API_KEY: process.env.UPLOAD_IMAGE_API_KEY,
   PG: {
     CONNECTION_STRING: process.env.PG_CONNECTION_STRING,
     HOST: process.env.POSTGRESDB_HOST || "localhost",

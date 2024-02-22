@@ -135,19 +135,19 @@ class InviteService {
     return updatedInvite;
   }
 
-  public async sendFriendInvite(senderId: number, receiverId: number): Promise<Invite>{
+  public async sendFriendInvite(senderId: number, receiverNickname?: string): Promise<Invite>{
     const sender = await userService.getUserById(senderId);
 
     if(!sender){
       throw new Error("Sender not found")
     }
 
-    const receiver = await userService.getUserById(receiverId);
+    const receiver = await userService.getUserByNickname(receiverNickname);
 
     if(!receiver){
       throw new Error("Receiver not found")
     }
-    const existingInvite = await this.findInviteByUsers(senderId, receiverId, InviteTypeEnum.FRIEND)
+    const existingInvite = await this.findInviteByUsers(senderId, receiver.id, InviteTypeEnum.FRIEND)
 
     if (existingInvite){
       throw Error("Invite is already exist");
@@ -156,7 +156,7 @@ class InviteService {
     return await this.createInvite({sender, receiver, type: InviteTypeEnum.FRIEND});
   }
 
-  public async sendGameInvite(senderId: number, receiverId: number, roomId: number): Promise<Invite>{
+  public async sendGameInvite(senderId: number, roomId: number, receiverId?: number): Promise<Invite>{
     const sender = await userService.getUserById(senderId);
 
     if(!sender){
@@ -165,7 +165,7 @@ class InviteService {
 
     const receiver = await userService.getUserById(receiverId);
 
-    if(!receiver){
+    if(!receiver || !receiverId){
       throw new Error("Receiver not found")
     }
     const existingInvite = await this.findInviteByUsers(senderId, receiverId, InviteTypeEnum.GAME)

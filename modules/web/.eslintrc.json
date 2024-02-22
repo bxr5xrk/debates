@@ -19,6 +19,7 @@
   },
   "plugins": ["@typescript-eslint", "react"],
   "rules": {
+    "react-hooks/exhaustive-deps": "off",
     "react/react-in-jsx-scope": "off",
     "react/jsx-uses-react": "off",
     "indent": ["error", 4],
