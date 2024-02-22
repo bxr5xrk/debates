@@ -66,11 +66,6 @@ export function SignUpByCredentialsForm(): JSX.Element {
     const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
     console.table(registrationData);
 
-    // const emailRef = useRef<HTMLInputElement>(null);
-    // const passwordRef = useRef<HTMLInputElement>(null);
-    // const nameRef = useRef<HTMLInputElement>(null);
-    // const nicknameRef = useRef<HTMLInputElement>(null);
-
     const { trigger } = useSignUp();
     const { onAfterFetch } = useAfterFetch({
         revalidate: [API.AUTH_ROUTES.whoami],
@@ -85,14 +80,14 @@ export function SignUpByCredentialsForm(): JSX.Element {
             return;
         }
 
-        // const res = await trigger({ profilePhoto, ...registrationData });
-        // onAfterFetch(
-        //     ["Signed up successfully", "Failed to sign in"],
-        //     res.status
-        // );
+        const res = await trigger({ profilePhoto, ...registrationData });
+        onAfterFetch(
+            ["Signed up successfully", "Failed to sign in"],
+            res.status
+        );
 
         // axios
-        //     .post("http://127.0.0.1:3001/api/auth/sign-up", registrationData)
+        //     .post("https://httpbin.org/post", registrationData)
         //     .then((response) => {
         //         console.log(response.status, response.data);
         //         setRegistrationData({...registrationData,
@@ -105,24 +100,6 @@ export function SignUpByCredentialsForm(): JSX.Element {
         //         });
         //     });
 
-        const options = {
-            method: "POST",
-            url: "http://127.0.0.1:3001/api/auth/sign-up",
-            headers: { "content-type": "application/json" },
-            data: {
-                name: "toor",
-                email: "toor@gmail.com",
-                nickname: "toor",
-                password: "toor",
-            },
-        };
-
-        try {
-            const { data } = await axios.request(options);
-            console.log(data);
-        } catch (error) {
-            console.error(error);
-        }
     }
 
     return (

@@ -3,11 +3,12 @@ import { BaseResponse } from "@/shared/types";
 
 export interface SignUpPayload {
   image: File;
-  email: string;
-  password: string;
   name: string;
   surname: string;
   nickname: string;
+  email: string;
+  password: string;
+  passwordConfirmation: string;
 }
 
 export type SignUpData = BaseResponse<User>

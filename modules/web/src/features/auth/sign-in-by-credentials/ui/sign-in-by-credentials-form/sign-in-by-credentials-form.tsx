@@ -22,8 +22,6 @@ export function SignInByCredentialsForm(
 ): JSX.Element {
     const { className, ...meta } = props;
 
-    const emailRef = useRef<HTMLInputElement>(null);
-    const passwordRef = useRef<HTMLInputElement>(null);
     const { trigger } = useSignIn();
     const { onAfterFetch } = useAfterFetch({
         revalidate: [API.AUTH_ROUTES.whoami],
@@ -35,15 +33,11 @@ export function SignInByCredentialsForm(
         password: "",
     });
 
-    console.table(loginData);
-
     async function onSubmit(e: FormEvent): Promise<void> {
         e.preventDefault();
-
-        const email = emailRef.current?.value ?? "";
-        const password = passwordRef.current?.value ?? "";
-
-        const res = await trigger({ email, password });
+        e.stopPropagation();
+        
+        const res = await trigger(loginData);
 
         onAfterFetch(
             ["Signed in successfully", "Failed to sign in"],
