@@ -8,23 +8,24 @@ const schema = defineSchema({
   body: type.Object({
     type: type.Enum(InviteTypeEnum),
     roomId: type.Optional(type.Number()),
+    nickname: type.Optional(type.String()),
+    userId: type.Optional(type.Number())
   })
 });
 
 async function handler({ server, session, params, body }: Server.Request<typeof schema>, rep: Server.Reply): Promise<Server.Reply> {
   const user = session.get("user") as { id: number };
-  const userId = (params as { userId: number }).userId;
 
-  if (body.type === InviteTypeEnum.GAME && !body.roomId){
+  if (body.type === InviteTypeEnum.GAME && !body.roomId) {
     throw new Error("RoomId is required");
   }
 
   let invite;
 
   if (body.type === InviteTypeEnum.FRIEND) {
-    invite = await inviteService.sendFriendInvite(user.id, userId);
+    invite = await inviteService.sendFriendInvite(user.id, body.nickname);
   } else if (body.type === InviteTypeEnum.GAME && body.roomId) {
-    invite = await inviteService.sendGameInvite(user.id, userId, body.roomId);
+    invite = await inviteService.sendGameInvite(user.id, body.roomId, body.userId);
   }
 
   return rep.status(200).send(getResponse("success", invite));

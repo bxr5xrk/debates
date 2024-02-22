@@ -17,14 +17,19 @@ class UserService {
     return user;
   }
 
-  public async getUserByNickname(nickname: string): Promise<User | null> {
+  public async getUserByNickname(nickname?: string): Promise<User | null> {
     if (!nickname) {
-      throw new Error("Username is required");
+      throw new Error("Nickname is required");
     }
 
     const user = await this.userRepository.findOneBy({
       nickname
     })
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
 
     return user;
   }
@@ -33,7 +38,7 @@ class UserService {
     return this.userRepository.find();
   }
 
-  public async getUserById(id: number): Promise<User | null> {
+  public async getUserById(id?: number): Promise<User | null> {
     if (!id) {
       throw new Error("Id is required");
     }
