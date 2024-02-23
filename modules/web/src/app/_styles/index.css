@@ -2,8 +2,3 @@
 @tailwind components;
 @tailwind utilities;
 @import url("./reset.css");
-@import url("https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&display=swap");
-
-* {
-  font-family: "Arvo", serif;
-}

@@ -1,44 +1,22 @@
 import React from "react";
 
 import { Text } from "@/shared/ui";
-import Link from "next/link";
-
-type BaseButtonProps = {
-    text: string;
-    className?: string[];
-    width: string;
-    height: string;
-    font: string;
-    fontSize: string;
-};
-
-type LinkButtonProps = BaseButtonProps & {
-    Tag: "Link";
-    href: string;
-};
-
-type NonLinkButtonProps = BaseButtonProps & {
-    Tag: "button" | "div" | "li";
-    href?: never;
-};
-
-type buttonProps = LinkButtonProps | NonLinkButtonProps;
+import { cl } from "../lib/cl";
+import buttonProps from "./types";
 
 export default function Button({
     text,
-    height,
     width,
     font,
     fontSize,
     className,
     Tag,
-    href,
+    ...meta
 }: buttonProps): JSX.Element {
     const commonStyles: string[] = [
         "flex",
         width,
-        height,
-        // "bg-red-500",
+        "p-4",
         "border-4",
         "border-black",
         "rounded-3xl",
@@ -48,6 +26,7 @@ export default function Button({
         "hover:border-white",
         "hover:text-white",
     ];
+
     const textStyles: string[] = [
         "flex justify-center items-center",
         fontSize,
@@ -55,21 +34,17 @@ export default function Button({
         width,
         "vertical-middle",
         "text-center",
+        "h-full",
+        "whitespace-nowrap",
     ];
 
-    const classes = [...commonStyles, ...(className || [])].join(" ");
+    const classes = cl(...commonStyles, ...(className || []));
 
-    if (Tag === "Link") {
-        return (
-            <Link href={href} className={classes}>
-                <Text Teg="p" textInTag={text} className={textStyles} />
-            </Link>
-        );
-    } else {
-        return React.createElement(
-            Tag,
-            { className: classes },
-            <Text Teg="p" textInTag={text} className={textStyles} />
-        );
-    }
+    return (
+        <Tag className={classes} {...meta}>
+            <Text Tag="p" classes={textStyles}>
+                {text}
+            </Text>
+        </Tag>
+    );
 }

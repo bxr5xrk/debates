@@ -1,21 +1,21 @@
 import React from "react";
+import { cl } from "../lib/cl";
 
-type textProps = {
-    Teg: "p" | "span" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
-    textInTag: string;
-    className?: string[];
-};
+interface TextProps
+    extends React.HTMLAttributes<
+        HTMLParagraphElement | HTMLSpanElement | HTMLHeadingElement
+    > {
+    Tag: "p" | "span" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+    classes: string[];
+}
 
-export default function Text({
-    Teg,
-    textInTag,
-    className,
-}: textProps): JSX.Element {
-    const classes = [...(className || [])];
+export default function Text(props: TextProps): JSX.Element {
+    const { children, Tag, classes, ...meta } = props;
+    const classesStr = cl(...classes);
 
-    return React.createElement(
-        Teg,
-        { className: classes.join(" ") },
-        textInTag
+    return (
+        <Tag className={classesStr} {...meta}>
+            {children}
+        </Tag>
     );
 }

@@ -1,20 +1,21 @@
 import { PropsWithChildren } from "react";
-import { Inter } from "next/font/google";
+import { Arvo } from "next/font/google";
 import { Header } from "@/widgets/header";
 import { Footer } from "@/widgets/footer";
+import { cl } from "@/shared/lib/cl";
 
-const inter = Inter({ subsets: ["latin"] });
+const arvo = Arvo({ subsets: ["latin"], weight: ["400", "700"] });
 
 export async function RootLayout(
-  props: PropsWithChildren
+    props: PropsWithChildren
 ): Promise<JSX.Element> {
-  const { children } = props;
+    const { children } = props;
 
-  return (
-    <body className={`${inter.className} flex flex-col`}>
-      <Header />
-      {children}
-      <Footer />
-    </body>
-  );
+    return (
+        <body className={cl(arvo.className, "flex", "flex-col")}>
+            <Header />
+            {children}
+            <Footer />
+        </body>
+    );
 }
