@@ -22,13 +22,13 @@ export function Header(): JSX.Element {
     const pathname = usePathname();
     const isLoggedIn = data?.data?.id;
 
-    if (!isLoggedIn) {
-        return <>
-            <Link scroll={false} href="/sign-in" className={cl(pathname === "/sign-in" && "font-bold")}>
-                Sign In
-            </Link>
-        </>;
-    }
+    // if (!isLoggedIn) {
+    //     return <>
+    //         <Link scroll={false} href="/sign-in" className={cl(pathname === "/sign-in" && "font-bold")}>
+    //             Sign In
+    //         </Link>
+    //     </>;
+    // }
 
     return (
         <header className="flex border-b w-full">

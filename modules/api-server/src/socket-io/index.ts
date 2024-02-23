@@ -76,9 +76,10 @@ export function setupSocketEvents(io: Server): void {
       }, 1000);
     }
 
-    socket.on('joinRoom', async (userId, roomId) => {
+    socket.on('joinRoom', async (userId, roomCode) => {
       try{
-        const room = await roomService.joinRoomById(userId, roomId);
+        const room = await roomService.joinRoomByCode(userId, roomCode);
+        const roomId = room.id;
         socket.join(`room-${roomId}`);
   
         console.log(`User ${socket.id} joined room ${roomId}`);

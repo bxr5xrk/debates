@@ -6,19 +6,19 @@ export interface CreateRoomPayload {
   judgeId: number;
   proTeamIds: number[];
   conTeamIds: number[];
-  preparationTime: number;
   reportTime: number;
-  gradingTime: number;
 }
 
 export interface CreateRoomFormData {
   topic: string;
   judgeId: string;
-  proTeamIds: string;
-  conTeamIds: string;
-  preparationTime: number;
+  proTeamIds: {
+    id: string;
+  }[];
+  conTeamIds: {
+    id: string;
+  }[];
   reportTime: number;
-  gradingTime: number;
 
 }
 

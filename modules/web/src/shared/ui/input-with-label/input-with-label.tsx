@@ -2,7 +2,7 @@ import { cl } from "@/shared/lib/cl";
 import { PropsWithChildren } from "react";
 import { Input, Label } from "..";
 
-interface InputWithLabelProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface InputWithLabelProps extends React.HTMLAttributes<HTMLDivElement> {
   htmlFor: string;
   label: string;
   errorMessage?: string;

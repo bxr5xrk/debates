@@ -8,7 +8,8 @@ import { CreateRoomFormData, CreateRoomPayload } from "../../types";
 import { useFriends } from "@/features/friends/friends-list/api";
 import { validations } from "@/shared/lib";
 import { Friend } from "@/entities/friend";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { ArrayPath, FieldErrors, Path, UseFieldArrayReturn, UseFormRegister, UseFormSetValue, UseFormTrigger, UseFormWatch, set } from "react-hook-form";
 
 export function CreateRoomDialog(): JSX.Element {
     return (
@@ -25,26 +26,17 @@ export function CreateRoomDialog(): JSX.Element {
 }
 
 function CreateRoomForm(): JSX.Element {
-    const { register, control, errors, handleSubmit, isMutating, trigger, watch, setValue } = useFormInit();
+    const { register, control, errors, handleSubmit, isMutating, trigger, watch, setValue, proTeamIds, conTeamIds, triggerField } = useFormInit();
     const { onAfterFetch } = useAfterFetch({});
-    const { data } = useFriends();
-    const friends = data?.data ?? [];
-    const [blacklistIds, setBlacklistIds] = useState<string[]>([]);
-    console.log({ blacklistIds });
-
-    useEffect(() => {
-        const values = [watch("judgeId"), watch("proTeamIds"), watch("conTeamIds")].filter(Boolean);
-        setBlacklistIds(values);
-
-    }, [watch("judgeId"), watch("proTeamIds"), watch("conTeamIds")]);
 
     async function onSubmit(data: CreateRoomFormData): Promise<void> {
         control._disableForm(true);
-        const res = await trigger(getPayload(data));
+        console.log('payload: ', getPayload(data));
+        // const res = await trigger(getPayload(data));
 
-        onAfterFetch(["Room created successfully", res?.data.message ?? "Something went wrong"], res.status);
+        // onAfterFetch(["Room created successfully", res?.data.message ?? "Something went wrong"], res.status);
 
-        console.log({ res });
+        // console.log({ res });
         control._disableForm(false);
     }
 
@@ -53,69 +45,172 @@ function CreateRoomForm(): JSX.Element {
             <InputWithLabel label="Topic" htmlFor="topic" errorMessage={errors['topic']?.message}>
                 <InputWithLabel.Input {...register("topic", { ...validations.required })} placeholder="Topic" />
             </InputWithLabel>
-            <InputWithLabel label="Preparation Time" htmlFor="preparationTime" errorMessage={errors['preparationTime']?.message}>
-                <InputWithLabel.Input {...register("preparationTime", { ...validations.required })} placeholder="Preparation Time" type="number" />
-            </InputWithLabel>
 
             <InputWithLabel label="Report Time" htmlFor="reportTime" errorMessage={errors['reportTime']?.message}>
                 <InputWithLabel.Input {...register("reportTime", { ...validations.required })} placeholder="Report Time" type="number" />
             </InputWithLabel>
 
-            <InputWithLabel label="Grading Time" htmlFor="gradingTime" errorMessage={errors['gradingTime']?.message}>
-                <InputWithLabel.Input {...register("gradingTime", { ...validations.required })} placeholder="Grading Time" type="number" />
-            </InputWithLabel>
-
-            <InputWithLabel label="Judge" htmlFor="judgeId" errorMessage={errors['judgeId']?.message}>
-                <Select onValueChange={(e) => setValue("judgeId", e)} {...register("judgeId")}>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select a judge" />
-                    </SelectTrigger>
-                    <SelectContent options={getOptions(friends, blacklistIds)} {...register("judgeId")} />
-                </Select>
-            </InputWithLabel>
-
-            <InputWithLabel label="Pro Team" htmlFor="proTeamIds" errorMessage={errors['proTeamIds']?.message}>
-                <Select onValueChange={(e) => setValue("proTeamIds", e)} {...register("proTeamIds")}>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select a pro team" />
-                    </SelectTrigger>
-                    <SelectContent options={getOptions(friends, blacklistIds)} {...register("proTeamIds")} />
-                </Select>
-            </InputWithLabel>
-
-            <InputWithLabel label="Con Team" htmlFor="conTeamIds" errorMessage={errors['conTeamIds']?.message}>
-                <Select onValueChange={(e) => setValue("conTeamIds", e)} {...register("conTeamIds")}>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select a con team" />
-                    </SelectTrigger>
-                    <SelectContent {...register("conTeamIds")} options={getOptions(friends, blacklistIds)} />
-                </Select>
-            </InputWithLabel>
+            <MembersSelect setValue={setValue} register={register} errors={errors} proTeamIds={proTeamIds} conTeamIds={conTeamIds} watch={watch} triggerField={triggerField} />
 
             <Button isLoading={isMutating} type="submit">Create</Button>
         </form>
     );
 }
 
-function getOptions(friends: Friend[], blacklistIds: string[]): SelectOption[] {
-    if (!friends.length) return [];
+interface MembersSelectProps {
+    register: UseFormRegister<CreateRoomFormData>;
+    errors: FieldErrors<CreateRoomFormData>;
+    proTeamIds: UseFieldArrayReturn<CreateRoomFormData, "proTeamIds", "id">;
+    conTeamIds: UseFieldArrayReturn<CreateRoomFormData, "conTeamIds", "id">;
+    setValue: UseFormSetValue<CreateRoomFormData>;
+    watch: UseFormWatch<CreateRoomFormData>;
+    triggerField: UseFormTrigger<CreateRoomFormData>
+}
 
-    return friends
-        .filter((friend) => !blacklistIds.includes(String(friend.id)))
-        .map((friend) => ({
-            label: friend.friend.nickname,
-            value: String(friend.id),
-        }));
+export function MembersSelect(props: MembersSelectProps): JSX.Element {
+    const { register, errors, proTeamIds, conTeamIds, setValue, watch, triggerField } = props;
+    const { data } = useFriends();
+    const friends = data?.data ?? [];
+    const [blacklistIds, setBlacklistIds] = useState<string[]>([]);
+
+    function onValue(e: string, name: 'proTeamIds' | 'conTeamIds' | 'judgeId', index: number): void {
+        switch (name) {
+        case "judgeId":
+            setValue("judgeId", e);
+            triggerField(name);
+            break;
+        case "proTeamIds":
+            proTeamIds.update(index, { id: e });
+            triggerField(name);
+            break;
+        case "conTeamIds":
+            conTeamIds.update(index, { id: e });
+            triggerField(name);
+            break;
+        }
+
+
+        // set blacklisted ids
+        setBlacklistIds([watch("judgeId"), ...watch("conTeamIds").map((id) => id.id), ...watch("proTeamIds").map((id) => id.id)].filter(Boolean));
+    }
+
+    function onRemove(index: number, name: 'proTeamIds' | 'conTeamIds'): void {
+        const isOneExists = name === 'proTeamIds' ? proTeamIds.fields.length > 1 : conTeamIds.fields.length > 1;
+
+        if (!isOneExists) {
+            return;
+        }
+
+        const field = name === 'proTeamIds' ? proTeamIds.fields[index] : conTeamIds.fields[index];
+
+        name === 'proTeamIds' ? proTeamIds.remove(index) : conTeamIds.remove(index);
+
+        setBlacklistIds((prev) => prev.filter((id) => id !== field.id));
+    }
+
+    const options = getOptions(friends, blacklistIds);
+
+    return (
+        <>
+            <InputWithLabel label="Judge" htmlFor="judgeId" errorMessage={errors['judgeId']?.message} >
+                <Select onValueChange={(e) => onValue(e, "judgeId", 0)}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select a judge" />
+                    </SelectTrigger>
+                    <SelectContent options={options} {...register("judgeId", { ...validations.required })} />
+                </Select>
+            </InputWithLabel >
+
+            {/* proTeamIds */}
+            <DynamicSelect label="Pro Team" htmlFor="proTeamIds"
+                fields={proTeamIds} onAppend={() => proTeamIds.append({ id: '' })
+                }
+                onRemove={(index) => onRemove(index, 'proTeamIds')} register={register}
+                options={options} onUpdate={(index, e) => onValue(e, "proTeamIds", index)}
+                value={(index) => `proTeamIds.${index}.id`} watch={watch} errorMessage={errors.proTeamIds?.root?.message}
+            />
+
+            {/* conTeamIds */}
+            <DynamicSelect label="Con Team" htmlFor="conTeamIds"
+                fields={conTeamIds} onAppend={() => conTeamIds.append({ id: '' })}
+                onRemove={(index) => onRemove(index, 'conTeamIds')} register={register}
+                options={options} onUpdate={(index, e) => onValue(e, "conTeamIds", index)}
+                value={(index) => `conTeamIds.${index}.id`} watch={watch} errorMessage={errors.conTeamIds?.root?.message}
+            />
+        </>
+    );
+}
+
+interface DynamicSelectProps<F extends object, T extends ArrayPath<F>> {
+    label: string;
+    htmlFor: string;
+    fields: UseFieldArrayReturn<F, T, "id">
+    onAppend: VoidFunction;
+    onRemove: (index: number) => void;
+    register: UseFormRegister<F>;
+    options: SelectOption[];
+    onUpdate: (index: number, value: string) => void;
+    value: (index: number) => Path<F>;
+    watch: UseFormWatch<F>;
+    errorMessage?: string
+}
+
+export function DynamicSelect<F extends object, T extends ArrayPath<F>>(props: DynamicSelectProps<F, T>): JSX.Element {
+    const { label, htmlFor, fields, onAppend, onRemove, register, options, onUpdate, value, watch, errorMessage } = props;
+
+    return (
+        <div>
+            <InputWithLabel label={label} htmlFor={htmlFor}>
+                <ul>
+                    {fields.fields.map((field, index) => (
+                        <li key={field.id}>
+                            <Select key={field.id} onValueChange={(e) => onUpdate(index, e)} value={watch(value(index))}>
+                                <SelectTrigger className="">
+                                    <SelectValue placeholder="Select a pro team" />
+                                </SelectTrigger>
+                                <SelectContent options={options} {...register(value(index))} />
+                            </Select>
+                            <button type="button" onClick={() => onRemove(index)}>Remove</button>
+                        </li>
+                    ))}
+                </ul>
+            </InputWithLabel>
+            {errorMessage && <span className="text-red-500">{errorMessage}</span>}
+            <button
+                type="button" onClick={onAppend}
+            >
+                append
+            </button>
+        </div>
+    );
+}
+
+function getOptions(friends: Friend[], blacklistIds: string[]): SelectOption[] {
+    // if (!friends.length) return [];
+
+    // return friends
+    //     .filter((friend) => !blacklistIds.includes(String(friend.id)))
+    //     .map((friend) => ({
+    //         label: friend.friend.nickname,
+    //         value: String(friend.id),
+    //     }));
+
+    return [
+        { label: '1', value: '1' },
+        { label: '2', value: '2' },
+        { label: '3', value: '3' },
+        { label: '4', value: '4' },
+        { label: '5', value: '5' },
+    ]
+        .map(friend => ({ ...friend, disabled: blacklistIds.includes(friend.value) }));
 }
 
 function getPayload(data: CreateRoomFormData): CreateRoomPayload {
     return {
         topic: data.topic,
         judgeId: Number(data.judgeId),
-        proTeamIds: [Number(data.proTeamIds)],
-        conTeamIds: [Number(data.conTeamIds)],
-        preparationTime: data.preparationTime,
+        proTeamIds: data.proTeamIds.map((e) => Number(e.id)),
+        conTeamIds: data.conTeamIds.map((e) => Number(e.id)),
         reportTime: data.reportTime,
-        gradingTime: data.gradingTime,
     };
 }
