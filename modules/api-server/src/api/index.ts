@@ -33,7 +33,7 @@ export async function applicationApi(server: FastifyInstance): Promise<void> {
   server.get("/rooms/own-history", room.getOwnRoomHistory);
   server.get("/rooms/user-history/:userId", room.getUserRoomHistory);
   server.get("/rooms/:id", room.getRoom);
-  server.get("/rooms/:id/is-live", room.isLive);
+  server.get("/rooms/is-live", room.isLive);
 }
 
 export async function authApi(server: FastifyInstance): Promise<void> {
