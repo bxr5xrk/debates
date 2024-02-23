@@ -10,6 +10,8 @@ import { BAD_REQUEST_CODE, MILLISECONDS_IN_SECOND, MINUTES_IN_HOUR, NOT_FOUND_CO
 import { initDependencies } from "dependencies";
 import { applicationApi, authApi } from "api";
 import fastifyMultipart from "@fastify/multipart";
+import fastifySocketIO from 'fastify-socket.io';
+import { setupSocketEvents } from "socket-io";
 
 const SESSION_OPTIONS = {
   secret: "secret1234567891011121314151617181920",
@@ -35,6 +37,15 @@ export async function initServer(): Promise<FastifyInstance> {
   server.register(fastifyMultipart, {
     attachFieldsToBody: "keyValues"
   })
+
+  // Register fastify-socket.io
+  server.register(fastifySocketIO);
+  
+  server.ready(async (err) => {
+    if (err) throw err;
+  
+    setupSocketEvents(server.io);
+  });
 
   // Register API 
   server.register(applicationApi, { prefix: "/api" });

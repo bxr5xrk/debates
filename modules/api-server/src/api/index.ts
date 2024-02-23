@@ -26,9 +26,6 @@ export async function applicationApi(server: FastifyInstance): Promise<void> {
 
   server.post("/rooms", room.createRoom);
   server.put("/rooms/join/:code", room.joinRoom);
-  server.put("/rooms/:id/set-judje/:userId", room.setJudje);
-  server.put("/rooms/:id/set-own-team", room.setOwnTeam);
-  server.put("/rooms/:id/set-user-team/:userId", room.setUserTeam);
   server.put("/rooms/:id/start", room.startRoom);
   server.put("/rooms/:id/end", room.endRoom);
   server.get("/rooms/received-invites", invite.getReceivedGameInvites);
@@ -36,6 +33,7 @@ export async function applicationApi(server: FastifyInstance): Promise<void> {
   server.get("/rooms/own-history", room.getOwnRoomHistory);
   server.get("/rooms/user-history/:userId", room.getUserRoomHistory);
   server.get("/rooms/:id", room.getRoom);
+  server.get("/rooms/:id/is-live", room.isLive);
 }
 
 export async function authApi(server: FastifyInstance): Promise<void> {

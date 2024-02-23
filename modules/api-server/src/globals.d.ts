@@ -4,6 +4,10 @@ declare module "fastify" {
   interface Session {
     user: unknown;
   }
+
+  interface FastifyInstance {
+    io: Socket;
+  }
 }
 
 export interface UploadImageData {

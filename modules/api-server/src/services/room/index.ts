@@ -37,21 +37,47 @@ class RoomService {
     }
 
     return this.roomRepository.find({
-      where: { members: { id: userId }, status: RoomStatusEnum.ENDED},
-      relations: ['owner', 'judje', 'proTeam', 'conTeam', 'winners', 'members']
+      where: [
+        { proTeam: { id: userId }, status: RoomStatusEnum.ENDED},
+        { conTeam: { id: userId }, status: RoomStatusEnum.ENDED},
+        { judge: { id: userId }, status: RoomStatusEnum.ENDED},
+      ],
+      relations: ['owner', 'judge', 'proTeam', 'conTeam', 'winners', 'members']
     });
   }
 
-  public async createRoom(ownerId: number, room: CreateRoomPayload): Promise<Room> {
+  public async createRoom(ownerId: number, judgeId: number, proTeamIds: number[], conTeamIds: number[], room: CreateRoomPayload): Promise<Room> {
+    if (!ownerId || !proTeamIds || !conTeamIds) {
+      throw new Error("Ids are required");
+    }
+
     const owner = await userService.getUserById(ownerId);
 
     if (!owner) {
       throw new Error("Owner not found");
     }
 
+    const judge = await userService.getUserById(judgeId);
+
+    if (!judge) {
+      throw new Error("judge not found");
+    }
+
+    const proTeam = await userService.getUsersByIds(proTeamIds);
+
+    if (!proTeam) {
+      throw new Error("proTeam not found");
+    }
+
+    const conTeam = await userService.getUsersByIds(conTeamIds);
+
+    if (!conTeam) {
+      throw new Error("conTeam not found");
+    }
+
     const generatedCode = await this.generateUniqueCode(CODE_LENGTH, CODE_CHARSET);
 
-    const roomPayload = {...room, owner, members: [owner], code: generatedCode};
+    const roomPayload = {...room, owner, judge, proTeam, conTeam, code: generatedCode};
 
     const newRoom = this.roomRepository.create(roomPayload);
 
@@ -65,7 +91,7 @@ class RoomService {
 
     const room = await this.roomRepository.findOne({
       where: {id},
-      relations: ['owner', 'judje', 'proTeam', 'conTeam', 'winners', 'members']
+      relations: ['owner', 'judge', 'proTeam', 'conTeam', 'winners', 'members']
     });
 
     if (!room) {
@@ -82,7 +108,7 @@ class RoomService {
 
     const room = await this.roomRepository.findOne({
       where: {code, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED])},
-      relations: ['owner', 'judje', 'proTeam', 'conTeam', 'winners', 'members']
+      relations: ['owner', 'judge', 'proTeam', 'conTeam', 'winners', 'members']
     });
 
     if (!room) {
@@ -103,58 +129,27 @@ class RoomService {
       throw new Error("You are not owner");
     }
 
-    const usersWithRoles = room.proTeam.concat(room.conTeam, room.judje || []);;
-
-    if (!usersWithRoles.length || !room.members.every(member => usersWithRoles.some(user => user.id === member.id))) {
-      throw new Error("Not all members have a role");
-    }
-
-    if (!room.judje){
-      room.practise = true;
-    }
-
     room.status = RoomStatusEnum.STARTED;
     return await this.roomRepository.save(room);
   }
 
-  public async joinRoom(userId: number, roomCode: string): Promise<Room> {
-    if (!userId) {
-      throw new Error("UserId is required");
+  public async joinRoomByCode(userId: number, roomCode: string): Promise<Room> {
+    if (!userId || !roomCode) {
+      throw new Error("UserId and roomCode are required");
     }
-
-    if (!roomCode) {
-      throw new Error("RoomCode is required");
-    }
-
+    
     const room = await this.getRoomByCode(roomCode);
     const user = await userService.getUserById(userId) as User;
+    
+    if (!this.isLive(userId, room.id)) {
+      throw new Error("User isn't in room");
+    }
 
     room.members.push(user);
     return await this.roomRepository.save(room);
   }
 
-  public async setJudje(ownerId: number, userId: number, roomId: number): Promise<Room> {
-    if (!userId || !ownerId || !roomId) {
-      throw new Error("Ids are required");
-    }
-
-    const room = await this.getRoomById(roomId);
-    const user = await userService.getUserById(userId) as User;
-    const owner = await userService.getUserById(ownerId) as User;
-
-    if (room.owner.id !== owner.id){
-      throw new Error("You are not owner");
-    }
-
-    if (!room.members.some(member => member.id === user.id)){
-      throw new Error("User is not a room member");
-    }
-
-    room.judje = user;
-    return await this.roomRepository.save(room);
-  }
-
-  public async setOwnTeam(userId: number, roomId: number, team: TeamsEnum): Promise<Room> {
+  public async joinRoomById(userId: number, roomId: number): Promise<Room> {
     if (!userId || !roomId) {
       throw new Error("Ids are required");
     }
@@ -162,48 +157,11 @@ class RoomService {
     const room = await this.getRoomById(roomId);
     const user = await userService.getUserById(userId) as User;
 
-    if (!room.members.some(member => member.id === user.id)){
-      throw new Error("User is not a room member");
+    if (!await this.isLive(userId, room.id)) {
+      throw new Error("User isn't in room");
     }
 
-    room.proTeam = room.proTeam.filter(member => member.id !== user.id);
-    room.conTeam = room.conTeam.filter(member => member.id !== user.id);
-
-    if (team === TeamsEnum.CON_TEAM){
-      room.conTeam.push(user);
-    }else if (team === TeamsEnum.PRO_TEAM){
-      room.proTeam.push(user);
-    }
-
-    return await this.roomRepository.save(room);
-  }
-
-  public async setUserTeam(ownerId: number, userId: number, roomId: number, team: TeamsEnum): Promise<Room> {
-    if (!userId || !ownerId || !roomId) {
-      throw new Error("Ids are required");
-    }
-
-    const room = await this.getRoomById(roomId);
-    const user = await userService.getUserById(userId) as User;
-    const owner = await userService.getUserById(ownerId) as User;
-
-    if (room.owner.id !== owner.id){
-      throw new Error("You are not owner");
-    }
-
-    if (!room.members.some(member => member.id === user.id)){
-      throw new Error("User is not a room member");
-    }
-
-    room.proTeam = room.proTeam.filter(member => member.id !== user.id);
-    room.conTeam = room.conTeam.filter(member => member.id !== user.id);
-
-    if (team === TeamsEnum.CON_TEAM){
-      room.conTeam.push(user);
-    }else if (team === TeamsEnum.PRO_TEAM){
-      room.proTeam.push(user);
-    }
-
+    room.members.push(user);
     return await this.roomRepository.save(room);
   }
 
@@ -215,7 +173,7 @@ class RoomService {
     const room = await this.getRoomById(roomId);
     const user = await userService.getUserById(userId) as User;
 
-    if (room.owner.id !== user.id && room.judje?.id !== user.id) {
+    if (room.owner.id !== user.id && room.judge?.id !== user.id) {
       throw new Error("You are not owner or judge");
     }
     if (winnerTeam === TeamsEnum.CON_TEAM){
@@ -225,7 +183,39 @@ class RoomService {
     }
 
     room.status = RoomStatusEnum.ENDED;
+    return await this.roomRepository.save(room);
+  }
 
+  public async isLive(userId: number, roomId: number): Promise<boolean> {
+    const user = await userService.getUserById(userId);
+
+    if(!user){
+      throw new Error("User not found");
+    }
+
+    const room = await this.getRoomById(roomId);
+
+    if(!room){
+      throw new Error("Room not found");
+    }
+
+    const usersInRoom = room.proTeam.concat(room.conTeam, room.judge);
+
+    return usersInRoom.some(userInRoom => userInRoom.id === user.id);
+  }
+
+  public async leaveRoom(userId: number, roomId: number): Promise<Room> {
+    if (!userId || !roomId) {
+      throw new Error("Ids are required");
+    }
+    const room = await this.getRoomById(roomId);
+    const user = await userService.getUserById(userId) as User;
+
+    if (!room.members.some(member => member.id === user.id)){
+      throw new Error("User is not a room member");
+    }
+
+    room.members = room.members.filter(member => member.nickname !== user.nickname);
     return await this.roomRepository.save(room);
   }
 }

@@ -27,9 +27,9 @@ export class Room {
   @JoinColumn()
   owner: User;
 
-  @ManyToOne(() => User, { nullable: true })
+  @ManyToOne(() => User, { nullable: false })
   @JoinColumn()
-  judje: User;
+  judge: User;
 
   @ManyToMany(() => User, { nullable: false })
   @JoinTable()
@@ -47,17 +47,14 @@ export class Room {
   @JoinTable()
   winners: User[];
 
-  @Column("int")
+  @Column("float")
   preparationTime: number;
 
-  @Column("int")
+  @Column("float")
   reportTime: number;
 
-  @Column("int")
+  @Column("float")
   gradingTime: number;
-
-  @Column("boolean", {default: false})
-  practise: boolean;
 
   @Column({ type: 'enum', enum: RoomStatusEnum, default: RoomStatusEnum.PENDING })
   status: RoomStatusEnum;
