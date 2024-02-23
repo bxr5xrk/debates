@@ -3,7 +3,7 @@ import { Page } from "@/shared/layout/page";
 import { HomePrivate } from "./ui/home-private/home-private";
 import { HomePublic } from "./ui/home-public/home-public";
 import { Text } from "@/shared/ui";
-import Button from "@/shared/ui/Button";
+import { Button } from "@/shared/ui";
 import Image from "next/image";
 
 export function HomePage(): JSX.Element {
@@ -11,16 +11,14 @@ export function HomePage(): JSX.Element {
         <Page className="p-8">
             <HomePrivate />
             <HomePublic />
-            <Button
-                font="font-bold"
-                width="w-21"
-                fontSize="text-25"
-                Tag="button"
-                href="sign-up"
-                className={["ml-auto", "font-bold", "w-21", "text-25",]}
-            >
-                Sign Up
-            </Button>
+            <div className="flex">
+                <Button
+                    className="ml-auto font-bold w-21 text-25 transition duration-1000
+                    after:content-[''] after:hover:bg-blackLight hover:text-white"
+                >
+                    Sign Up
+                </Button>
+            </div>
             <div className="flex justify-center flex-col gap-6 mt-9 h-5/6">
                 <Image
                     src="/swords.svg"
@@ -35,15 +33,10 @@ export function HomePage(): JSX.Element {
                 >
                     DEBATE NIGHT
                 </Text>
-
                 <Button
-                    font="font-bold"
-                    width="w-80"
-                    height="h-16"
-                    fontSize="text-5xl"
-                    Tag="button"
-                    href="/sign-in"
-                    className={["mx-auto mt-11"]}
+                    className="w-80 font-bold text-5xl 
+                mx-auto mt-11 p-2 transition duration-1000 after:hover:bg-blackLight
+                after:content-['']  hover:text-white after:transition"
                 >
                     Play
                 </Button>

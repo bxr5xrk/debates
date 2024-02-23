@@ -1,5 +1,5 @@
 import React from "react";
-import { cl } from "../lib/cl";
+import { cl } from "../../lib/cl";
 
 interface TextProps
     extends React.HTMLAttributes<
