@@ -1,10 +1,17 @@
 import Image from "next/image";
 
 interface ProfilePhotoProps {
-    setProfilePhoto: React.Dispatch<React.SetStateAction<File | null>>;
+    // setProfilePhoto: React.Dispatch<React.SetStateAction<File | null>>;
+    profilePhoto: File | null;
+    checkProfilePhoto: (profilePhoto: File) => void;
+    profilePhotoVerified: boolean;
 }
 
-export function ProfilePhoto({ setProfilePhoto }: ProfilePhotoProps): JSX.Element {
+export function ProfilePhoto({
+    profilePhoto,
+    checkProfilePhoto,
+    profilePhotoVerified
+}: ProfilePhotoProps): JSX.Element {
     return (
         <div className="lg:mt-24 lg:mr-24">
             <label
@@ -17,6 +24,7 @@ export function ProfilePhoto({ setProfilePhoto }: ProfilePhotoProps): JSX.Elemen
                     </span>
                     <Image
                         className="object-cover scale-75"
+                        // src={profilePhotoVerified ? profilePhoto : `/sign-up-page/profile-photo.svg`}
                         src={`/sign-up-page/profile-photo.svg`}
                         alt="profile-photo"
                         width="440"
@@ -32,9 +40,11 @@ export function ProfilePhoto({ setProfilePhoto }: ProfilePhotoProps): JSX.Elemen
                 id="image"
                 accept="image/*"
                 onChange={(e) => {
-                    e.target.files
-                        ? setProfilePhoto(e.target.files[0])
-                        : setProfilePhoto(null);
+                    if (e.target.files) {
+                        checkProfilePhoto(e.target.files[0]);
+                        console.log(profilePhotoVerified);
+                    }
+                    console.log("Photo verified: " + profilePhotoVerified);
                 }}
             />
         </div>
