@@ -140,8 +140,10 @@ class RoomService {
     
     const room = await this.getRoomByCode(roomCode);
     const user = await userService.getUserById(userId) as User;
-    
-    if (!this.isLive(userId, room.id)) {
+
+    const usersInRoom = room.proTeam.concat(room.conTeam, room.judge);
+
+    if (!usersInRoom.some(userInRoom => userInRoom.id === user.id)) {
       throw new Error("User isn't in room");
     }
 
@@ -157,7 +159,9 @@ class RoomService {
     const room = await this.getRoomById(roomId);
     const user = await userService.getUserById(userId) as User;
 
-    if (!await this.isLive(userId, room.id)) {
+    const usersInRoom = room.proTeam.concat(room.conTeam, room.judge);
+
+    if (!usersInRoom.some(userInRoom => userInRoom.id === user.id)) {
       throw new Error("User isn't in room");
     }
 
@@ -186,22 +190,23 @@ class RoomService {
     return await this.roomRepository.save(room);
   }
 
-  public async isLive(userId: number, roomId: number): Promise<boolean> {
+  public async isLive(userId: number): Promise<Room | null> {
     const user = await userService.getUserById(userId);
 
     if(!user){
       throw new Error("User not found");
     }
 
-    const room = await this.getRoomById(roomId);
+    const room = await this.roomRepository.findOne({
+      where: [
+        { proTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED])},
+        { conTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED])},
+        { judge: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED])},
+      ],
+      relations: ['owner', 'judge', 'proTeam', 'conTeam', 'winners', 'members']
+    });
 
-    if(!room){
-      throw new Error("Room not found");
-    }
-
-    const usersInRoom = room.proTeam.concat(room.conTeam, room.judge);
-
-    return usersInRoom.some(userInRoom => userInRoom.id === user.id);
+    return room;
   }
 
   public async leaveRoom(userId: number, roomId: number): Promise<Room> {
