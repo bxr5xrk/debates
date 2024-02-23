@@ -16,8 +16,13 @@ const FRIENDS_ROUTES = {
     sentInvites: '/friends/sent-invites'
 };
 
+const ROOM_ROUTES = {
+    onAir: "/rooms/is-live",
+};
+
 export const API = {
     AUTH_ROUTES,
     FRIENDS_ROUTES,
-    USER
+    USER,
+    ROOM_ROUTES
 } as const;

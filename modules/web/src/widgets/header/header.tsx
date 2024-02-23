@@ -1,7 +1,7 @@
 "use client";
 
 import { SignOutAction, useWhoami } from "@/features/auth";
-import { CreateRoomDialog } from "@/features/room";
+import { CreateRoomDialog, OnAirAction } from "@/features/room";
 import { cl } from "@/shared/lib/cl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -42,6 +42,7 @@ export function Header(): JSX.Element {
                         );
                     })}
                     <CreateRoomDialog />
+                    <OnAirAction />
                     <SignOutAction />
                 </nav>
             </div>
