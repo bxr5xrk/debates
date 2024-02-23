@@ -1,3 +1,4 @@
+// tailwind.config.js
 import type { Config } from "tailwindcss";
 
 const config: Config = {
@@ -8,8 +9,37 @@ const config: Config = {
     ],
     theme: {
         extend: {
+            fontSize: {
+                "115": "115px",
+                "70": "70px",
+            },
+            backgroundColor: {
+                white: "#f8fafc",
+                whiteLight: "#e2e8f0",
+                whiteDark: "#cbd5e1",
+                gray: "#64748b",
+                grayDark: "#334155",
+                blackLight: "#1E3A8A",
+                blackDark: "#020617",
+                green: "#65A30D",
+                red: "#EF4444",
+                blue: "#3B82F6",
+            },
+            color: {
+                white: "#f8fafc",
+                whiteLight: "#e2e8f0",
+                whiteDark: "#cbd5e1",
+                gray: "#64748b",
+                grayDark: "#334155",
+                blackLight: "#1E3A8A",
+                blackDark: "#020617",
+                green: "#65A30D",
+                red: "#EF4444",
+                blue: "#3B82F6",
+            },
         },
     },
     plugins: [],
 };
+
 export default config;
