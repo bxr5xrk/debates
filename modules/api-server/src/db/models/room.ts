@@ -48,13 +48,10 @@ export class Room {
   winners: User[];
 
   @Column("float")
-  preparationTime: number;
-
-  @Column("float")
   reportTime: number;
 
-  @Column("float")
-  gradingTime: number;
+  @Column("int")
+  reportsNumber: number;
 
   @Column({ type: 'enum', enum: RoomStatusEnum, default: RoomStatusEnum.PENDING })
   status: RoomStatusEnum;
