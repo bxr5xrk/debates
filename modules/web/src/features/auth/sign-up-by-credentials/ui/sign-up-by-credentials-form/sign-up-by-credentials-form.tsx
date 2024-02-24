@@ -6,36 +6,113 @@ import { useAfterFetch } from "@/shared/hooks";
 import { API } from "@/shared/api/api-routes";
 import Image from "next/image";
 import { maxFileSize } from "@/shared/const";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { ProfilePhoto } from "./ProfilePhoto";
+import axios from "axios";
+
+export interface RegistrationData {
+    name: string;
+    surname: string;
+    nickname: string;
+    email: string;
+    password: string;
+    passwordConfirmation: string;
+}
+
+const isEmailValid = (email: string): boolean => !!email.length;
+
+const checkRegistrationData = (registrationData: RegistrationData): boolean => {
+    if (!isEmailValid(registrationData.email)) {
+        console.log("email");
+        return false;
+    }
+
+    if (!registrationData.password.trim()) {
+        console.log("password missed");
+        return false;
+    }
+
+    if (
+        !registrationData.name.trim() &&
+        !registrationData.surname.trim() &&
+        !registrationData.nickname.trim()
+    ) {
+        console.log("name");
+        return false;
+    }
+
+    if (registrationData.password !== registrationData.passwordConfirmation) {
+        console.log("password");
+        return false;
+    }
+
+    return true;
+};
 
 export function SignUpByCredentialsForm(): JSX.Element {
-    const [file, setFile] = useState<File | null>(null);
-    const emailRef = useRef<HTMLInputElement>(null);
-    const passwordRef = useRef<HTMLInputElement>(null);
-    const nameRef = useRef<HTMLInputElement>(null);
-    const nicknameRef = useRef<HTMLInputElement>(null);
+    const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
+    const [profilePhotoVerified, setProfilePhotoVerified] =
+        useState<boolean>(false);
+
     const { trigger } = useSignUp();
-    const { onAfterFetch } = useAfterFetch({ revalidate: [API.AUTH_ROUTES.whoami], redirect: "/" });
+    const { onAfterFetch } = useAfterFetch({
+        revalidate: [API.AUTH_ROUTES.whoami],
+        redirect: "/",
+    });
 
-    async function onSubmit(e: FormEvent): Promise<void> {
-        e.preventDefault();
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: { isSubmitSuccessful },
+    } = useForm<RegistrationData>({
+        defaultValues: {
+            name: "",
+            surname: "",
+            nickname: "",
+            email: "",
+            password: "",
+            passwordConfirmation: "",
+        },
+    });
 
-        const email = emailRef.current?.value ?? "";
-        const password = passwordRef.current?.value ?? "";
-        const name = nameRef.current?.value ?? "";
-        const nickname = nicknameRef.current?.value ?? "";
+    function checkProfilePhoto(profilePhoto: File): void {
+        axios
+            .post("https://httpbin.org/post", { profilePhoto })
+            .then((response) => {
+                console.log(response);
+                if (response.status === 200) { // change the response.status to the confirmation response from the server
+                    setProfilePhotoVerified(true);
+                    setProfilePhoto(profilePhoto);
+                }
+            });
+    }
+
+    const onSubmit: SubmitHandler<RegistrationData> = async (data) => {
+        const {
+            name,
+            surname,
+            nickname,
+            email,
+            password,
+            passwordConfirmation,
+        }: RegistrationData = data;
 
         const formData = new FormData();
         formData.append("email", email);
         formData.append("password", password);
         formData.append("name", name);
         formData.append("nickname", nickname);
-        if (file) {
-            formData.append("picture", file);
+        if (profilePhoto) {
+            formData.append("picture", profilePhoto);
         }
         const res = await trigger(formData);
 
-        onAfterFetch(["Signed up successfully", "Failed to sign up"], res.status);
-    }
+        onAfterFetch(
+            ["Signed up successfully", "Failed to sign up"],
+            res.status
+        );
+    };
 
     function onUpload(e: React.ChangeEvent<HTMLInputElement>): void {
         if (!e.target.files) {
@@ -48,28 +125,67 @@ export function SignUpByCredentialsForm(): JSX.Element {
             return;
         }
 
-        setFile(file);
+        setProfilePhoto(file);
     }
 
     return (
-        <form className="flex flex-col w-full gap-2" onSubmit={onSubmit}>
-            {file && <Image
-                src={URL.createObjectURL(file)}
-                alt="Profile image"
-                width={200}
-                height={200}
-            />}
-            <input
-                type="file"
-                accept="image/*"
-                id="file-input"
-                onChange={onUpload}
-            />
-            <input className="border rounded-lg border-slate-700 p-2" type="text" name="name" required minLength={2} id="name" placeholder="Name" ref={nameRef} />
-            <input className="border rounded-lg border-slate-700 p-2" type="text" name="nickname" required minLength={2} id="nickname" placeholder="Nickname" ref={nicknameRef} />
-            <input className="border rounded-lg border-slate-700 p-2" type="email" name="email" required id="email" minLength={2} placeholder="Email" ref={emailRef} />
-            <input className="border rounded-lg border-slate-700 p-2" type="password" name="password" required minLength={2} id="password" placeholder="Password" ref={passwordRef} />
-            <button className="bg-slate-700 text-white w-fit mx-auto p-2 rounded-lg font-medium" type="submit">submit</button>
-        </form>
+        <div className="w-full">
+            <form
+                className="flex flex-col justify-center items-center w-full gap-5 lg:flex-row lg:justify-end lg:items-start lg:pt-15"
+                onSubmit={handleSubmit(onSubmit)}
+            >
+                <ProfilePhoto profilePhoto={profilePhoto} onChange={onUpload} />
+
+                <div className="flex flex-col w-full gap-4 sm:mt-5 sm:w-2/3 md:w-3/5 lg:w-1/2">
+                    <h1 className="font-bold text-center text-5xl pb-3 lg:text-left lg:text-6xl lg:pb-6">
+                        Sign up
+                    </h1>
+                    <input
+                        {...register("name", { required: true, minLength: 4 })}
+                        type="text"
+                        placeholder="Name"
+                        className={`shadow-md border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4 lg:p-2 lg:w-96`}
+                    />
+                    <input
+                        {...register("surname", { required: true })}
+                        type="text"
+                        placeholder="Surname"
+                        className={`shadow-md border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4 lg:p-2 lg:w-96`}
+                    />
+                    <input
+                        {...register("nickname", { required: true })}
+                        type="text"
+                        placeholder="Nickname"
+                        className={`shadow-md border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4 lg:p-2 lg:w-96`}
+                    />
+                    <input
+                        {...register("email", { required: true })}
+                        type="email"
+                        placeholder="E-mail"
+                        className={`shadow-md border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4 lg:p-2 lg:w-96`}
+                    />
+                    <input
+                        {...register("password", { required: true })}
+                        type="password"
+                        placeholder="Password"
+                        className={`shadow-md border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4 lg:p-2 lg:w-96`}
+                    />
+                    <input
+                        {...register("passwordConfirmation", {
+                            required: true,
+                        })}
+                        type="password"
+                        placeholder="Password"
+                        className={`shadow-md border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4 lg:p-2 lg:w-96`}
+                    />
+                    <button
+                        className="bg-slate-50 text-slate-700 border-solid border-2 border-slate-700 text-lg w-full p-4 rounded-full font-medium sm:mt-10 sm:text-xl sm:p-4 lg:w-96 lg:mt-10 ease-in-out duration-300 hover:bg-slate-700 hover:text-slate-50"
+                        type="submit"
+                    >
+                        Create account
+                    </button>
+                </div>
+            </form>
+        </div>
     );
 }

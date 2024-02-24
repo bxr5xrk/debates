@@ -149,10 +149,10 @@ importers:
         version: 0.3.20(pg@8.11.3)(ts-node@10.9.2)
     devDependencies:
       '@types/node':
-        specifier: ^20
+        specifier: ^20.5.1
         version: 20.5.1
       '@types/react':
-        specifier: ^18
+        specifier: ^18.2.55
         version: 18.2.55
       '@types/react-dom':
         specifier: ^18
@@ -176,7 +176,7 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.1)
       typescript:
-        specifier: ^5
+        specifier: ^5.3.3
         version: 5.3.3
 
 packages:
