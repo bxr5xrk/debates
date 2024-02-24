@@ -2,6 +2,7 @@ import { Server, Socket } from 'socket.io';
 import { roomService } from 'services/room';
 import { User } from 'db/models/user';
 import { RoomStatusEnum } from 'db/enums/room-status';
+import { TeamsEnum } from 'db/enums/teams';
 
 interface HandshakeQuery {
   userId: number;
@@ -76,9 +77,11 @@ export function setupSocketEvents(io: Server): void {
         }, 1000);
       }
   
-      function startGradingTimer() {
+      async function startGradingTimer() {
         let gradingTime = 60;
-  
+        await roomService.setStatus(roomId, RoomStatusEnum.GRADING);
+        io.to(`room-${roomId}`).emit('status', RoomStatusEnum.GRADING);
+
         const gradingInterval = setInterval(async () => {
           const updatedRoom = await roomService.getRoomById(room.id);
           if(updatedRoom.status === RoomStatusEnum.ENDED){
@@ -89,6 +92,8 @@ export function setupSocketEvents(io: Server): void {
     
             if (gradingTime === 0) {
               clearInterval(gradingInterval);
+              await roomService.setStatus(roomId, RoomStatusEnum.ENDED);
+              io.to(`room-${roomId}`).emit('status', RoomStatusEnum.ENDED);
             }
           }
         }, 1000);
@@ -160,6 +165,15 @@ export function setupSocketEvents(io: Server): void {
           io.to(`room-${room.id}`).emit('current-team', {currentTeamType, teamMembers, isTeamMember});
           startReportTimer();
           startTotalTimer();
+        }catch(e){
+          console.log(e);
+        }
+      });
+
+      socket.on('rate', async (team: TeamsEnum) => {
+        try{
+          const room = await roomService.setWinners(userId, roomId, team);
+          io.to(`room-${room.id}`).emit('status', room.status);
         }catch(e){
           console.log(e);
         }
