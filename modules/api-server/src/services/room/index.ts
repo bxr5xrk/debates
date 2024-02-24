@@ -8,6 +8,7 @@ import { userService } from "services/user";
 import { User } from "db/models/user";
 import { TeamsEnum } from "db/enums/teams";
 import { CODE_CHARSET, CODE_LENGTH } from "lib/const";
+import { friendService } from "services/friend";
 
 class RoomService {
   private roomRepository = db.getRepository(Room);
@@ -29,6 +30,22 @@ class RoomService {
     } else {
       return this.generateUniqueCode(codeLength, codeCharset);
     }
+  }
+
+  private async updateRoomStatus(userId: number, roomId: number, newStatus: RoomStatusEnum): Promise<Room> {
+    if (!userId || !roomId) {
+      throw new Error("UserId and RoomId are required");
+    }
+  
+    const room = await this.getRoomById(roomId);
+    const user = await userService.getUserById(userId) as User;
+  
+    if (room.owner.id !== user.id) {
+      throw new Error("You are not the owner");
+    }
+  
+    room.status = newStatus;
+    return await this.roomRepository.save(room);
   }
 
   public async getUserEndedRooms(userId: number): Promise<Room[]> {
@@ -73,6 +90,20 @@ class RoomService {
 
     if (!conTeam) {
       throw new Error("conTeam not found");
+    }
+
+    const friends = await friendService.getFriends(owner.id);
+    const usersInRoom = proTeam.concat(conTeam, judge as User);
+
+    const areAllFriends = usersInRoom.every(roomUser => {
+      if (roomUser.id === owner.id) {
+        return true;
+      }
+      return friends.some(friend => friend.friend.id === roomUser.id);
+    });
+    
+    if (!areAllFriends) {
+      throw new Error("Not all users in the room are friends");
     }
 
     const generatedCode = await this.generateUniqueCode(CODE_LENGTH, CODE_CHARSET);
@@ -125,8 +156,20 @@ class RoomService {
 
     const room = await this.getRoomById(roomId);
 
-    if(room.owner.id !== userId){
+    if(room.owner.id != userId){
       throw new Error("You are not owner");
+    }
+
+    if (room.status === RoomStatusEnum.STARTED){
+      throw new Error("Room is already started");
+    }
+
+    if (room.status === RoomStatusEnum.ENDED){
+      throw new Error("Room is already ended");
+    }
+
+    if (room.status === RoomStatusEnum.PAUSED){
+      throw new Error("Room is paused");
     }
 
     room.status = RoomStatusEnum.STARTED;
@@ -147,7 +190,6 @@ class RoomService {
       throw new Error("User isn't in room");
     }
 
-    room.members.push(user);
     return await this.roomRepository.save(room);
   }
 
@@ -169,25 +211,32 @@ class RoomService {
     return await this.roomRepository.save(room);
   }
 
-  public async endRoom(userId: number, roomId: number, winnerTeam: TeamsEnum): Promise<Room> {
-    if (!userId || !roomId || !winnerTeam) {
-      throw new Error("UserId, RoomId and Team are required");
+  public async endRoom(userId: number, roomId: number): Promise<Room> {
+    if (!userId || !roomId ) {
+      throw new Error("UserId and RoomId are required");
     }
 
     const room = await this.getRoomById(roomId);
     const user = await userService.getUserById(userId) as User;
 
-    if (room.owner.id !== user.id && room.judge?.id !== user.id) {
-      throw new Error("You are not owner or judge");
+    if (room.owner.id != user.id) {
+      throw new Error("You are not owner");
     }
-    if (winnerTeam === TeamsEnum.CON_TEAM){
-      room.winners = room.conTeam;
-    }else if (winnerTeam === TeamsEnum.PRO_TEAM){
-      room.proTeam = room.proTeam;
+
+    if (room.status === RoomStatusEnum.ENDED){
+      throw new Error("Room is already ended");
     }
 
     room.status = RoomStatusEnum.ENDED;
     return await this.roomRepository.save(room);
+  }
+
+  public async pauseRoom(userId: number, roomId: number): Promise<Room> {
+    return await this.updateRoomStatus(userId, roomId, RoomStatusEnum.PAUSED);
+  }
+  
+  public async resumeRoom(userId: number, roomId: number): Promise<Room> {
+    return await this.updateRoomStatus(userId, roomId, RoomStatusEnum.STARTED);
   }
 
   public async isLive(userId: number): Promise<Room | null> {

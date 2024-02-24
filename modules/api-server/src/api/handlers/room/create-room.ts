@@ -9,9 +9,8 @@ const schema = defineSchema({
     judgeId: type.Number(),
     proTeamIds: type.Array(type.Number()),
     conTeamIds: type.Array(type.Number()),
-    preparationTime: type.Number(),
     reportTime: type.Number(),
-    gradingTime: type.Number(),
+    reportsNumber: type.Number(),
   })
 });
 

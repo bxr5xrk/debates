@@ -5,7 +5,7 @@ import { friendService } from "services/friend";
 async function handler({ server, session, params, body }: Server.Request, rep: Server.Reply): Promise<Server.Reply> {
   const user = session.get("user") as { id: number };
 
-  const friends = await friendService.getFriends(user.id)
+  const friends = await friendService.getFriends(user.id);
   
   return rep.status(200).send(getResponse("success", friends));
 }
