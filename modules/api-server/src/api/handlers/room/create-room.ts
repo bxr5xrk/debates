@@ -6,16 +6,18 @@ import { roomService } from "services/room";
 const schema = defineSchema({
   body: type.Object({
     topic: type.String(),
-    preparationTime: type.Number(),
+    judgeId: type.Number(),
+    proTeamIds: type.Array(type.Number()),
+    conTeamIds: type.Array(type.Number()),
     reportTime: type.Number(),
-    gradingTime: type.Number(),
+    reportsNumber: type.Number(),
   })
 });
 
 async function handler({ server, session, params, body }: Server.Request<typeof schema>, rep: Server.Reply): Promise<Server.Reply> {
   const user = session.get("user") as { id: number };
   
-  const room = await roomService.createRoom(user.id, {...body});
+  const room = await roomService.createRoom(user.id, body.judgeId, body.proTeamIds, body.conTeamIds, {...body});
   
   return rep.status(200).send(getResponse("success", room));
 }

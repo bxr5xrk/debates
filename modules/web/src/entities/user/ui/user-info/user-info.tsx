@@ -6,7 +6,7 @@ import { useAfterFetch } from "@/shared/hooks";
 import { API } from "@/shared/api/api-routes";
 import { onUpload, validations } from "@/shared/lib";
 import Image from "next/image";
-import { Button, InputGroup } from "@/shared/ui";
+import { Button, Input, InputGroup, InputWithLabel } from "@/shared/ui";
 import { useFormInit } from "./hooks/use-form-init";
 import { useDirty } from "./hooks/use-dirty";
 import { getFormData } from "./lib/get-form-data";
@@ -45,15 +45,15 @@ export function UserInfo(): JSX.Element {
                     id="file-input"
                     onChange={(e) => onUpload(e, setFile)}
                 />
-                <InputGroup label="Name" errorMessage={errors['name']?.message}>
-                    <InputGroup.Input {...register("name", { ...validations.required })} placeholder="Name" />
-                </InputGroup>
-                <InputGroup label="Nickname" errorMessage={errors['nickname']?.message}>
-                    <InputGroup.Input {...register("nickname", { ...validations.required })} placeholder="Nickname" />
-                </InputGroup>
-                <InputGroup label="Email" errorMessage={errors['email']?.message}>
-                    <InputGroup.Input {...register("email", { ...validations.required })} placeholder="Email" type="email" />
-                </InputGroup>
+                <InputWithLabel label="Name" htmlFor="name" errorMessage={errors['name']?.message}>
+                    <Input {...register("name", { ...validations.required })} placeholder="Name" id="name" />
+                </InputWithLabel>
+                <InputWithLabel label="Nickname" errorMessage={errors['nickname']?.message} htmlFor="nickname">
+                    <InputGroup.Input {...register("nickname", { ...validations.required })} placeholder="Nickname" id="nickname" />
+                </InputWithLabel>
+                <InputWithLabel label="Email" errorMessage={errors['email']?.message} htmlFor="email">
+                    <InputGroup.Input {...register("email", { ...validations.required })} placeholder="Email" type="email" id="email" />
+                </InputWithLabel>
                 {isDirty && <Button isLoading={isMutating} type="submit">save changes</Button>}
             </form>
         </div>

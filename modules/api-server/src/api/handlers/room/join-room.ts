@@ -6,7 +6,7 @@ async function handler({ server, session, params, body }: Server.Request, rep: S
   const roomCode = (params as { code: string }).code;
   const user = session.get("user") as { id: number };
 
-  const room = await roomService.joinRoom(user.id, roomCode)
+  const room = await roomService.joinRoomByCode(user.id, roomCode)
   return rep.status(200).send(getResponse("success", room));
 }
 

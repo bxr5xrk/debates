@@ -1,48 +1,19 @@
 "use client";
 
-import { SignOutAction, useWhoami } from "@/features/auth";
-import { cl } from "@/shared/lib/cl";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-const navItems = [
-    {
-        href: '/',
-        label: 'Dashboard',
-    },
-    {
-        href: '/friends',
-        label: 'Friends',
-    }
-];
+import { useLoggedIn } from "@/shared/hooks";
+import { HeaderPublic } from "./ui/header-public";
+import { HeaderPrivate } from "./ui/header-private";
 
 export function Header(): JSX.Element {
-    const { data } = useWhoami();
-    const pathname = usePathname();
-    const isLoggedIn = data?.data?.id;
+    const isLoggedIn = useLoggedIn();
 
     if (!isLoggedIn) {
-        return <>
-            <Link scroll={false} href="/sign-in" className={cl(pathname === "/sign-in" && "font-bold")}>
-                Sign In
-            </Link>
-        </>;
+        return (
+            <HeaderPublic />
+        );
     }
 
     return (
-        <header className="flex border-b w-full">
-            <div className="w-full px-2 py-4 max-w-screen-2xl mx-auto">
-                <nav className="flex gap-2">
-                    {navItems.map((item) => {
-                        return (
-                            <Link scroll={false} href={item.href} key={item.href} className={cl(pathname === item.href && "font-bold")}>
-                                {item.label}
-                            </Link>
-                        );
-                    })}
-                    <SignOutAction />
-                </nav>
-            </div>
-        </header>
+        <HeaderPrivate />
     );
 }
