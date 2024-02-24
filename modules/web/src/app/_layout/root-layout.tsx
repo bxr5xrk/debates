@@ -11,7 +11,7 @@ export async function RootLayout(props: PropsWithChildren): Promise<JSX.Element>
     const { children } = props;
 
     return (
-        <body className={cl(inter.className, "grid grid-rows-[auto_1fr_auto] min-h-screen w-screen")}>
+        <body className={cl(inter.className, "grid grid-rows-[auto_1fr_auto] min-h-screen w-screen bg-slate-50")}>
             <Header />
             {children}
             <Footer />
