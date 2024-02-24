@@ -38,12 +38,15 @@ export async function initServer(): Promise<FastifyInstance> {
     attachFieldsToBody: "keyValues"
   })
 
-  // Register fastify-socket.io
-  server.register(fastifySocketIO);
-  
+  server.register(fastifySocketIO, {
+    cors: {
+      origin: ENV.SERVER.CORS_ORIGIN
+    }
+  });
+
   server.ready(async (err) => {
     if (err) throw err;
-  
+
     setupSocketEvents(server.io);
   });
 

@@ -11,6 +11,9 @@ export function useWhoami<D = WhoamiData>(options?: GetOptions<D>): GetResponse<
     return useSWR<D, AxiosError, string>(
         API.AUTH_ROUTES.whoami,
         baseFetcher({ method: "GET" }),
-        options
+        {
+            ...options,
+            keepPreviousData: true,
+        }
     );
 }
