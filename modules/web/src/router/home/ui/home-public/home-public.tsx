@@ -1,25 +1,11 @@
 "use client";
 
-import { useWhoami } from "@/features/auth";
+import { Page } from "@/shared/layout/page";
 
 export function HomePublic(): JSX.Element {
-    const { data, isLoading } = useWhoami();
-    const isLoggedIn = data?.data?.id;
-
-    if (isLoading) {
-        return (
-            <></>
-        );
-    }
-
-    if (isLoggedIn) {
-        return (
-            <></>
-        );
-    }
     return (
-        <div>
+        <Page>
             not logged in
-        </div>
+        </Page>
     );
 }

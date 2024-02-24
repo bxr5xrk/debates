@@ -1,7 +1,7 @@
 "use client";
 
+import { useFriends } from "@/entities/friend";
 import { useWhoami } from "@/features/auth";
-import { useFriends } from "../../api";
 import { FriendRemoveAction } from "@/features/friends/friends-remove";
 
 export function FriendsList(): JSX.Element {

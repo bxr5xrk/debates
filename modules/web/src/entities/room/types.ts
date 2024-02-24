@@ -1,3 +1,4 @@
+import { BaseResponse } from "@/shared/types";
 import { User } from "../user";
 
 export enum RoomStatusEnum {
@@ -23,3 +24,5 @@ export interface Room {
   createdAt: string;
   updatedAt: string;
 }
+
+export type RoomValidData = BaseResponse<Room>;

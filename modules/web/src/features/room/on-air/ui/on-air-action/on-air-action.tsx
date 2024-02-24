@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/shared/ui";
 import { useOnAir } from "../../api";
 import Image from "next/image";
+import Link from "next/link";
 
 export function OnAirAction(): JSX.Element {
     const { data } = useOnAir();
@@ -13,9 +13,9 @@ export function OnAirAction(): JSX.Element {
     }
 
     return (
-        <Button>
+        <Link href={`/room/${room.id}`}>
             <Image src="/icons/radio.svg" alt="On Air" width={16} height={16} />
       Join
-        </Button>
+        </Link>
     );
 }
