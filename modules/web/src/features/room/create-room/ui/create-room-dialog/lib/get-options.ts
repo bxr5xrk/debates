@@ -1,13 +1,22 @@
 import { Friend } from "@/entities/friend";
 import { SelectOption } from "@/shared/ui";
 
-export function getOptions(friends: Friend[], blacklistIds: string[]): SelectOption[] {
-    if (!friends.length) return [];
+export function getOptions(friends: Friend[], blacklistIds: string[], currentUserId?: number): SelectOption[] {
+    if (!friends.length || !currentUserId) {
+        return [];
+    }
 
-    return friends.map((friend) => ({
+    const options = friends?.map((friend) => ({
         label: friend.friend.nickname,
         value: String(friend.id),
-    }))
-        .map(friend => ({ ...friend, disabled: blacklistIds.includes(friend.value) }));
+    }));
+
+    return [
+        ...options,
+        {
+            label: "Me",
+            value: String(currentUserId),
+        }
+    ].map(friend => ({ ...friend, disabled: blacklistIds.includes(friend.value) }));
 }
 

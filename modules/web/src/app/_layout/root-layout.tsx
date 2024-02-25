@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import { Header } from "@/widgets/header";
 import { Footer } from "@/widgets/footer";
 import { cl } from "@/shared/lib/cl";
-import { Toaster } from 'sonner';
+import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,7 +15,9 @@ export async function RootLayout(props: PropsWithChildren): Promise<JSX.Element>
             <Header />
             {children}
             <Footer />
-            <Toaster richColors closeButton duration={3000} position="top-center" />
+            <Toaster position="top-center" toastOptions={{
+                duration: 3000
+            }} />
         </body>
     );
 }

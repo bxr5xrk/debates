@@ -1,6 +1,6 @@
 "use client";
 
-import { RoomStatusEnum, useRoomValid } from "@/entities/room";
+import { Room, RoomStatusEnum, useRoomValid } from "@/entities/room";
 import { User } from "@/entities/user";
 import { useWhoami } from "@/features/auth";
 import { Page } from "@/shared/layout/page";
@@ -38,20 +38,31 @@ export function RoomPage(props: RoomPageProps): JSX.Element {
     );
 }
 
-function useSocket(roomId: string, userId: number): {
-    socket: Socket | null
-} {
+function useSocket(roomId: string, userId: number): Socket | null {
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
         const socketIo = io("http://127.0.0.1:3001", {
             reconnection: true,
             upgrade: true,
+            autoConnect: true,
             query: {
                 userId,
                 roomId
-            }
+            },
+            // transports: ["websocket", "polling"],
         });
+
+        socketIo.on("connect", () => {
+            console.log("connected to socket");
+        });
+
+        socketIo?.emit("join");
+        socketIo?.emit("current-team");
+        socketIo?.emit("current-room");
+        socketIo?.emit("is-admin");
+        socketIo?.emit("online-members");
+
         setSocket(socketIo);
 
         return () => {
@@ -59,9 +70,13 @@ function useSocket(roomId: string, userId: number): {
         };
     }, []);
 
-    return {
-        socket
-    };
+    return socket;
+}
+
+interface CurrentTeamRes {
+    currentTeamType: "proTeam" | "conTeam";
+    teamMembers: User[];
+    isTeamMember: boolean;
 }
 
 interface RoomConnectProps {
@@ -74,89 +89,147 @@ function RoomDetails(props: RoomConnectProps): JSX.Element {
     const [status, setStatus] = useState<RoomStatusEnum | null>(null);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [onlineMembers, setOnlineMembers] = useState<User[]>([]);
-    const [currentTeam, setCurrentTeam] = useState<null | string>(null);
-    const { socket } = useSocket(roomId, userId);
+    const [currentTeam, setCurrentTeam] = useState<null | CurrentTeamRes>(null);
+    const [currentRoom, setCurrentRoom] = useState<null | Room>(null);
+    const [countdownReport, setCountdownReport] = useState<number>(0);
+    const [countdownTotal, setCountdownTotal] = useState<number>(0);
+    const [countdownGrading, setCountdownGrading] = useState<number>(0);
+    // const [isConnected, setIsConnected] = useState(socket.connected);
+    const [fooEvents, setFooEvents] = useState([]);
+    // const isJurge = currentRoom?.judge.id === userId;
+    const socket = useSocket(roomId, userId);
 
     useEffect(() => {
-        if (!socket) {
-            return;
-        }
+        // if (!socket) {
+        //     return;
+        // }
 
-        socket.on("connect", () => {
-            socket.on('is-admin', (isAdminRes: boolean) => {
-                setIsAdmin(isAdminRes);
-
-                socket.on("status", (statusRes) => {
-                    setStatus(statusRes);
-
-                    if (statusRes !== "pending" && !isAdminRes) {
-                        socket.emit("join");
-                    }
-                });
-            });
+        socket?.on("connect", () => {
+            console.log("connected");
+            socket.emit("join");
         });
 
-        socket.on("current-team", (team) => {
-            setCurrentTeam(team);
+        // socket.connect();
+        // socket.on("connect", () => {
+        //     console.log("connected");
+        //     socket.emit("current-room");
+
+        //     socket.on('is-admin', (isAdminRes: boolean) => {
+        //         console.log(isAdminRes);
+        //         setIsAdmin(isAdminRes);
+
+        //         socket.on("status", (statusRes) => {
+        //             console.log(statusRes);
+        //             setStatus(statusRes);
+
+        //             if (statusRes !== "pending" && !isAdminRes) {
+        //                 socket.emit("join");
+        //             }
+        //         });
+        //     });
+        // });
+
+        // socket.on('countdown-report', (time: number) => {
+        //     setCountdownReport(time);
+        // });
+
+        // socket.on('countdown-total', (time: number) => {
+        //     setCountdownTotal(time);
+        // });
+
+        // socket.on('countdown-grading', (time: number) => {
+        //     setCountdownGrading(time);
+        // });
+
+        socket?.on("current-team", (data: CurrentTeamRes) => {
+            console.log({ data });
+            setCurrentTeam(data);
         });
 
-        socket.on('online-members', (members) => {
+        socket?.on('online-members', (members) => {
             setOnlineMembers(members);
         });
 
-        socket.emit("current-room");
-
-        socket.on("current-room", (room) => {
-            console.log(room);
+        socket?.on("current-room", (room) => {
+            setCurrentRoom(room);
         });
 
-        socket.on("status", (data) => {
+        // .on(`room-${roomId}`)
+
+        socket?.on('status', (data) => {
+            console.log(data);
             setStatus(data);
         });
-    }, [socket]);
+    }, []);
 
-    function onEnd(): void {
-        if (!socket || !isAdmin) {
-            return;
-        }
+    // function onEnd(): void {
+    //     if (!socket || !isAdmin) {
+    //         return;
+    //     }
 
-        socket.emit("end");
-    }
+    //     socket.emit("end");
+    // }
 
-    function onStart(): void {
-        if (!socket || !isAdmin) {
-            return;
-        }
+    // function onPause(): void {
+    //     if (!socket || !isAdmin) {
+    //         return;
+    //     }
 
-        socket.emit("start");
-    }
+    //     socket.emit("pause");
+    // }
 
-    function onResume(): void {
-        if (!socket || !isAdmin) {
-            return;
-        }
+    // function onStart(): void {
+    //     if (!socket || !isAdmin) {
+    //         return;
+    //     }
 
-        socket.emit("resume");
-    }
+    //     socket.emit("start");
+    // }
+
+    // function onResume(): void {
+    //     if (!socket || !isAdmin) {
+    //         return;
+    //     }
+
+    //     socket.emit("resume");
+    // }
+
+    // useEffect(() => {
+    //     socket?.emit("join");
+    //     socket?.emit("current-team");
+    //     socket?.emit("current-room");
+    //     socket?.emit("is-admin");
+    //     socket?.emit("online-members");
+    // }, [status]);
 
     return (
         <>
             <span className="text-2xl p-2 border rounded-lg">{status}</span>
-            <div>
-                {isAdmin && <button onClick={onStart}>Start</button>}
-                {isAdmin && <button onClick={onEnd}>End</button>}
-                {isAdmin && <button onClick={onResume}>Resume</button>}
-            </div>
+            {/* <p onClick={() => {
+                console.log(1);
+                socket?.emit("join");
+                socket?.emit("current-team");
+                socket?.emit("current-room");
+                socket?.emit("is-admin");
+                socket?.emit("online-members");
+            }}>countdown report: {countdownReport}</p> */}
+            <p>countdown total: {countdownTotal}</p>
+            <p>countdown grading: {countdownGrading}</p>
+            <p>topic {currentRoom?.topic}</p>
+            <p>judge {currentRoom?.judge.nickname}</p>
+            <p>is admin {isAdmin.toString()}</p>
+            {/* <div className="flex flex-col items-start">
+                {isAdmin && status === RoomStatusEnum.PENDING && <button onClick={onStart}>Start</button>}
+                {(isAdmin && status === RoomStatusEnum.STARTED || status === RoomStatusEnum.PAUSED) && <button onClick={onEnd}>End</button>}
+                {isAdmin && status === RoomStatusEnum.STARTED && <button onClick={onPause}>Pause</button>}
+                {isAdmin && status === RoomStatusEnum.STARTED && <button onClick={onResume}>Resume</button>}
+            </div> */}
             <p>online members: {onlineMembers.length}</p>
-            {onlineMembers.length && (
-                <ul>
-                    {onlineMembers.map((member) => (
-                        <li key={member.id}>{member.name}</li>
-                    ))}
-                </ul>
-            )}
-            <p>current team: {currentTeam}</p>
+            <pre className="text-xs">{JSON.stringify(onlineMembers, null, 2)}</pre>
+            <p>current team</p>
             <pre className="text-xs">{JSON.stringify(currentTeam, null, 2)}</pre>
+            <p>current room</p>
+            <pre className="text-xs">{JSON.stringify(currentRoom, null, 2)}</pre>
         </>
     );
 }

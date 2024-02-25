@@ -1,10 +1,9 @@
 "use client";
 
-import { FormEvent, useRef, useState } from "react";
+import { useState } from "react";
 import { useSignUp } from "../../api";
 import { useAfterFetch } from "@/shared/hooks";
 import { API } from "@/shared/api/api-routes";
-import Image from "next/image";
 import { maxFileSize } from "@/shared/const";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { ProfilePhoto } from "./ProfilePhoto";
@@ -18,36 +17,6 @@ export interface RegistrationData {
     password: string;
     passwordConfirmation: string;
 }
-
-const isEmailValid = (email: string): boolean => !!email.length;
-
-const checkRegistrationData = (registrationData: RegistrationData): boolean => {
-    if (!isEmailValid(registrationData.email)) {
-        console.log("email");
-        return false;
-    }
-
-    if (!registrationData.password.trim()) {
-        console.log("password missed");
-        return false;
-    }
-
-    if (
-        !registrationData.name.trim() &&
-        !registrationData.surname.trim() &&
-        !registrationData.nickname.trim()
-    ) {
-        console.log("name");
-        return false;
-    }
-
-    if (registrationData.password !== registrationData.passwordConfirmation) {
-        console.log("password");
-        return false;
-    }
-
-    return true;
-};
 
 export function SignUpByCredentialsForm(): JSX.Element {
     const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
@@ -109,7 +78,7 @@ export function SignUpByCredentialsForm(): JSX.Element {
         const res = await trigger(formData);
 
         onAfterFetch(
-            ["Signed up successfully", "Failed to sign up"],
+            ["Signed up successfully", (res as unknown as { message: string })?.message ?? "Failed to sign up"],
             res.status
         );
     };

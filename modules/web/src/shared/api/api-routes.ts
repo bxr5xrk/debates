@@ -18,7 +18,7 @@ const FRIENDS_ROUTES = {
 
 const ROOM_ROUTES = {
     onAir: "/rooms/is-live",
-    roomValid: "/rooms/valid",
+    isRoomValid: "/rooms/check-is-valid",
 };
 
 export const API = {

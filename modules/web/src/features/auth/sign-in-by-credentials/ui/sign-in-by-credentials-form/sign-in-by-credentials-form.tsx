@@ -1,6 +1,5 @@
 "use client";
 
-import { FormEvent, useRef } from "react";
 import { useSignIn } from "../../api";
 import { useAfterFetch } from "@/shared/hooks";
 import { API } from "@/shared/api/api-routes";
@@ -39,8 +38,6 @@ export function SignInByCredentialsForm(
     const {
         register,
         handleSubmit,
-        reset,
-        formState: { isSubmitSuccessful },
     } = useForm<LoginData>({
         defaultValues: {
             email: "",
@@ -93,7 +90,7 @@ export function SignInByCredentialsForm(
                     className={`shadow-md border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4 lg:p-2 lg:w-96`}
                 />
                 <button
-                    className="bg-slate-50 text-slate-700 border-solid border-2 border-slate-700 text-lg w-full p-4 rounded-full font-medium sm:mt-10 sm:text-xl sm:p-4 lg:w-96 sm:mt-2 lg:mt-5 ease-in-out duration-300 hover:bg-slate-700 hover:text-slate-50"
+                    className="bg-slate-50 text-slate-700 border-solid border-2 border-slate-700 text-lg w-full p-4 rounded-full font-medium sm:text-xl sm:p-4 lg:w-96 sm:mt-2 lg:mt-5 ease-in-out duration-300 hover:bg-slate-700 hover:text-slate-50"
                     type="submit"
                 >
                     Sign In

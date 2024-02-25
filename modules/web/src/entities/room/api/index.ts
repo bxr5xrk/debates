@@ -9,7 +9,7 @@ import { RoomValidData } from "..";
 
 export function useRoomValid<D = RoomValidData>(roomId: string, options?: GetOptions<D>): GetResponse<D> {
     return useSWR<D, AxiosError, string>(
-        `${API.ROOM_ROUTES.roomValid}/${roomId}`,
+        `${API.ROOM_ROUTES.isRoomValid}/${roomId}`,
         baseFetcher({ method: "GET" }),
         { ...options, keepPreviousData: true }
     );

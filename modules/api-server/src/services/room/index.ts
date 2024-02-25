@@ -19,10 +19,10 @@ class RoomService {
       charset: codeCharset,
     });
 
-    const existingRoom = await this.roomRepository.findOne({ 
-      where: { 
-        code: generatedCode, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED]) 
-      } 
+    const existingRoom = await this.roomRepository.findOne({
+      where: {
+        code: generatedCode, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED])
+      }
     });
 
     if (!existingRoom) {
@@ -36,14 +36,14 @@ class RoomService {
     if (!userId || !roomId) {
       throw new Error("UserId and RoomId are required");
     }
-  
+
     const room = await this.getRoomById(roomId);
     const user = await userService.getUserById(userId) as User;
-  
+
     if (room.owner.id !== user.id) {
       throw new Error("You are not the owner");
     }
-  
+
     room.status = newStatus;
     return await this.roomRepository.save(room);
   }
@@ -55,9 +55,9 @@ class RoomService {
 
     return this.roomRepository.find({
       where: [
-        { proTeam: { id: userId }, status: RoomStatusEnum.ENDED},
-        { conTeam: { id: userId }, status: RoomStatusEnum.ENDED},
-        { judge: { id: userId }, status: RoomStatusEnum.ENDED},
+        { proTeam: { id: userId }, status: RoomStatusEnum.ENDED },
+        { conTeam: { id: userId }, status: RoomStatusEnum.ENDED },
+        { judge: { id: userId }, status: RoomStatusEnum.ENDED },
       ],
       relations: ['owner', 'judge', 'proTeam', 'conTeam', 'winners', 'members']
     });
@@ -101,18 +101,39 @@ class RoomService {
       }
       return friends.some(friend => friend.friend.id === roomUser.id);
     });
-    
+
     if (!areAllFriends) {
       throw new Error("Not all users in the room are friends");
     }
 
     const generatedCode = await this.generateUniqueCode(CODE_LENGTH, CODE_CHARSET);
 
-    const roomPayload = {...room, owner, judge, proTeam, conTeam, code: generatedCode};
+    const roomPayload = { ...room, owner, judge, proTeam, conTeam, code: generatedCode };
 
     const newRoom = this.roomRepository.create(roomPayload);
 
     return this.roomRepository.save(newRoom);
+  }
+
+  public async checkIsRoomValid(userId: number, roomId: number): Promise<Room> {
+    if (!userId || !roomId) {
+      throw new Error("UserId and RoomId are required");
+    }
+
+    const room = await this.roomRepository.findOne({
+      where: [
+        { id: roomId, proTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED]) },
+        { id: roomId, conTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED]) },
+        { id: roomId, judge: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED]) },
+      ],
+      relations: ['owner', 'judge', 'proTeam', 'conTeam', 'winners', 'members']
+    })
+
+    if (!room) {
+      throw new Error("Room not found");
+    }
+
+    return room;
   }
 
   public async getRoomById(id: number): Promise<Room> {
@@ -121,7 +142,7 @@ class RoomService {
     }
 
     const room = await this.roomRepository.findOne({
-      where: {id},
+      where: { id },
       relations: ['owner', 'judge', 'proTeam', 'conTeam', 'winners', 'members']
     });
 
@@ -138,7 +159,7 @@ class RoomService {
     }
 
     const room = await this.roomRepository.findOne({
-      where: {code, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED])},
+      where: { code, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED]) },
       relations: ['owner', 'judge', 'proTeam', 'conTeam', 'winners', 'members']
     });
 
@@ -156,19 +177,19 @@ class RoomService {
 
     const room = await this.getRoomById(roomId);
 
-    if(room.owner.id != userId){
+    if (room.owner.id != userId) {
       throw new Error("You are not owner");
     }
 
-    if (room.status === RoomStatusEnum.STARTED){
+    if (room.status === RoomStatusEnum.STARTED) {
       throw new Error("Room is already started");
     }
 
-    if (room.status === RoomStatusEnum.ENDED){
+    if (room.status === RoomStatusEnum.ENDED) {
       throw new Error("Room is already ended");
     }
 
-    if (room.status === RoomStatusEnum.PAUSED){
+    if (room.status === RoomStatusEnum.PAUSED) {
       throw new Error("Room is paused");
     }
 
@@ -180,7 +201,7 @@ class RoomService {
     if (!userId || !roomCode) {
       throw new Error("UserId and roomCode are required");
     }
-    
+
     const room = await this.getRoomByCode(roomCode);
     const user = await userService.getUserById(userId) as User;
 
@@ -212,7 +233,7 @@ class RoomService {
   }
 
   public async endRoom(userId: number, roomId: number): Promise<Room> {
-    if (!userId || !roomId ) {
+    if (!userId || !roomId) {
       throw new Error("UserId and RoomId are required");
     }
 
@@ -223,7 +244,7 @@ class RoomService {
       throw new Error("You are not owner");
     }
 
-    if (room.status === RoomStatusEnum.ENDED){
+    if (room.status === RoomStatusEnum.ENDED) {
       throw new Error("Room is already ended");
     }
 
@@ -234,7 +255,7 @@ class RoomService {
   public async pauseRoom(userId: number, roomId: number): Promise<Room> {
     return await this.updateRoomStatus(userId, roomId, RoomStatusEnum.PAUSED);
   }
-  
+
   public async resumeRoom(userId: number, roomId: number): Promise<Room> {
     return await this.updateRoomStatus(userId, roomId, RoomStatusEnum.STARTED);
   }
@@ -242,15 +263,15 @@ class RoomService {
   public async isLive(userId: number): Promise<Room | null> {
     const user = await userService.getUserById(userId);
 
-    if(!user){
+    if (!user) {
       throw new Error("User not found");
     }
 
     const room = await this.roomRepository.findOne({
       where: [
-        { proTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED])},
-        { conTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED])},
-        { judge: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED])},
+        { proTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED]) },
+        { conTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED]) },
+        { judge: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED]) },
       ],
       relations: ['owner', 'judge', 'proTeam', 'conTeam', 'winners', 'members']
     });
@@ -265,7 +286,7 @@ class RoomService {
     const room = await this.getRoomById(roomId);
     const user = await userService.getUserById(userId) as User;
 
-    if (!room.members.some(member => member.id === user.id)){
+    if (!room.members.some(member => member.id === user.id)) {
       throw new Error("User is not a room member");
     }
 
