@@ -1,19 +1,15 @@
 "use client";
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/ui";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface EndRoomDialogProps {
-  close: boolean;
+    isOpen?: boolean;
 }
 
 export function EndRoomDialog(props: EndRoomDialogProps): JSX.Element {
-    const { close } = props;
-    const [open, setOpen] = useState(false);
-
-    useEffect(() => {
-        setOpen(false);
-    }, [close]);
+    const { isOpen } = props;
+    const [open, setOpen] = useState(isOpen ?? false);
 
     function onOpenChange(i: boolean): void {
         // lock the dialog

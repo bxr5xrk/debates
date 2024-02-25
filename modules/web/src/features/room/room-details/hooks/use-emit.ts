@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { Socket } from "socket.io-client";
 
 interface UseEmit {
@@ -10,6 +11,8 @@ interface UseEmit {
 }
 
 export function useEmit(socket: Socket | null, isAdmin: boolean): UseEmit {
+    const { push } = useRouter();
+
     function onEnd(): void {
         if (!socket || !isAdmin) {
             return;
@@ -56,6 +59,7 @@ export function useEmit(socket: Socket | null, isAdmin: boolean): UseEmit {
         }
 
         socket.emit("rate", team);
+        push(`/history`);
     }
 
     return {

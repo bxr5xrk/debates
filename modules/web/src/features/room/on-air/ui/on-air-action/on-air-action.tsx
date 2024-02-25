@@ -10,14 +10,18 @@ export function OnAirAction(): JSX.Element {
     const pathname = usePathname();
     const room = data?.data;
 
-    if (!room || pathname === "/rooms/[roomId]") {
+    if (!room || isRoomPath(pathname)) {
         return <></>;
     }
 
     return (
         <Link href={`/rooms/${room.id}`} className="flex gap-2 items-center">
             <Image src="/icons/radio.svg" alt="On Air" width={16} height={16} />
-            Join
+            On Air
         </Link>
     );
+}
+
+function isRoomPath(pathname: string): boolean {
+    return pathname.includes("/rooms/");
 }

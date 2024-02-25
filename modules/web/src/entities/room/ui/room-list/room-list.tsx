@@ -1,9 +1,10 @@
 "use client";
 
 import { useWhoami } from "@/features/auth";
-import { RoomStatusEnum, useRooms } from "../..";
+import { useRooms } from "../..";
 import { cl } from "@/shared/lib/cl";
 import { GradeRoomAction } from "@/features/room";
+import { formatTime } from "@/shared/lib";
 
 export function RoomList(): JSX.Element {
     const { data: rooms } = useRooms();
@@ -12,16 +13,20 @@ export function RoomList(): JSX.Element {
 
     return (
         <ul className="grid grid-cols-3 gap-2">
-            {rooms?.data.map((room) => {
+            {rooms?.data.toReversed().map((room) => {
                 const isJudge = room.judge.id === userId;
-                const isGradingStatus = room.status === RoomStatusEnum.GRADING;
-                const isWin = room.winners.some((winner) => winner.id === userId);
-                const isLoose = room.winners.length && !isWin;
+                const notGraded = room.notGraded;
+                const isWinners = room.winners.length;
+                const isUserInConOrPro = (notGraded || !isWinners) ? false : room.conTeam.some((con) => con.id === userId) || room.proTeam.some((pro) => pro.id === userId);
+                const isWin = !isUserInConOrPro ? false : room.winners.some((winner) => winner.id === userId);
+                const isLoose = !isUserInConOrPro ? false : !isWin;
 
                 return (
-                    <li key={room.id} className={cl("border rounded-xl p-2", isWin && "border-green-500", isLoose && "border-red-500", isGradingStatus && "border-gray-500")}>
-                        {room.topic}
-                        {isJudge && isGradingStatus && <GradeRoomAction roomId={room.id} />}
+                    <li key={room.id} className={cl("border rounded-xl p-2", isWin && "border-green-500", isLoose && "border-red-500", notGraded && "border-gray-500")}>
+                        <p>topic: {room.topic}</p>
+                        <p>reportTime: {formatTime(room.reportTime)}</p>
+                        <p>reportsNumber: {room.reportsNumber}</p>
+                        {isJudge && notGraded && <GradeRoomAction roomId={room.id} />}
                     </li>
                 );
             })}

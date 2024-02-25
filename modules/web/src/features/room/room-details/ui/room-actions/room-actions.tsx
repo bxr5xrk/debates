@@ -11,12 +11,12 @@ interface RoomActionsProps {
   isAdmin: boolean;
   socket: Socket | null;
   isJudge: boolean;
+  status: RoomStatusEnum | null;
 }
 
 export function RoomActions(props: RoomActionsProps): JSX.Element {
-    const { onlineMembers, userId, isAdmin, socket, isJudge } = props;
+    const { onlineMembers, userId, isAdmin, socket, isJudge, status } = props;
     const { onEnd, onJoin, onPause, onRate, onResume, onStart } = useEmit(socket, isAdmin);
-
 
     return (
         <div>
@@ -25,8 +25,8 @@ export function RoomActions(props: RoomActionsProps): JSX.Element {
             {(isAdmin && status === RoomStatusEnum.STARTED) && <button onClick={onPause} className="border p-2">pause</button>}
             {isAdmin && status === RoomStatusEnum.PAUSED && <button onClick={onResume} className="border p-2">resume</button>}
             {(isAdmin && status === RoomStatusEnum.STARTED || status === RoomStatusEnum.PAUSED) && <button onClick={onEnd} className="border p-2">end</button>}
-            {isJudge && <GradeRoomDialog onSelect={onRate} />}
-            {!isJudge && <EndRoomDialog close={status === RoomStatusEnum.ENDED} />}
+            {isJudge && status === RoomStatusEnum.GRADING && <GradeRoomDialog isOpen onSelect={onRate} />}
+            {!isJudge && status === RoomStatusEnum.GRADING && <EndRoomDialog isOpen />}
         </div>
     );
 }

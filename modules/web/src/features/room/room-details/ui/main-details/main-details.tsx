@@ -1,4 +1,5 @@
 import { Room, RoomStatusEnum } from "@/entities/room";
+import { formatSeconds } from "@/shared/lib";
 
 interface MainDetailsProps {
     countdownTotal: number;
@@ -15,11 +16,12 @@ export function MainDetails(props: MainDetailsProps): JSX.Element {
     return (
         <>
             <span className="text-2xl p-2 border rounded-lg">{status}</span>
-            <p>countdown total: {countdownTotal}s</p>
-            <p>countdown report: {countdownReport}s</p>
-            <p>countdown grading: {countdownGrading}s</p>
-            <p>topic {room?.topic}</p>
+            <p>countdown total: {formatSeconds(countdownTotal)}</p>
+            <p>countdown report: {formatSeconds(countdownReport)}</p>
+            <p>countdown grading: {formatSeconds(countdownGrading)}</p>
+            <p>topic: {room?.topic}</p>
             <p className="text-xl font-bold">is admin {isAdmin.toString()}</p>
         </>
     );
 }
+

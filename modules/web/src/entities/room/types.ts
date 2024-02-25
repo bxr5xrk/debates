@@ -11,6 +11,7 @@ export enum RoomStatusEnum {
 
 export interface Room {
   gradingTime: number;
+  notGraded: boolean;
   conTeam: User[];
   proTeam: User[];
   code: string;
@@ -18,7 +19,7 @@ export interface Room {
   judge: User;
   members: User[];
   owner: User;
-  preparationTime: number;
+  reportsNumber: number;
   winners: User[];
   topic: string;
   id: number;

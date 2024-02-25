@@ -1,15 +1,16 @@
 "use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/shared/ui";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/ui";
 import { PropsWithChildren, useState } from "react";
 
 interface GradeRoomDialogProps {
-  onSelect: (type: "conTeam" | "proTeam") => void;
+    onSelect: (type: "conTeam" | "proTeam") => void;
+    isOpen?: boolean;
 }
 
 export function GradeRoomDialog(props: PropsWithChildren<GradeRoomDialogProps>): JSX.Element {
-    const { onSelect, children } = props;
-    const [open, setOpen] = useState(false);
+    const { onSelect, children, isOpen } = props;
+    const [open, setOpen] = useState(isOpen ?? false);
 
     function handleSelect(type: "conTeam" | "proTeam"): void {
         onSelect(type);
@@ -18,7 +19,7 @@ export function GradeRoomDialog(props: PropsWithChildren<GradeRoomDialogProps>):
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger>{children || "Rate"}</DialogTrigger>
+            <div onClick={() => setOpen(true)}>{children || "Grade"}</div>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Rate room</DialogTitle>

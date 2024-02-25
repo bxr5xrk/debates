@@ -8,7 +8,7 @@ export function getOptions(friends: Friend[], blacklistIds: string[], currentUse
 
     const options = friends?.map((friend) => ({
         label: friend.friend.nickname,
-        value: String(friend.id),
+        value: String(friend.friend.id),
     }));
 
     return [

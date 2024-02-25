@@ -346,7 +346,7 @@ class RoomService {
 
     const room = await this.getRoomById(roomId);
 
-    if (room.status !== RoomStatusEnum.GRADING) {
+    if (!room.notGraded) {
       throw new Error("Room status is not grading");
     }
 

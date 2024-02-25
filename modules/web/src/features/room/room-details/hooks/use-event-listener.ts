@@ -3,21 +3,22 @@ import { User } from "@/entities/user";
 import { useEffect } from "react";
 import { Socket } from "socket.io-client";
 import { CurrentTeamRes } from "../types";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface useEventListenerProps {
-  socket: Socket | null;
-  setCountdownReport: (countdown: number) => void;
-  setCountdownTotal: (countdown: number) => void;
-  setCountdownGrading: (countdown: number) => void;
-  setIsAdmin: (isAdmin: boolean) => void;
-  setCurrentTeam: (team: CurrentTeamRes) => void;
-  setOnlineMembers: (members: User[]) => void;
-  setStatus: (status: RoomStatusEnum) => void;
+    socket: Socket | null;
+    setCountdownReport: (countdown: number) => void;
+    setCountdownTotal: (countdown: number) => void;
+    setCountdownGrading: (countdown: number) => void;
+    setIsAdmin: (isAdmin: boolean) => void;
+    setCurrentTeam: (team: CurrentTeamRes) => void;
+    setOnlineMembers: (members: User[]) => void;
+    setStatus: (status: RoomStatusEnum) => void;
 }
 
 export function useEventListener(props: useEventListenerProps): void {
     const { socket, setCountdownGrading, setCountdownReport, setIsAdmin, setCountdownTotal, setCurrentTeam, setStatus, setOnlineMembers } = props;
+    const { push } = useRouter();
 
     useEffect(() => {
         if (!socket) {
@@ -54,7 +55,7 @@ export function useEventListener(props: useEventListenerProps): void {
 
         socket.on('status', (data) => {
             if (data === RoomStatusEnum.ENDED) {
-                redirect("/history");
+                push("/history");
             }
 
             setStatus(data);

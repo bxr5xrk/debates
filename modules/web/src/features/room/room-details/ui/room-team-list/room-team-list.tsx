@@ -11,7 +11,7 @@ export function RoomTeamList(props: RoomTeamListProps): JSX.Element {
     const { team, className, currentUserId, ...meta } = props;
 
     return (
-        <div className={cl("border rounded-xl p-2 flex flex-col gap-2 bg-red-50", className)} {...meta}>
+        <div className={cl("border rounded-xl p-2 flex flex-col gap-2", className)} {...meta}>
             {team.map((member) => (
                 <RoomUserItem key={member.id} {...member} isCurrentUser={member.id === currentUserId} />
             ))}
