@@ -338,6 +338,28 @@ class RoomService {
 
     return await this.roomRepository.save(room);
   }
+
+  public async gradeRoom(userId: number, roomId: number, team: TeamsEnum): Promise<Room> {
+    if (!userId || !roomId || !team) {
+      throw new Error("Ids and team are required");
+    }
+
+    const room = await this.getRoomById(roomId);
+
+    if (room.status !== RoomStatusEnum.GRADING) {
+      throw new Error("Room status is not grading");
+    }
+
+    if (room.judge.id != userId) {
+      throw new Error("User is not a judge");
+    }
+
+    room.notGraded = false;
+    room.winners = team === TeamsEnum.PRO_TEAM ? room.proTeam : room.conTeam;
+    room.status = RoomStatusEnum.ENDED;
+
+    return await this.roomRepository.save(room);
+  }
 }
 
 export const roomService = new RoomService();

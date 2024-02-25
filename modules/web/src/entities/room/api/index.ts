@@ -5,7 +5,7 @@ import { baseFetcher } from "@/shared/api/fetcher";
 import { AxiosError } from "axios";
 import useSWR from "swr";
 import { GetOptions, GetResponse } from "@/shared/api/types";
-import { RoomData, RoomValidData } from "..";
+import { RoomData, RoomValidData, RoomsData } from "..";
 
 export function useRoomValid<D = RoomValidData>(roomId: string, options?: GetOptions<D>): GetResponse<D> {
     return useSWR<D, AxiosError, string>(
@@ -22,3 +22,12 @@ export function useRoom<D = RoomData>(roomId: string, options?: GetOptions<D>): 
         { ...options, keepPreviousData: true }
     );
 }
+
+export function useRooms<D = RoomsData>(options?: GetOptions<D>): GetResponse<D> {
+    return useSWR<D, AxiosError, string>(
+        API.ROOM_ROUTES.roomHistory,
+        baseFetcher({ method: "GET" }),
+        { ...options, keepPreviousData: true }
+    );
+}
+

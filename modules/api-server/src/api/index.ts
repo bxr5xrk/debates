@@ -28,6 +28,7 @@ export async function applicationApi(server: FastifyInstance): Promise<void> {
   server.put("/rooms/join/:code", room.joinRoom);
   server.put("/rooms/:id/start", room.startRoom);
   server.put("/rooms/:id/end", room.endRoom);
+  server.put("/rooms/:id/grade", room.gradeRoom);
   server.get("/rooms/received-invites", invite.getReceivedGameInvites);
   server.get("/rooms/sent-invites", invite.getSentGameInvites);
   server.get("/rooms/own-history", room.getOwnRoomHistory);

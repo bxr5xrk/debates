@@ -5,6 +5,7 @@ export enum RoomStatusEnum {
   PENDING = 'pending',
   STARTED = 'started',
   PAUSED = 'paused',
+  GRADING = 'grading',
   ENDED = 'ended',
 }
 
@@ -29,3 +30,5 @@ export interface Room {
 export type RoomValidData = BaseResponse<Room>;
 
 export type RoomData = BaseResponse<Room>;
+
+export type RoomsData = BaseResponse<Room[]>;

@@ -43,7 +43,7 @@ export function CreateRoomForm(props: CreateRoomFormProps): JSX.Element {
         }
         
         afterCreate();
-        push(`/room/${id}`);
+        push(`/rooms/${id}`);
         control._disableForm(false);
     }
 

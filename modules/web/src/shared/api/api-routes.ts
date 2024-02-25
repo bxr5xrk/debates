@@ -19,7 +19,8 @@ const FRIENDS_ROUTES = {
 const ROOM_ROUTES = {
     onAir: "/rooms/is-live",
     isRoomValid: "/rooms/check-is-valid",
-    room: "/rooms"
+    room: "/rooms",
+    roomHistory: "/rooms/own-history",
 };
 
 export const API = {
