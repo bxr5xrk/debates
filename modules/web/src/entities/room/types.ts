@@ -27,3 +27,5 @@ export interface Room {
 }
 
 export type RoomValidData = BaseResponse<Room>;
+
+export type RoomData = BaseResponse<Room>;

@@ -17,7 +17,7 @@ const schema = defineSchema({
 async function handler({ server, session, params, body }: Server.Request<typeof schema>, rep: Server.Reply): Promise<Server.Reply> {
   const user = session.get("user") as { id: number };
   
-  const room = await roomService.createRoom(user.id, body.judgeId, body.proTeamIds, body.conTeamIds, {...body});
+  const room = await roomService.createRoom(user.id, body);
   
   return rep.status(200).send(getResponse("success", room));
 }

@@ -1,9 +1,10 @@
 "use client";
 
-import { Room, RoomStatusEnum, useRoomValid } from "@/entities/room";
+import { RoomStatusEnum, useRoom, useRoomValid } from "@/entities/room";
 import { User } from "@/entities/user";
 import { useWhoami } from "@/features/auth";
 import { Page } from "@/shared/layout/page";
+import { cl } from "@/shared/lib/cl";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
@@ -32,7 +33,6 @@ export function RoomPage(props: RoomPageProps): JSX.Element {
 
     return (
         <Page>
-            Room {roomId}
             <RoomDetails roomId={roomId} userId={userId} />
         </Page>
     );
@@ -53,16 +53,6 @@ function useSocket(roomId: string, userId: number): Socket | null {
             // transports: ["websocket", "polling"],
         });
 
-        socketIo.on("connect", () => {
-            console.log("connected to socket");
-        });
-
-        socketIo?.emit("join");
-        socketIo?.emit("current-team");
-        socketIo?.emit("current-room");
-        socketIo?.emit("is-admin");
-        socketIo?.emit("online-members");
-
         setSocket(socketIo);
 
         return () => {
@@ -74,7 +64,7 @@ function useSocket(roomId: string, userId: number): Socket | null {
 }
 
 interface CurrentTeamRes {
-    currentTeamType: "proTeam" | "conTeam";
+    currentTeamType: "proTeam" | "conTeam" | null;
     teamMembers: User[];
     isTeamMember: boolean;
 }
@@ -86,150 +76,142 @@ interface RoomConnectProps {
 
 function RoomDetails(props: RoomConnectProps): JSX.Element {
     const { roomId, userId } = props;
+    const { data } = useRoom(roomId);
+    const room = data?.data;
     const [status, setStatus] = useState<RoomStatusEnum | null>(null);
     const [isAdmin, setIsAdmin] = useState<boolean>(false);
     const [onlineMembers, setOnlineMembers] = useState<User[]>([]);
     const [currentTeam, setCurrentTeam] = useState<null | CurrentTeamRes>(null);
-    const [currentRoom, setCurrentRoom] = useState<null | Room>(null);
     const [countdownReport, setCountdownReport] = useState<number>(0);
     const [countdownTotal, setCountdownTotal] = useState<number>(0);
     const [countdownGrading, setCountdownGrading] = useState<number>(0);
-    // const [isConnected, setIsConnected] = useState(socket.connected);
-    const [fooEvents, setFooEvents] = useState([]);
-    // const isJurge = currentRoom?.judge.id === userId;
     const socket = useSocket(roomId, userId);
 
     useEffect(() => {
-        // if (!socket) {
-        //     return;
-        // }
+        if (!socket) {
+            return;
+        }
 
-        socket?.on("connect", () => {
+        socket.on("connect", () => {
             console.log("connected");
-            socket.emit("join");
         });
 
-        // socket.connect();
-        // socket.on("connect", () => {
-        //     console.log("connected");
-        //     socket.emit("current-room");
+        socket.on('countdown-report', (time: number) => {
+            setCountdownReport(time);
+        });
 
-        //     socket.on('is-admin', (isAdminRes: boolean) => {
-        //         console.log(isAdminRes);
-        //         setIsAdmin(isAdminRes);
+        socket.on('countdown-total', (time: number) => {
+            setCountdownTotal(time);
+        });
 
-        //         socket.on("status", (statusRes) => {
-        //             console.log(statusRes);
-        //             setStatus(statusRes);
+        socket.on('countdown-grading', (time: number) => {
+            setCountdownGrading(time);
+        });
 
-        //             if (statusRes !== "pending" && !isAdminRes) {
-        //                 socket.emit("join");
-        //             }
-        //         });
-        //     });
-        // });
+        socket.on('is-admin', (data: boolean) => {
+            setIsAdmin(data);
+        });
 
-        // socket.on('countdown-report', (time: number) => {
-        //     setCountdownReport(time);
-        // });
-
-        // socket.on('countdown-total', (time: number) => {
-        //     setCountdownTotal(time);
-        // });
-
-        // socket.on('countdown-grading', (time: number) => {
-        //     setCountdownGrading(time);
-        // });
-
-        socket?.on("current-team", (data: CurrentTeamRes) => {
-            console.log({ data });
+        socket.on("current-team", (data: CurrentTeamRes) => {
             setCurrentTeam(data);
         });
 
-        socket?.on('online-members', (members) => {
+        socket.on('online-members', (members) => {
             setOnlineMembers(members);
         });
 
-        socket?.on("current-room", (room) => {
-            setCurrentRoom(room);
-        });
-
-        // .on(`room-${roomId}`)
-
-        socket?.on('status', (data) => {
+        socket.on('status', (data) => {
             console.log(data);
             setStatus(data);
         });
-    }, []);
+    }, [socket]);
 
-    // function onEnd(): void {
-    //     if (!socket || !isAdmin) {
-    //         return;
-    //     }
+    function onEnd(): void {
+        if (!socket || !isAdmin) {
+            return;
+        }
 
-    //     socket.emit("end");
-    // }
+        socket.emit("end");
+    }
 
-    // function onPause(): void {
-    //     if (!socket || !isAdmin) {
-    //         return;
-    //     }
+    function onPause(): void {
+        if (!socket || !isAdmin) {
+            return;
+        }
 
-    //     socket.emit("pause");
-    // }
+        socket.emit("pause");
+    }
 
-    // function onStart(): void {
-    //     if (!socket || !isAdmin) {
-    //         return;
-    //     }
+    function onStart(): void {
+        if (!socket || !isAdmin) {
+            return;
+        }
 
-    //     socket.emit("start");
-    // }
+        socket.emit("start");
+    }
 
-    // function onResume(): void {
-    //     if (!socket || !isAdmin) {
-    //         return;
-    //     }
+    function onResume(): void {
+        if (!socket || !isAdmin) {
+            return;
+        }
 
-    //     socket.emit("resume");
-    // }
+        socket.emit("resume");
+    }
 
-    // useEffect(() => {
-    //     socket?.emit("join");
-    //     socket?.emit("current-team");
-    //     socket?.emit("current-room");
-    //     socket?.emit("is-admin");
-    //     socket?.emit("online-members");
-    // }, [status]);
+    function onJoin(): void {
+        if (!socket) {
+            return;
+        }
+
+        socket.emit("join");
+    }
 
     return (
-        <>
+        <div className="flex flex-col gap-2">
+            {!onlineMembers.find(i => i.id === userId) && <button onClick={onJoin} className="border p-2">join</button>}
+            {isAdmin && status === RoomStatusEnum.PENDING && <button onClick={onStart} className="border p-2">start</button>}
+            {(isAdmin && status === RoomStatusEnum.STARTED) && <button onClick={onPause} className="border p-2">pause</button>}
+            {isAdmin && status === RoomStatusEnum.PAUSED && <button onClick={onResume} className="border p-2">resume</button>}
+            {(isAdmin && status === RoomStatusEnum.STARTED || status === RoomStatusEnum.PAUSED) && <button onClick={onEnd} className="border p-2">end</button>}
             <span className="text-2xl p-2 border rounded-lg">{status}</span>
-            {/* <p onClick={() => {
-                console.log(1);
-                socket?.emit("join");
-                socket?.emit("current-team");
-                socket?.emit("current-room");
-                socket?.emit("is-admin");
-                socket?.emit("online-members");
-            }}>countdown report: {countdownReport}</p> */}
-            <p>countdown total: {countdownTotal}</p>
-            <p>countdown grading: {countdownGrading}</p>
-            <p>topic {currentRoom?.topic}</p>
-            <p>judge {currentRoom?.judge.nickname}</p>
-            <p>is admin {isAdmin.toString()}</p>
-            {/* <div className="flex flex-col items-start">
-                {isAdmin && status === RoomStatusEnum.PENDING && <button onClick={onStart}>Start</button>}
-                {(isAdmin && status === RoomStatusEnum.STARTED || status === RoomStatusEnum.PAUSED) && <button onClick={onEnd}>End</button>}
-                {isAdmin && status === RoomStatusEnum.STARTED && <button onClick={onPause}>Pause</button>}
-                {isAdmin && status === RoomStatusEnum.STARTED && <button onClick={onResume}>Resume</button>}
-            </div> */}
-            <p>online members: {onlineMembers.length}</p>
-            <pre className="text-xs">{JSON.stringify(onlineMembers, null, 2)}</pre>
-            <p>current team</p>
-            <pre className="text-xs">{JSON.stringify(currentTeam, null, 2)}</pre>
-            <p>current room</p>
-            <pre className="text-xs">{JSON.stringify(currentRoom, null, 2)}</pre>
-        </>
+            <p>countdown total: {countdownTotal}s</p>
+            <p>countdown report: {countdownReport}s</p>
+            <p>countdown grading: {countdownGrading}s</p>
+            <p>topic {room?.topic}</p>
+            <p className="text-xl font-bold">is admin {isAdmin.toString()}</p>
+            <p className="text-xl font-bold">judge</p>
+            <div className={cl("border rounded-xl p-2", room?.judge.id === userId && "bg-green-100")}>
+                <p>{room?.judge.nickname}</p>
+                <p>{room?.judge.email}</p>
+            </div>
+            <p className="text-xl font-bold">online</p>
+            <ul className="border rounded-xl p-2 flex flex-col gap-2">
+                {onlineMembers.map((member) => (
+                    <li key={member.id} className={cl("border rounded-xl p-2", member.id === userId && "bg-green-100")}>
+                        <p>{member.nickname}</p>
+                        <p>{member.email}</p>
+                    </li>
+                ))}
+            </ul>
+            <p className="text-xl font-bold">teams</p>
+            <div className="grid grid-cols-2 gap-2">
+                <ul className={cl("border rounded-xl p-2 flex flex-col gap-2 bg-blue-50", currentTeam?.currentTeamType === "proTeam" && 'border-blue-500')}>
+                    {room?.proTeam.map((member) => (
+                        <li key={member.id} className={cl("border rounded-xl p-2", member.id === userId && "bg-green-100")}>
+                            <p>{member.nickname}</p>
+                            <p>{member.email}</p>
+                        </li>
+                    ))}
+                </ul>
+                <ul className={cl("border rounded-xl p-2 flex flex-col gap-2 bg-red-50", currentTeam?.currentTeamType === "conTeam" && 'border-red-500')}>
+                    {room?.conTeam.map((member) => (
+                        <li key={member.id} className={cl("border rounded-xl p-2", member.id === userId && "bg-green-100")}>
+                            <p>{member.nickname}</p>
+                            <p>{member.email}</p>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </div>
     );
 }
