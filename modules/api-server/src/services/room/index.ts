@@ -8,6 +8,7 @@ import { userService } from "services/user";
 import { User } from "db/models/user";
 import { CODE_CHARSET, CODE_LENGTH } from "lib/const";
 import { friendService } from "services/friend";
+import { TeamsEnum } from "db/enums/teams";
 
 class RoomService {
   private roomRepository = db.getRepository(Room);
@@ -20,7 +21,7 @@ class RoomService {
 
     const existingRoom = await this.roomRepository.findOne({
       where: {
-        code: generatedCode, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED])
+        code: generatedCode, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED, RoomStatusEnum.GRADING])
       }
     });
 
@@ -128,9 +129,9 @@ class RoomService {
 
     const room = await this.roomRepository.findOne({
       where: [
-        { id: roomId, proTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED]) },
-        { id: roomId, conTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED]) },
-        { id: roomId, judge: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED]) },
+        { id: roomId, proTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED, RoomStatusEnum.GRADING]) },
+        { id: roomId, conTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED, RoomStatusEnum.GRADING]) },
+        { id: roomId, judge: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED, RoomStatusEnum.GRADING]) },
       ],
       relations: ['owner', 'judge', 'proTeam', 'conTeam', 'winners', 'members']
     })
@@ -275,9 +276,9 @@ class RoomService {
 
     const room = await this.roomRepository.findOne({
       where: [
-        { proTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED]) },
-        { conTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED]) },
-        { judge: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED]) },
+        { proTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED, RoomStatusEnum.GRADING]) },
+        { conTeam: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED, RoomStatusEnum.GRADING]) },
+        { judge: { id: userId }, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED, RoomStatusEnum.GRADING]) },
       ],
       relations: ['owner', 'judge', 'proTeam', 'conTeam', 'winners', 'members']
     });
@@ -307,17 +308,17 @@ class RoomService {
     const room = await this.getRoomById(roomId);
     const user = await userService.getUserById(userId) as User;
 
-    if (room.status !== RoomStatusEnum.GRADING){
+    if (room.status !== RoomStatusEnum.GRADING) {
       throw new Error("Room status is not grading");
     }
 
-    if (room.judge.id != user.id){
+    if (room.judge.id != user.id) {
       throw new Error("User is not a judge");
     }
 
-    if (team === TeamsEnum.PRO_TEAM){
+    if (team === TeamsEnum.PRO_TEAM) {
       room.winners = room.proTeam;
-    } else if (team === TeamsEnum.CON_TEAM){
+    } else if (team === TeamsEnum.CON_TEAM) {
       room.winners = room.conTeam;
     }
 
