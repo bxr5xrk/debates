@@ -56,6 +56,9 @@ export class Room {
   @Column({ type: 'enum', enum: RoomStatusEnum, default: RoomStatusEnum.PENDING })
   status: RoomStatusEnum;
 
+  @Column({type: 'boolean', default: true})
+  notGraded: boolean;
+
   @CreateDateColumn()
   createdAt: Date;
 
