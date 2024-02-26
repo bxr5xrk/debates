@@ -4,6 +4,7 @@ import { Header } from "@/widgets/header";
 import { Footer } from "@/widgets/footer";
 import { cl } from "@/shared/lib/cl";
 import { Toaster } from 'react-hot-toast';
+import NextTopLoader from 'nextjs-toploader';
 
 const arvo = Arvo({ subsets: ["latin"], weight: ["400", "700"] });
 
@@ -21,6 +22,7 @@ export async function RootLayout(
             <Toaster position="top-center" toastOptions={{
                 duration: 3000
             }} />
+            <NextTopLoader color="#1F3A8A" showSpinner={false} shadow="none" />
         </body>
     );
 }

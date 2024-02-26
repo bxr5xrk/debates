@@ -6,7 +6,6 @@ import { SentInvitesList } from "@/features/friends/sent-invites-list";
 import { Page } from "@/shared/layout/page";
 
 export function FriendsPage(): JSX.Element {
-
     return (
         <Page protect>
             <FriendsList />
