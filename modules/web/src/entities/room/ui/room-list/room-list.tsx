@@ -5,11 +5,19 @@ import { useRooms } from "../..";
 import { cl } from "@/shared/lib/cl";
 import { GradeRoomAction } from "@/features/room";
 import { formatTime } from "@/shared/lib";
+import { useSWRConfig } from "swr";
+import { useEffect } from "react";
+import { API } from "@/shared/api/api-routes";
 
 export function RoomList(): JSX.Element {
     const { data: rooms } = useRooms();
     const { data } = useWhoami();
     const userId = data?.data.id;
+    const {mutate} = useSWRConfig();
+
+    useEffect(() => {
+        mutate(API.ROOM_ROUTES.onAir);
+    }, []);
 
     return (
         <ul className="grid grid-cols-3 gap-2">

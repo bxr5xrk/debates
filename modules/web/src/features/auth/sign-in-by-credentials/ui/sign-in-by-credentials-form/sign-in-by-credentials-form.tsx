@@ -60,7 +60,7 @@ export function SignInByCredentialsForm(props: SignInByCredentialsFormProps): JS
         const res = await trigger(data);
 
         onAfterFetch(
-            ["Signed in successfully", "Failed to sign in"],
+            ["Signed in successfully", (res as unknown as { message: string })?.message ?? "Failed to sign in"],
             res.status
         );
         onSuccess?.();

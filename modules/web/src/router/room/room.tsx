@@ -17,15 +17,17 @@ export function RoomPage(props: RoomPageProps): JSX.Element {
     const userId = whoami?.data.id;
     const { push } = useRouter();
 
+    // If the user is not logged in, redirect to the home page
     if (!userId && !isWhoamiLoading) {
-        return <></>;
+        push("/");
     }
 
     if (!userId) {
         return <></>;
     }
 
-    if (!data?.data?.code && !isLoading) {
+    // If the room is not valid, redirect to the history page
+    if (!data?.data && !isLoading) {
         push("/history");
     }
 

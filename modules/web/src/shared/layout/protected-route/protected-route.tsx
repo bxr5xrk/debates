@@ -9,6 +9,10 @@ export function ProtectedRoute(props: PropsWithChildren): JSX.Element {
     const { data, isLoading } = useWhoami();
     const { push } = useRouter();
 
+    if (isLoading) {
+        return <></>;
+    }
+
     if (!isLoading && !data?.data.id) {
         push('/');
     }

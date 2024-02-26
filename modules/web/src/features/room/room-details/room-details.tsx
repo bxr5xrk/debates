@@ -36,7 +36,7 @@ export function RoomDetails(props: RoomDetailsProps): JSX.Element {
 
     return (
         <div className="flex flex-col gap-2">
-            <RoomActions status={status} onlineMembers={onlineMembers} isAdmin={isAdmin} isJudge={isJudge} socket={socket} userId={userId} />
+            <RoomActions status={status} onlineMembers={onlineMembers} isAdmin={isAdmin} isJudge={isJudge} socket={socket} userId={userId} isCurrentTeamMember={currentTeam?.isTeamMember ?? false} />
             <MainDetails status={status} room={room} countdownGrading={countdownGrading} countdownReport={countdownReport} countdownTotal={countdownTotal} isAdmin={isAdmin} />
 
             <p className="text-xl font-bold">judge</p>

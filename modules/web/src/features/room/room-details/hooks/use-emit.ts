@@ -1,17 +1,21 @@
+import { API } from "@/shared/api/api-routes";
 import { useRouter } from "next/navigation";
 import { Socket } from "socket.io-client";
+import { useSWRConfig } from "swr";
 
 interface UseEmit {
-    onEnd: () => void;
-    onPause: () => void;
-    onStart: () => void;
-    onResume: () => void;
-    onJoin: () => void;
+    onEnd: VoidFunction;
+    onPause: VoidFunction;
+    onStart: VoidFunction;
+    onResume: VoidFunction;
+    onJoin: VoidFunction;
     onRate: (team: "conTeam" | "proTeam") => void;
+    onSkip: VoidFunction;
 }
 
 export function useEmit(socket: Socket | null, isAdmin: boolean): UseEmit {
     const { push } = useRouter();
+    const { mutate } = useSWRConfig();
 
     function onEnd(): void {
         if (!socket || !isAdmin) {
@@ -58,8 +62,17 @@ export function useEmit(socket: Socket | null, isAdmin: boolean): UseEmit {
             return;
         }
 
+        mutate(API.ROOM_ROUTES.onAir);
         socket.emit("rate", team);
         push(`/history`);
+    }
+
+    function onSkip(): void {
+        if (!socket) {
+            return;
+        }
+
+        socket.emit("skip");
     }
 
     return {
@@ -69,5 +82,6 @@ export function useEmit(socket: Socket | null, isAdmin: boolean): UseEmit {
         onResume,
         onJoin,
         onRate,
+        onSkip
     };
 }
