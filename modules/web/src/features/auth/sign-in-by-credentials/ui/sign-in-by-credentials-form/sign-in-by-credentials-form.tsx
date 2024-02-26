@@ -5,11 +5,14 @@ import { useAfterFetch } from "@/shared/hooks";
 import { API } from "@/shared/api/api-routes";
 import { cl } from "@/shared/lib/cl";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { Button } from "@/shared/ui";
 
-type SignInByCredentialsFormProps = React.DetailedHTMLProps<
+interface SignInByCredentialsFormProps extends React.DetailedHTMLProps<
     React.FormHTMLAttributes<HTMLFormElement>,
     HTMLFormElement
->;
+> {
+    onSuccess?: VoidFunction
+}
 
 export interface LoginData {
     email: string;
@@ -30,10 +33,8 @@ const checkLoginData = (loginData: LoginData): boolean => {
     return true;
 };
 
-export function SignInByCredentialsForm(
-    props: SignInByCredentialsFormProps
-): JSX.Element {
-    const { className, ...meta } = props;
+export function SignInByCredentialsForm(props: SignInByCredentialsFormProps): JSX.Element {
+    const { className, onSuccess, ...meta } = props;
 
     const {
         register,
@@ -45,7 +46,7 @@ export function SignInByCredentialsForm(
         },
     });
 
-    const { trigger } = useSignIn();
+    const { trigger, isMutating } = useSignIn();
     const { onAfterFetch } = useAfterFetch({
         revalidate: [API.AUTH_ROUTES.whoami],
         redirect: "/",
@@ -62,6 +63,7 @@ export function SignInByCredentialsForm(
             ["Signed in successfully", "Failed to sign in"],
             res.status
         );
+        onSuccess?.();
     };
 
     return (
@@ -73,7 +75,7 @@ export function SignInByCredentialsForm(
             onSubmit={handleSubmit(onSubmit)}
             {...meta}
         >
-            <div className="flex flex-col w-full gap-4 sm:mt-5 lg:w-1/2 lg:items-center">
+            <div className="flex flex-col w-full gap-4 sm:mt-5 lg:items-center">
                 <h1 className="font-bold text-center text-5xl pb-3 lg:text-6xl lg:pb-6">
                     Sign In
                 </h1>
@@ -89,12 +91,13 @@ export function SignInByCredentialsForm(
                     placeholder="Password"
                     className={`shadow-md border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4 lg:p-2 lg:w-96`}
                 />
-                <button
-                    className="bg-slate-50 text-slate-700 border-solid border-2 border-slate-700 text-lg w-full p-4 rounded-full font-medium sm:text-xl sm:p-4 lg:w-96 sm:mt-2 lg:mt-5 ease-in-out duration-300 hover:bg-slate-700 hover:text-slate-50"
+                <Button
+                    isLoading={isMutating}
+                    className="bg-slate-50 text-slate-700 text-lg w-full p-4 sm:text-xl sm:p-4 lg:w-96 sm:mt-2 lg:mt-5 ease-in-out duration-300"
                     type="submit"
                 >
                     Sign In
-                </button>
+                </Button>
             </div>
         </form>
     );

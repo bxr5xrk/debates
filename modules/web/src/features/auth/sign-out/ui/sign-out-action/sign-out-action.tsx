@@ -6,13 +6,12 @@ import { API } from "@/shared/api/api-routes";
 
 export function SignOutAction(): JSX.Element {
     const { trigger } = useSignOut();
-    const { onAfterFetch } = useAfterFetch({ revalidate: [API.AUTH_ROUTES.whoami] });
+    const { onAfterFetch } = useAfterFetch({ revalidate: [API.AUTH_ROUTES.whoami], redirect: "/" });
 
     async function onSignOut(): Promise<void> {
         const res = await trigger();
 
         onAfterFetch(["Signed out successfully", "Failed to sign out"], res.status);
-        window.location.reload();
     }
 
     return (

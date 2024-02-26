@@ -3,7 +3,7 @@ import { Page } from "@/shared/layout/page";
 
 export function HistoryPage(): JSX.Element {
     return (
-        <Page>
+        <Page protect>
             <RoomList />
         </Page>
     );
