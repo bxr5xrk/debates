@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useSignUp } from "../../api";
 import { useAfterFetch } from "@/shared/hooks";
 import { API } from "@/shared/api/api-routes";
-import { maxFileSize } from "@/shared/const";
+import { MAX_FILE_SIZE } from "@/shared/const";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { ProfilePhoto } from "./ProfilePhoto";
 import axios from "axios";
@@ -91,7 +91,7 @@ export function SignUpByCredentialsForm(): JSX.Element {
 
         const file = e.target.files[0];
 
-        if (file.size > maxFileSize) {
+        if (file.size > MAX_FILE_SIZE) {
             return;
         }
 
