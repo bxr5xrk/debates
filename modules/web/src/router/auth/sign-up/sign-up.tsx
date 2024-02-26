@@ -16,7 +16,7 @@ export function SignUpPage(): JSX.Element {
                 <div className="flex flex-col items-center gap-3 mt-5 sm:flex-row lg:ml-96">
                     <p>Have an account?</p>
                     <Link className="text-sky-400 font-bold" href="/sign-in">
-                        Log In
+                        Sign In
                     </Link>
                 </div>
             </div>

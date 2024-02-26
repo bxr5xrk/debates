@@ -8,6 +8,7 @@ import { maxFileSize } from "@/shared/const";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { ProfilePhoto } from "./ProfilePhoto";
 import axios from "axios";
+import { Button } from "@/shared/ui";
 
 export interface RegistrationData {
     name: string;
@@ -23,7 +24,7 @@ export function SignUpByCredentialsForm(): JSX.Element {
     const [profilePhotoVerified, setProfilePhotoVerified] =
         useState<boolean>(false);
 
-    const { trigger } = useSignUp();
+    const { trigger, isMutating } = useSignUp();
     const { onAfterFetch } = useAfterFetch({
         revalidate: [API.AUTH_ROUTES.whoami],
         redirect: "/",
@@ -147,12 +148,13 @@ export function SignUpByCredentialsForm(): JSX.Element {
                         placeholder="Password"
                         className={`shadow-md border rounded-lg border-slate-700 text-lg p-3 sm:text-xl sm:p-4 lg:p-2 lg:w-96`}
                     />
-                    <button
-                        className="bg-slate-50 text-slate-700 border-solid border-2 border-slate-700 text-lg w-full p-4 rounded-full font-medium sm:mt-10 sm:text-xl sm:p-4 lg:w-96 lg:mt-10 ease-in-out duration-300 hover:bg-slate-700 hover:text-slate-50"
+                    <Button
+                        isLoading={isMutating}
+                        className="bg-slate-50 text-slate-700 text-lg w-full p-4 sm:text-xl sm:p-4 lg:w-96 sm:mt-2 lg:mt-5 ease-in-out duration-300"
                         type="submit"
                     >
-                        Create account
-                    </button>
+                   Create account
+                    </Button>
                 </div>
             </form>
         </div>

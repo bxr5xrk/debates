@@ -23,7 +23,7 @@ export function HeaderPrivate(): JSX.Element {
     const pathname = usePathname();
 
     return (
-        <header className="flex border-b w-full">
+        <header className="flex border-b w-full h-14 items-center">
             <div className="w-full px-2 py-4 max-w-screen-2xl mx-auto">
                 <nav className="flex gap-2">
                     {navItems.map((item) => (
