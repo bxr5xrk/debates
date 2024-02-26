@@ -7,5 +7,6 @@ export function getPayload(data: CreateRoomFormData): CreateRoomPayload {
         proTeamIds: data.proTeamIds.map((e) => Number(e.id)),
         conTeamIds: data.conTeamIds.map((e) => Number(e.id)),
         reportTime: data.reportTime,
+        reportsNumber: data.reportsNumber
     };
 }

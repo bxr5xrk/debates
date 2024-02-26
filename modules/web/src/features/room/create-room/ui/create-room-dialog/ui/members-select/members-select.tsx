@@ -5,20 +5,22 @@ import { useState } from "react";
 import { FieldErrors, UseFieldArrayReturn, UseFormRegister, UseFormSetValue, UseFormTrigger, UseFormWatch } from "react-hook-form";
 import { getOptions } from "../../lib/get-options";
 import { validations } from "@/shared/lib";
+import { useWhoami } from "@/features/auth";
 
 interface MembersSelectProps {
-  register: UseFormRegister<CreateRoomFormData>;
-  errors: FieldErrors<CreateRoomFormData>;
-  proTeamIds: UseFieldArrayReturn<CreateRoomFormData, "proTeamIds", "id">;
-  conTeamIds: UseFieldArrayReturn<CreateRoomFormData, "conTeamIds", "id">;
-  setValue: UseFormSetValue<CreateRoomFormData>;
-  watch: UseFormWatch<CreateRoomFormData>;
-  triggerField: UseFormTrigger<CreateRoomFormData>
+    register: UseFormRegister<CreateRoomFormData>;
+    errors: FieldErrors<CreateRoomFormData>;
+    proTeamIds: UseFieldArrayReturn<CreateRoomFormData, "proTeamIds", "id">;
+    conTeamIds: UseFieldArrayReturn<CreateRoomFormData, "conTeamIds", "id">;
+    setValue: UseFormSetValue<CreateRoomFormData>;
+    watch: UseFormWatch<CreateRoomFormData>;
+    triggerField: UseFormTrigger<CreateRoomFormData>
 }
 
 export function MembersSelect(props: MembersSelectProps): JSX.Element {
     const { register, errors, proTeamIds, conTeamIds, setValue, watch, triggerField } = props;
     const { data } = useFriends();
+    const { data: whoami } = useWhoami();
     const friends = data?.data ?? [];
     const [blacklistIds, setBlacklistIds] = useState<string[]>([]);
 
@@ -56,7 +58,7 @@ export function MembersSelect(props: MembersSelectProps): JSX.Element {
         setBlacklistIds((prev) => prev.filter((id) => id !== field.id));
     }
 
-    const options = getOptions(friends, blacklistIds);
+    const options = getOptions(friends, blacklistIds, whoami?.data.id);
 
     return (
         <>

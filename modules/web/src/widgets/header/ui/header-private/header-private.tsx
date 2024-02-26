@@ -12,6 +12,10 @@ const navItems = [
     {
         href: '/friends',
         label: 'Friends',
+    },
+    {
+        href: '/history',
+        label: 'History',
     }
 ];
 

@@ -1,5 +1,5 @@
 import { maxFileSize } from "@/shared/const";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 
 export function onUpload(e: React.ChangeEvent<HTMLInputElement>, setFile: (file: File) => void): void {
     if (!e.target.files) {

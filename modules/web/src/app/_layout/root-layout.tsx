@@ -3,7 +3,7 @@ import { Arvo } from "next/font/google";
 import { Header } from "@/widgets/header";
 import { Footer } from "@/widgets/footer";
 import { cl } from "@/shared/lib/cl";
-import { Toaster } from 'sonner';
+import { Toaster } from 'react-hot-toast';
 
 const arvo = Arvo({ subsets: ["latin"], weight: ["400", "700"] });
 
@@ -18,7 +18,9 @@ export async function RootLayout(
             <Header />
             {children}
             <Footer />
-            <Toaster richColors closeButton duration={3000} position="top-center" />
+            <Toaster position="top-center" toastOptions={{
+                duration: 3000
+            }} />
         </body>
     );
 }
