@@ -254,33 +254,6 @@ class RoomService {
     return await this.roomRepository.save(room);
   }
 
-  public async setWinners(userId: number, roomId: number, team: TeamsEnum): Promise<Room> {
-    if (!userId || !roomId || !team) {
-      throw new Error("Ids and team are required");
-    }
-    const room = await this.getRoomById(roomId);
-    const user = await userService.getUserById(userId) as User;
-
-    if (room.status !== RoomStatusEnum.GRADING) {
-      throw new Error("Room status is not grading");
-    }
-
-    if (room.judge.id != user.id) {
-      throw new Error("User is not a judge");
-    }
-
-    if (team === TeamsEnum.PRO_TEAM) {
-      room.winners = room.proTeam;
-    } else if (team === TeamsEnum.CON_TEAM) {
-      room.winners = room.conTeam;
-    }
-
-    room.status = RoomStatusEnum.ENDED;
-    room.notGraded = false;
-
-    return await this.roomRepository.save(room);
-  }
-
   public async setStatus(roomId: number, status: RoomStatusEnum): Promise<Room> {
     if (!roomId) {
       throw new Error("RoomId is required");

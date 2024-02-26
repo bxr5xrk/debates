@@ -42,7 +42,6 @@ export function setupSocketEvents(io: Server): void {
         if (countdownIterations > 0) {
           reportInterval = setInterval(async () => {
             const updatedRoom = await roomService.getRoomById(room.id);
-            socket.emit('iter', countdownIterations);
 
             if (updatedRoom.status === RoomStatusEnum.ENDED) {
               clearInterval(reportInterval);
@@ -183,7 +182,7 @@ export function setupSocketEvents(io: Server): void {
 
       socket.on('rate', async (team: TeamsEnum) => {
         try {
-          const room = await roomService.setWinners(userId, roomId, team);
+          const room = await roomService.gradeRoom(userId, roomId, team);
           io.to(`room-${room.id}`).emit('status', room.status);
         } catch (e) {
           console.log(e);
@@ -202,14 +201,13 @@ export function setupSocketEvents(io: Server): void {
             const teamMembers = room[currentTeamType as keyof typeof room] as User[];
             const isTeamMember = teamMembers.some((member) => member.id == userId);
             io.to(`room-${room.id}`).emit('current-team', { currentTeamType, teamMembers, isTeamMember });
-            socket.emit('iter', countdownIterations);
   
             clearInterval(reportInterval);
             clearInterval(totalInterval);
             startTotalTimer();
             startReportTimer();
           }else{
-            throw new Error("not your team");
+            socket.emit('error', { message: `User isn't a team member or owner` });
           }
         } catch (e) {
           console.log(e);
