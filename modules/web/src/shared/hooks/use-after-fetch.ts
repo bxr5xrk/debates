@@ -2,7 +2,7 @@ import { useRouter } from "next/navigation";
 import { isString } from "../lib/type-guards";
 import { useSWRConfig } from "swr";
 import { Status } from "../const/status";
-import { toast } from "sonner";
+import toast from "react-hot-toast";
 
 function useRedirect(): {
     onRedirect: (redirect?: string) => void;

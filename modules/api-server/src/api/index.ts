@@ -28,12 +28,14 @@ export async function applicationApi(server: FastifyInstance): Promise<void> {
   server.put("/rooms/join/:code", room.joinRoom);
   server.put("/rooms/:id/start", room.startRoom);
   server.put("/rooms/:id/end", room.endRoom);
+  server.put("/rooms/:id/grade", room.gradeRoom);
   server.get("/rooms/received-invites", invite.getReceivedGameInvites);
   server.get("/rooms/sent-invites", invite.getSentGameInvites);
   server.get("/rooms/own-history", room.getOwnRoomHistory);
   server.get("/rooms/user-history/:userId", room.getUserRoomHistory);
   server.get("/rooms/:id", room.getRoom);
   server.get("/rooms/is-live", room.isLive);
+  server.get("/rooms/check-is-valid/:id", room.checkRoom);
 }
 
 export async function authApi(server: FastifyInstance): Promise<void> {

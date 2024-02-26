@@ -7,6 +7,7 @@ export interface CreateRoomPayload {
   proTeamIds: number[];
   conTeamIds: number[];
   reportTime: number;
+  reportsNumber: number;
 }
 
 export interface CreateRoomFormData {
@@ -19,7 +20,7 @@ export interface CreateRoomFormData {
     id: string;
   }[];
   reportTime: number;
-
+  reportsNumber: number;
 }
 
 export type CreateRoomData = BaseResponse<Room>;
