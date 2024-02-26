@@ -6,7 +6,7 @@ import { fastify, FastifyInstance } from "fastify";
 import { Server } from "platform/types";
 import { BadRequest, NotFound } from "lib/exceptions";
 import { ENV } from "platform/env";
-import { BAD_REQUEST_CODE, MILLISECONDS_IN_SECOND, MINUTES_IN_HOUR, NOT_FOUND_CODE, SECONDS_IN_MINUTE } from "lib/const";
+import { BAD_REQUEST_CODE, MAX_FILE_SIZE, MILLISECONDS_IN_SECOND, MINUTES_IN_HOUR, NOT_FOUND_CODE, SECONDS_IN_MINUTE } from "lib/const";
 import { initDependencies } from "dependencies";
 import { applicationApi, authApi } from "api";
 import fastifyMultipart from "@fastify/multipart";
@@ -35,7 +35,8 @@ export async function initServer(): Promise<FastifyInstance> {
   server.register(cookie);
   server.register(session, SESSION_OPTIONS);
   server.register(fastifyMultipart, {
-    attachFieldsToBody: "keyValues"
+    attachFieldsToBody: "keyValues",
+    limits: { fileSize: MAX_FILE_SIZE }
   })
 
   server.register(fastifySocketIO, {
