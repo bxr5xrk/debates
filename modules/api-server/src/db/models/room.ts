@@ -17,9 +17,6 @@ export class Room {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column("varchar", { unique: true })
-  code: string;
-
   @Column("varchar")
   topic: string;
 

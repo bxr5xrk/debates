@@ -1,36 +1,15 @@
 import { db } from "connectors/db";
 import { Room } from "db/models/room";
 import { CreateRoomPayload } from "./types";
-import * as randomstring from 'randomstring';
 import { RoomStatusEnum } from "db/enums/room-status";
 import { In } from "typeorm";
 import { userService } from "services/user";
 import { User } from "db/models/user";
-import { CODE_CHARSET, CODE_LENGTH } from "lib/const";
 import { friendService } from "services/friend";
 import { TeamsEnum } from "db/enums/teams";
 
 class RoomService {
   private roomRepository = db.getRepository(Room);
-
-  private async generateUniqueCode(codeLength: number, codeCharset: string): Promise<string> {
-    const generatedCode = randomstring.generate({
-      length: codeLength,
-      charset: codeCharset,
-    });
-
-    const existingRoom = await this.roomRepository.findOne({
-      where: {
-        code: generatedCode, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED, RoomStatusEnum.GRADING])
-      }
-    });
-
-    if (!existingRoom) {
-      return generatedCode;
-    } else {
-      return this.generateUniqueCode(codeLength, codeCharset);
-    }
-  }
 
   private async updateRoomStatus(userId: number, roomId: number, newStatus: RoomStatusEnum): Promise<Room> {
     if (!userId || !roomId) {
@@ -76,6 +55,16 @@ class RoomService {
       throw new Error("Owner not found");
     }
 
+    const activeRoom = await this.roomRepository.findOne({
+      where: {
+        owner: {id: owner.id}, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED, RoomStatusEnum.PAUSED, RoomStatusEnum.GRADING])
+      }
+    });
+
+    if (activeRoom) {
+      throw new Error("You have already active room");
+    }
+
     const friends = await friendService.getFriends(ownerId);
 
     if (!friends) {
@@ -115,9 +104,7 @@ class RoomService {
       throw new Error("ConTeam not found");
     }
 
-    const generatedCode = await this.generateUniqueCode(CODE_LENGTH, CODE_CHARSET);
-
-    const newRoom = this.roomRepository.create({ ...payload, owner, judge, proTeam, conTeam, code: generatedCode });
+    const newRoom = this.roomRepository.create({ ...payload, owner, judge, proTeam, conTeam });
 
     return this.roomRepository.save(newRoom);
   }
@@ -160,23 +147,6 @@ class RoomService {
     return room;
   }
 
-  public async getRoomByCode(code: string): Promise<Room> {
-    if (!code) {
-      throw new Error("Code is required");
-    }
-
-    const room = await this.roomRepository.findOne({
-      where: { code, status: In([RoomStatusEnum.PENDING, RoomStatusEnum.STARTED]) },
-      relations: ['owner', 'judge', 'proTeam', 'conTeam', 'winners', 'members']
-    });
-
-    if (!room) {
-      throw new Error('Room not found');
-    }
-
-    return room;
-  }
-
   public async startRoom(userId: number, roomId: number): Promise<Room> {
     if (!userId || !roomId) {
       throw new Error("Ids are required");
@@ -201,23 +171,6 @@ class RoomService {
     }
 
     room.status = RoomStatusEnum.STARTED;
-    return await this.roomRepository.save(room);
-  }
-
-  public async joinRoomByCode(userId: number, roomCode: string): Promise<Room> {
-    if (!userId || !roomCode) {
-      throw new Error("UserId and roomCode are required");
-    }
-
-    const room = await this.getRoomByCode(roomCode);
-    const user = await userService.getUserById(userId) as User;
-
-    const usersInRoom = room.proTeam.concat(room.conTeam, room.judge);
-
-    if (!usersInRoom.some(userInRoom => userInRoom.id === user.id)) {
-      throw new Error("User isn't in room");
-    }
-
     return await this.roomRepository.save(room);
   }
 
@@ -298,33 +251,6 @@ class RoomService {
     }
 
     room.members = room.members.filter(member => member.nickname !== user.nickname);
-    return await this.roomRepository.save(room);
-  }
-
-  public async setWinners(userId: number, roomId: number, team: TeamsEnum): Promise<Room> {
-    if (!userId || !roomId || !team) {
-      throw new Error("Ids and team are required");
-    }
-    const room = await this.getRoomById(roomId);
-    const user = await userService.getUserById(userId) as User;
-
-    if (room.status !== RoomStatusEnum.GRADING) {
-      throw new Error("Room status is not grading");
-    }
-
-    if (room.judge.id != user.id) {
-      throw new Error("User is not a judge");
-    }
-
-    if (team === TeamsEnum.PRO_TEAM) {
-      room.winners = room.proTeam;
-    } else if (team === TeamsEnum.CON_TEAM) {
-      room.winners = room.conTeam;
-    }
-
-    room.status = RoomStatusEnum.ENDED;
-    room.notGraded = false;
-
     return await this.roomRepository.save(room);
   }
 
