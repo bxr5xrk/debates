@@ -8,14 +8,14 @@ import { usePathname } from "next/navigation";
 export function OnAirAction(): JSX.Element {
     const { data } = useOnAir();
     const pathname = usePathname();
-    const room = data?.data;
+    const roomId = data?.data?.id;
 
-    if (!room || isRoomPath(pathname)) {
+    if (!roomId || isRoomPath(pathname)) {
         return <></>;
     }
 
     return (
-        <Link href={`/rooms/${room.id}`} className="flex gap-2 items-center">
+        <Link href={`/rooms/${roomId}`} className="flex gap-2 items-center">
             <Image src="/icons/radio.svg" alt="On Air" width={16} height={16} />
             On Air
         </Link>

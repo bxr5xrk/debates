@@ -14,7 +14,6 @@ export interface Room {
   notGraded: boolean;
   conTeam: User[];
   proTeam: User[];
-  code: string;
   reportTime: number;
   judge: User;
   members: User[];

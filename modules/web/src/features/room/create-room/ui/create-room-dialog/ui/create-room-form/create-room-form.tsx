@@ -8,6 +8,7 @@ import { MembersSelect } from "../members-select";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useWhoami } from "@/features/auth";
+import { API } from "@/shared/api/api-routes";
 
 interface CreateRoomFormProps {
     afterCreate: VoidFunction;
@@ -16,7 +17,7 @@ interface CreateRoomFormProps {
 export function CreateRoomForm(props: CreateRoomFormProps): JSX.Element {
     const { afterCreate } = props;
     const { register, control, errors, handleSubmit, isMutating, trigger, watch, setValue, proTeamIds, conTeamIds, triggerField } = useFormInit();
-    const { onAfterFetch } = useAfterFetch({});
+    const { onAfterFetch } = useAfterFetch({ revalidate: [API.ROOM_ROUTES.onAir] });
     const { data: whoami } = useWhoami();
     const { push } = useRouter();
 
@@ -41,7 +42,7 @@ export function CreateRoomForm(props: CreateRoomFormProps): JSX.Element {
         if (!id) {
             return;
         }
-        
+
         afterCreate();
         push(`/rooms/${id}`);
         control._disableForm(false);

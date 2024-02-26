@@ -29,22 +29,6 @@ export function Page(props: PropsWithChildren<PageProps>): JSX.Element {
         );
     }
 
-    if (protect) {
-        return (
-            <ProtectedRoute>
-                <main
-                    {...meta}
-                    className={cl(
-                        "p-2 w-full h-full max-w-screen-2xl mx-auto",
-                        className
-                    )}
-                >
-                    {children}
-                </main>
-            </ProtectedRoute>
-        );
-    }
-
     return (
         <main {...meta} className={cl("flex-auto", className)}>
             {children}
