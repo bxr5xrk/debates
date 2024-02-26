@@ -24,7 +24,7 @@ export function RoomActions(props: RoomActionsProps): JSX.Element {
             {isAdmin && status === RoomStatusEnum.PENDING && <button onClick={onStart} className="border p-2">start</button>}
             {(isAdmin && status === RoomStatusEnum.STARTED) && <button onClick={onPause} className="border p-2">pause</button>}
             {isAdmin && status === RoomStatusEnum.PAUSED && <button onClick={onResume} className="border p-2">resume</button>}
-            {(isAdmin && status === RoomStatusEnum.STARTED || status === RoomStatusEnum.PAUSED) && <button onClick={onEnd} className="border p-2">end</button>}
+            {isAdmin && (status === RoomStatusEnum.STARTED || status === RoomStatusEnum.PAUSED) && <button onClick={onEnd} className="border p-2">end</button>}
             {isJudge && status === RoomStatusEnum.GRADING && <GradeRoomDialog isOpen onSelect={onRate} />}
             {!isJudge && status === RoomStatusEnum.GRADING && <EndRoomDialog isOpen />}
         </div>
