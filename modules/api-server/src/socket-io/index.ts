@@ -27,8 +27,7 @@ export function setupSocketEvents(io: Server): void {
       // initial setup
       io.to(`room-${room.id}`).emit('online-members', room.members);
       io.to(`room-${room.id}`).emit('status', room.status);
-      io.to(`room-${room.id}`).emit('is-admin', isAdmin);
-      io.to(`room-${room.id}`).emit('current-room', room);
+      socket.emit('is-admin', isAdmin);
       const teamMembers = room[currentTeamType as keyof typeof room] as User[];
       const isTeamMember = teamMembers.some((member) => member.id == userId);
       io.to(`room-${room.id}`).emit('current-team', { currentTeamType, teamMembers, isTeamMember });
@@ -106,10 +105,6 @@ export function setupSocketEvents(io: Server): void {
         }, 1000);
       }
 
-      socket.on("current-room", () => {
-        socket.emit('current-room', room);
-      });
-
       socket.on("current-team", () => {
         const teamMembers = room[currentTeamType as keyof typeof room] as User[];
         const isTeamMember = teamMembers.some((member) => member.id == userId);
@@ -131,8 +126,7 @@ export function setupSocketEvents(io: Server): void {
           io.to(`room-${roomId}`).emit('countdown-grading', 60);
           io.to(`room-${room.id}`).emit('online-members', room.members);
           io.to(`room-${room.id}`).emit('status', room.status);
-          io.to(`room-${room.id}`).emit('is-admin', isAdmin);
-          io.to(`room-${room.id}`).emit('current-room', room);
+          socket.emit('is-admin', isAdmin);
           const teamMembers = room[currentTeamType as keyof typeof room] as User[];
           const isTeamMember = teamMembers.some((member) => member.id == userId);
           io.to(`room-${room.id}`).emit('current-team', { currentTeamType, teamMembers, isTeamMember });
