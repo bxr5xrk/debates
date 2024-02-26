@@ -13,7 +13,8 @@ export async function RootLayout(
     const { children } = props;
 
     return (
-        <body className={cl(arvo.className, "grid grid-rows-[auto_1fr_auto] min-h-screen w-screen")}>
+
+        <body className={cl(inter.className, "grid grid-rows-[auto_1fr_auto] min-h-screen w-screen bg-slate-50")}>
             <Header />
             {children}
             <Footer />

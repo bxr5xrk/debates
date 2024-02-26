@@ -4,6 +4,7 @@ import { Page } from "@/shared/layout/page";
 
 import { HomePrivate } from "./ui/home-private/home-private";
 import { HomePublic } from "./ui/home-public/home-public";
+import { useLoggedIn } from "@/shared/hooks";
 
 import { Text } from "@/shared/ui";
 import { Button } from "@/shared/ui";
@@ -62,5 +63,14 @@ export function HomePage(): JSX.Element {
                 </Button>
             </div>
         </Page>
+    const isLoggedIn = useLoggedIn();
+
+    if (!isLoggedIn) {
+        return (
+            <HomePublic />
+        );
+    }
+    return (
+        <HomePrivate />
     );
 }
