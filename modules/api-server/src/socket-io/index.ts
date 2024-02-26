@@ -32,55 +32,59 @@ export function setupSocketEvents(io: Server): void {
       const isTeamMember = teamMembers.some((member) => member.id == userId);
       io.to(`room-${room.id}`).emit('current-team', { currentTeamType, teamMembers, isTeamMember });
 
-      let iterations = 0;
+      let countdownIterations = room.reportsNumber*2;
+      let reportInterval: NodeJS.Timeout | undefined;
+      let totalInterval: NodeJS.Timeout | undefined;
 
       function startReportTimer() {
         let reportTime = room.reportTime * 60;
 
-        const reportInterval = setInterval(async () => {
-          const updatedRoom = await roomService.getRoomById(room.id);
-          if (updatedRoom.status === RoomStatusEnum.ENDED) {
-            clearInterval(reportInterval);
-          } else if (updatedRoom.status !== RoomStatusEnum.PAUSED) {
-            reportTime--;
-            io.to(`room-${room.id}`).emit('countdown-report', reportTime);
+        if (countdownIterations > 0) {
+          reportInterval = setInterval(async () => {
+            const updatedRoom = await roomService.getRoomById(room.id);
+            socket.emit('iter', countdownIterations);
 
-            if (reportTime === 0) {
+            if (updatedRoom.status === RoomStatusEnum.ENDED) {
               clearInterval(reportInterval);
-              iterations++;
-              currentTeamType = currentTeamType === 'proTeam' ? 'conTeam' : 'proTeam';
-              const teamMembers = room[currentTeamType as keyof typeof room] as User[];
-              const isTeamMember = teamMembers.some((member) => member.id == userId);
+            } else if (updatedRoom.status !== RoomStatusEnum.PAUSED) {
+              reportTime--;
+              io.to(`room-${room.id}`).emit('countdown-report', reportTime);
 
-              if (iterations < room.reportsNumber * 2) {
+              if (reportTime === 0) {
+                clearInterval(reportInterval);
+                countdownIterations--;
+                currentTeamType = currentTeamType === 'proTeam' ? 'conTeam' : 'proTeam';
+                const teamMembers = room[currentTeamType as keyof typeof room] as User[];
+                const isTeamMember = teamMembers.some((member) => member.id == userId);
                 io.to(`room-${room.id}`).emit('current-team', { currentTeamType, teamMembers, isTeamMember });
                 startReportTimer();
-              } else {
-                io.to(`room-${room.id}`).emit('current-team', { currentTeamType: null, teamMembers, isTeamMember });
-                startGradingTimer();
-                iterations = 0;
               }
             }
-          }
-        }, 1000);
+          }, 1000);
+        } else {
+          startGradingTimer();
+          countdownIterations = room.reportsNumber*2;
+        }
       }
 
       function startTotalTimer() {
-        let totalTime = room.reportTime * room.reportsNumber * 2 * 60;
+        let totalTime = room.reportTime * countdownIterations * 60;
 
-        const totalInterval = setInterval(async () => {
-          const updatedRoom = await roomService.getRoomById(room.id);
-          if (updatedRoom.status === RoomStatusEnum.ENDED) {
-            clearInterval(totalInterval);
-          } if (updatedRoom.status !== RoomStatusEnum.PAUSED) {
-            totalTime--;
-            io.to(`room-${room.id}`).emit('countdown-total', totalTime);
-
-            if (totalTime === 0) {
+        if (countdownIterations > 0) {
+          totalInterval = setInterval(async () => {
+            const updatedRoom = await roomService.getRoomById(room.id);
+            if (updatedRoom.status === RoomStatusEnum.ENDED) {
               clearInterval(totalInterval);
+            } if (updatedRoom.status !== RoomStatusEnum.PAUSED) {
+              totalTime--;
+              io.to(`room-${room.id}`).emit('countdown-total', totalTime);
+
+              if (totalTime === 0) {
+                clearInterval(totalInterval);
+              }
             }
-          }
-        }, 1000);
+          }, 1000);
+        }
       }
 
       async function startGradingTimer() {
@@ -181,6 +185,32 @@ export function setupSocketEvents(io: Server): void {
         try {
           const room = await roomService.setWinners(userId, roomId, team);
           io.to(`room-${room.id}`).emit('status', room.status);
+        } catch (e) {
+          console.log(e);
+        }
+      });
+
+      socket.on('skip', async () => {
+        try {
+          const teamMembers = room[currentTeamType as keyof typeof room] as User[];
+          const isTeamMember = teamMembers.some((member) => member.id == userId);
+
+          if (isTeamMember || room.owner.id == userId) {
+            countdownIterations--;
+            currentTeamType = currentTeamType === 'proTeam' ? 'conTeam' : 'proTeam';
+  
+            const teamMembers = room[currentTeamType as keyof typeof room] as User[];
+            const isTeamMember = teamMembers.some((member) => member.id == userId);
+            io.to(`room-${room.id}`).emit('current-team', { currentTeamType, teamMembers, isTeamMember });
+            socket.emit('iter', countdownIterations);
+  
+            clearInterval(reportInterval);
+            clearInterval(totalInterval);
+            startTotalTimer();
+            startReportTimer();
+          }else{
+            throw new Error("not your team");
+          }
         } catch (e) {
           console.log(e);
         }
