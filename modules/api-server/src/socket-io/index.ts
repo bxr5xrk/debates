@@ -42,6 +42,7 @@ export function setupSocketEvents(io: Server): void {
         if (countdownIterations > 0) {
           reportInterval = setInterval(async () => {
             const updatedRoom = await roomService.getRoomById(room.id);
+            io.to(`room-${room.id}`).emit('countdown-report', reportTime);
 
             if (updatedRoom.status === RoomStatusEnum.ENDED) {
               clearInterval(reportInterval);
@@ -72,6 +73,8 @@ export function setupSocketEvents(io: Server): void {
         if (countdownIterations > 0) {
           totalInterval = setInterval(async () => {
             const updatedRoom = await roomService.getRoomById(room.id);
+            io.to(`room-${room.id}`).emit('countdown-total', totalTime);
+
             if (updatedRoom.status === RoomStatusEnum.ENDED) {
               clearInterval(totalInterval);
             } if (updatedRoom.status !== RoomStatusEnum.PAUSED) {
@@ -93,6 +96,9 @@ export function setupSocketEvents(io: Server): void {
 
         const gradingInterval = setInterval(async () => {
           const updatedRoom = await roomService.getRoomById(room.id);
+          io.to(`room-${room.id}`).emit('countdown-total', 0);
+          io.to(`room-${room.id}`).emit('countdown-report', 0);
+
           if (updatedRoom.status === RoomStatusEnum.ENDED) {
             clearInterval(gradingInterval);
           } else if (updatedRoom.status !== RoomStatusEnum.PAUSED) {
