@@ -3,7 +3,6 @@ import * as user from "./handlers/user";
 import * as auth from "./handlers/auth";
 import * as friend from "./handlers/friend";
 import * as room from "./handlers/room";
-import * as invite from "./handlers/invite";
 import { authMiddleware } from "./middleware/authorization";
 
 export async function applicationApi(server: FastifyInstance): Promise<void> {
@@ -13,16 +12,15 @@ export async function applicationApi(server: FastifyInstance): Promise<void> {
   server.get("/user/:id", user.getUser);
   server.put("/user", user.updateUser);
 
-  server.get("/invites/:id", invite.getInvite);
-  server.put("/invites/:id/accept", invite.acceptInvite);
-  server.put("/invites/:id/reject", invite.rejectInvite);
-  server.post("/invites/send", invite.sendInvite);
-
   server.get("/friends", friend.getFriends);
   server.get("/friends/:id", friend.getFriend);
   server.delete("/friends/:id", friend.deleteFriend);
-  server.get("/friends/received-invites", invite.getReceivedFriendInvites);
-  server.get("/friends/sent-invites", invite.getSentFriendInvites);
+  server.get("/friends/received-invites", friend.getReceivedInvites);
+  server.get("/friends/sent-invites", friend.getSentInvites);
+  server.get("/friends/invite/:id", friend.getInvite);
+  server.post("/friends/send-invite", friend.sendInvite);
+  server.put("/friends/accept-invite/:id", friend.acceptInvite);
+  server.put("/friends/reject-invite/:id", friend.rejectInvite);
 
   server.post("/rooms", room.createRoom);
   server.put("/rooms/:id/grade", room.gradeRoom);
