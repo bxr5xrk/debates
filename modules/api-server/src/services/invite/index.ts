@@ -5,28 +5,28 @@ import { CreateInvitePayload, UpdateInvitePayload } from "./types";
 import { In } from "typeorm";
 import { friendService } from "services/friend";
 import { userService } from "services/user";
-import { InviteTypeEnum } from "db/enums/invite-type";
 import { Room } from "db/models/room";
 import { roomService } from "services/room";
+import { User } from "db/models/user";
 
 class InviteService {
   private inviteRepository = db.getRepository(Invite);
-  public async getReceivedInvites(userId: number, type: InviteTypeEnum): Promise<Invite[]> {
+  public async getReceivedInvites(userId: number): Promise<Invite[]> {
     return this.inviteRepository.find({
-      where: { receiver: { id: userId }, status: InviteStatusEnum.PENDING, type },
+      where: { receiver: { id: userId }, status: InviteStatusEnum.PENDING },
       relations: ['sender'],
     });
   }
 
-  public async getSentInvites(userId: number, type: InviteTypeEnum): Promise<Invite[]> {
+  public async getSentInvites(userId: number): Promise<Invite[]> {
     return this.inviteRepository.find({
-      where: { sender: { id: userId }, status: InviteStatusEnum.PENDING, type },
+      where: { sender: { id: userId }, status: InviteStatusEnum.PENDING },
       relations: ['receiver'],
     });
   }
 
-  public async createInvite(invite: CreateInvitePayload, gameRoom?: Room): Promise<Invite> {
-    const newInvite = this.inviteRepository.create({...invite, gameRoom});
+  public async createInvite(invite: CreateInvitePayload): Promise<Invite> {
+    const newInvite = this.inviteRepository.create(invite);
     return this.inviteRepository.save(newInvite);
   }
 
@@ -37,7 +37,7 @@ class InviteService {
 
     const invite = await this.inviteRepository.findOne({
       where: {id: inviteId},
-      relations: ['sender', 'receiver', 'gameRoom']
+      relations: ['sender', 'receiver']
     });
 
     if (!invite) {
@@ -47,20 +47,19 @@ class InviteService {
     return invite;
   }
 
-  public async findInviteByUsers(senderId: number, receiverId: number, type: InviteTypeEnum): Promise<Invite | null> {
+  public async findInviteByUsers(senderId: number, receiverId: number): Promise<Invite | null> {
     if (!senderId || !receiverId) {
       throw new Error("Ids are required");
     }
 
     const invite = await this.inviteRepository.findOne({
       where: [
-        { sender: { id: senderId }, receiver: { id: receiverId }, status: In([InviteStatusEnum.PENDING, InviteStatusEnum.ACCEPTED]), type },
-        { sender: { id: receiverId }, receiver: { id: senderId }, status: In([InviteStatusEnum.PENDING, InviteStatusEnum.ACCEPTED]), type },
+        { sender: { id: senderId }, receiver: { id: receiverId }, status: In([InviteStatusEnum.PENDING, InviteStatusEnum.ACCEPTED]) },
+        { sender: { id: receiverId }, receiver: { id: senderId }, status: In([InviteStatusEnum.PENDING, InviteStatusEnum.ACCEPTED]) },
       ],
-      relations: ['sender', 'receiver', 'gameRoom'],
+      relations: ['sender', 'receiver'],
     });
     
-
     return invite;
   }
 
@@ -91,7 +90,7 @@ class InviteService {
     return true; 
   }
 
-  public async acceptInvite(id: number, userId: number): Promise<Invite | Room> {
+  public async acceptInvite(id: number, userId: number): Promise<Invite> {
     const invite = await this.getInvite(id);
 
     if(invite.receiver.id !== userId){
@@ -105,19 +104,12 @@ class InviteService {
     const updatedInvite = await this.updateInvite(invite.id, {
       status: InviteStatusEnum.ACCEPTED
     });
-
-    if (invite.type === InviteTypeEnum.FRIEND){
-      await friendService.createFriend({
-        user: updatedInvite.sender, friend: updatedInvite.receiver, invite: updatedInvite
-      })
-      await friendService.createFriend({
-        user: updatedInvite.receiver, friend: updatedInvite.sender, invite: updatedInvite
-      })
-    }else if (invite.type === InviteTypeEnum.GAME){
-      await roomService.joinRoom(invite.receiver.id, invite.gameRoom.code);
-      return invite.gameRoom;
-    }
-
+    await friendService.createFriend({
+      user: updatedInvite.sender, friend: updatedInvite.receiver, invite: updatedInvite
+    })
+    await friendService.createFriend({
+      user: updatedInvite.receiver, friend: updatedInvite.sender, invite: updatedInvite
+    })
     return updatedInvite;
   }
 
@@ -135,8 +127,8 @@ class InviteService {
     return updatedInvite;
   }
 
-  public async sendFriendInvite(senderId: number, receiverNickname?: string): Promise<Invite>{
-    const sender = await userService.getUserById(senderId);
+  public async sendInvite(senderId: number, receiverNickname: string): Promise<Invite>{
+    const sender = await userService.getUserById(senderId) as User;
 
     if(!sender){
       throw new Error("Sender not found")
@@ -147,40 +139,13 @@ class InviteService {
     if(!receiver){
       throw new Error("Receiver not found")
     }
-    const existingInvite = await this.findInviteByUsers(senderId, receiver.id, InviteTypeEnum.FRIEND)
+    const existingInvite = await this.findInviteByUsers(senderId, receiver.id)
 
     if (existingInvite){
       throw Error("Invite is already exist");
     }
 
-    return await this.createInvite({sender, receiver, type: InviteTypeEnum.FRIEND});
-  }
-
-  public async sendGameInvite(senderId: number, roomId: number, receiverId?: number): Promise<Invite>{
-    const sender = await userService.getUserById(senderId);
-
-    if(!sender){
-      throw new Error("Sender not found")
-    }
-
-    const receiver = await userService.getUserById(receiverId);
-
-    if(!receiver || !receiverId){
-      throw new Error("Receiver not found")
-    }
-    const existingInvite = await this.findInviteByUsers(senderId, receiverId, InviteTypeEnum.GAME)
-
-    if (existingInvite){
-      throw Error("Invite is already exist");
-    }
-
-    const room = await roomService.getRoomById(roomId);
-
-    if(!room){
-      throw new Error("Room not found")
-    }
-
-    return await this.createInvite({sender, receiver, type: InviteTypeEnum.GAME}, room);
+    return await this.createInvite({sender, receiver});
   }
 }
 
