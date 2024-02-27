@@ -6,7 +6,7 @@ import { useAfterFetch } from "@/shared/hooks";
 import { API } from "@/shared/api/api-routes";
 import { MAX_FILE_SIZE } from "@/shared/const";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { ProfilePhoto } from "./ProfilePhoto";
+import { ProfilePhoto } from "@/shared/ui/profile-photo";
 import axios from "axios";
 import { Button } from "@/shared/ui";
 
@@ -51,7 +51,8 @@ export function SignUpByCredentialsForm(): JSX.Element {
             .post("https://httpbin.org/post", { profilePhoto })
             .then((response) => {
                 console.log(response);
-                if (response.status === 200) { // change the response.status to the confirmation response from the server
+                if (response.status === 200) {
+                    // change the response.status to the confirmation response from the server
                     setProfilePhotoVerified(true);
                     setProfilePhoto(profilePhoto);
                 }
@@ -79,7 +80,11 @@ export function SignUpByCredentialsForm(): JSX.Element {
         const res = await trigger(formData);
 
         onAfterFetch(
-            ["Signed up successfully", (res as unknown as { message: string })?.message ?? "Failed to sign up"],
+            [
+                "Signed up successfully",
+                (res as unknown as { message: string })?.message ??
+                    "Failed to sign up",
+            ],
             res.status
         );
     };
@@ -104,7 +109,12 @@ export function SignUpByCredentialsForm(): JSX.Element {
                 className="flex flex-col justify-center items-center w-full gap-5 lg:flex-row lg:justify-end lg:items-start lg:pt-15"
                 onSubmit={handleSubmit(onSubmit)}
             >
-                <ProfilePhoto profilePhoto={profilePhoto} onChange={onUpload} />
+                <div className="lg:mt-24 lg:mr-24">
+                    <ProfilePhoto
+                        profilePhoto={profilePhoto}
+                        setProfilePhoto={setProfilePhoto}
+                    />
+                </div>
 
                 <div className="flex flex-col w-full gap-4 sm:mt-5 sm:w-2/3 md:w-3/5 lg:w-1/2">
                     <h1 className="font-bold text-center text-5xl pb-3 lg:text-left lg:text-6xl lg:pb-6">
@@ -153,7 +163,7 @@ export function SignUpByCredentialsForm(): JSX.Element {
                         className="bg-slate-50 text-slate-700 text-lg w-full p-4 sm:text-xl sm:p-4 lg:w-96 sm:mt-2 lg:mt-5 ease-in-out duration-300"
                         type="submit"
                     >
-                   Create account
+                        Create account
                     </Button>
                 </div>
             </form>

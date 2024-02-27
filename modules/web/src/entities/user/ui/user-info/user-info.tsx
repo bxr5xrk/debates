@@ -10,6 +10,7 @@ import { Button, Input, InputGroup, InputWithLabel } from "@/shared/ui";
 import { useFormInit } from "./hooks/use-form-init";
 import { useDirty } from "./hooks/use-dirty";
 import { getFormData } from "./lib/get-form-data";
+import { ProfilePhoto } from "@/shared/ui/profile-photo";
 
 export function UserInfo(): JSX.Element {
     const { data, register, control, errors, handleSubmit, isMutating, trigger, watch } = useFormInit();
@@ -17,6 +18,8 @@ export function UserInfo(): JSX.Element {
     const [file, setFile] = useState<File | null>(null);
     const [isDirty] = useDirty<UserFormData>(control, watch, isMutating, file);
     const { onAfterFetch } = useAfterFetch({ revalidate: [API.USER.me] });
+
+    const profilePhoto = file ? file : picture ?? null;
 
     async function onSubmit(data: UserFormData): Promise<void> {
         control._disableForm(true);
@@ -33,18 +36,7 @@ export function UserInfo(): JSX.Element {
             <h1>User Info</h1>
             <pre>{JSON.stringify(data, null, 2)}</pre>
             <form noValidate onSubmit={handleSubmit(onSubmit)}>
-                {(file || picture) && <Image
-                    src={file ? URL.createObjectURL(file) : picture ?? ''}
-                    alt="Profile image"
-                    width={200}
-                    height={200}
-                />}
-                <input
-                    type="file"
-                    accept="image/*"
-                    id="file-input"
-                    onChange={(e) => onUpload(e, setFile)}
-                />
+                <ProfilePhoto profilePhoto={profilePhoto} setProfilePhoto={setFile} />
                 <InputWithLabel label="Name" htmlFor="name" errorMessage={errors['name']?.message}>
                     <Input {...register("name", { ...validations.required })} placeholder="Name" id="name" />
                 </InputWithLabel>

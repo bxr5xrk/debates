@@ -1,24 +1,36 @@
 import Image from "next/image";
+import { onUpload } from "@/shared/lib";
 
 interface ProfilePhotoProps {
     // setProfilePhoto: React.Dispatch<React.SetStateAction<File | null>>;
-    profilePhoto: File | null;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    profilePhoto: File | string | null;
+    // onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    setProfilePhoto: (photo: File) => void;
     // checkProfilePhoto: (profilePhoto: File) => void;
     // profilePhotoVerified: boolean;
 }
 
+const profilePhotoUrl = (profilePhoto: File | string | null): string => {
+    if (profilePhoto instanceof File) {
+        return URL.createObjectURL(profilePhoto);
+    } else if (typeof profilePhoto === "string") {
+        return profilePhoto;
+    }
+
+    return `/sign-up-page/profile-photo.svg`;
+};
+
 export function ProfilePhoto({
     profilePhoto,
-    onChange,
+    setProfilePhoto,
 }: // checkProfilePhoto,
 // profilePhotoVerified
 ProfilePhotoProps): JSX.Element {
-    const imageSource = profilePhoto
-        ? URL.createObjectURL(profilePhoto)
-        : `/sign-up-page/profile-photo.svg`;
+    // const imageSource = profilePhoto
+    //     ? URL.createObjectURL(profilePhoto)
+    //     : `/sign-up-page/profile-photo.svg`;
     return (
-        <div className="lg:mt-24 lg:mr-24">
+        <div>
             <label
                 className="flex rounded-full justify-center cursor-pointer items-center w-full"
                 htmlFor="image"
@@ -30,8 +42,7 @@ ProfilePhotoProps): JSX.Element {
 
                     <Image
                         className="w-full h-full object-cover"
-                        // src={profilePhotoVerified ? profilePhoto : `/sign-up-page/profile-photo.svg`}
-                        src={imageSource}
+                        src={profilePhotoUrl(profilePhoto)}
                         alt="profile-photo"
                         fill={true}
                         priority={true}
@@ -44,7 +55,7 @@ ProfilePhotoProps): JSX.Element {
                 name="image"
                 id="image"
                 accept="image/*"
-                onChange={onChange}
+                onChange={(e) => onUpload(e, setProfilePhoto)}
                 // onChange={(e) => {
                 //     if (e.target.files) {
                 //         checkProfilePhoto(e.target.files[0]);
