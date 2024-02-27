@@ -6,7 +6,7 @@ import { InviteAcceptData, InviteAcceptPayload } from "../types";
 
 export function useInviteAccept<D = InviteAcceptData, P = void>(payload: InviteAcceptPayload, options?: MutationOptions<D, P>): MutationResponse<D, P> {
     return useSWRMutation<AxiosResponse<D>, AxiosError, string, P, D>(
-        `/invites/${payload}/accept`,
+        `/invites/accept-invite/${payload}`,
         mutationFetcher({ method: "PUT" }),
         options
     );

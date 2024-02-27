@@ -11,7 +11,7 @@ const USER = {
 
 const FRIENDS_ROUTES = {
     friends: "/friends",
-    inviteSend: "/invite-send",
+    inviteSend: "/friends/send-invite",
     invites: '/friends/received-invites',
     sentInvites: '/friends/sent-invites'
 };

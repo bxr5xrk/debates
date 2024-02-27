@@ -1,6 +1,5 @@
 "use client";
 
-import { InviteTypeEnum } from "@/features/friends";
 import { useInviteSend } from "../../api";
 import { useRef } from "react";
 import { useAfterFetch } from "@/shared/hooks";
@@ -20,7 +19,7 @@ export function SendInviteForm(): JSX.Element {
 
         const nickname = nicknameRef.current.value;
 
-        const res = await trigger({ nickname, type: InviteTypeEnum.FRIEND });
+        const res = await trigger({ nickname });
         onAfterFetch(["Invite sent successfully", "Failed to send invite"], res.status);
         nicknameRef.current.value = "";
     }
