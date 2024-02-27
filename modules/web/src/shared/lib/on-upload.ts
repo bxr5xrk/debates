@@ -1,4 +1,4 @@
-import { maxFileSize } from "@/shared/const";
+import { MAX_FILE_SIZE } from "@/shared/const";
 import toast from "react-hot-toast";
 
 export function onUpload(e: React.ChangeEvent<HTMLInputElement>, setFile: (file: File) => void): void {
@@ -8,7 +8,7 @@ export function onUpload(e: React.ChangeEvent<HTMLInputElement>, setFile: (file:
 
     const file = e.target.files[0];
 
-    if (file.size > maxFileSize) {
+    if (file.size > MAX_FILE_SIZE) {
         toast.error("File size is too big");
 
         return;

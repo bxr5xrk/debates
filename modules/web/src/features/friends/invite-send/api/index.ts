@@ -6,7 +6,7 @@ import { InviteSendData, InviteSendPayload } from "../types";
 
 export function useInviteSend<D = InviteSendData, P = InviteSendPayload>(options?: MutationOptions<D, P>): MutationResponse<D, P> {
     return useSWRMutation<AxiosResponse<D>, AxiosError, string, P, D>(
-        '/invites/send',
+        '/friends/send-invite',
         mutationFetcher({ method: "POST" }),
         options
     );
