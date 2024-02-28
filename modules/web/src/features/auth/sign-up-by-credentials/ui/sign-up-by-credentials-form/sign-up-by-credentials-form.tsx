@@ -7,6 +7,7 @@ import { API } from "@/shared/api/api-routes";
 import { MAX_FILE_SIZE } from "@/shared/const";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { ProfilePhoto } from "@/shared/ui/profile-photo";
+import { Text } from "@/shared/ui/text";
 import axios from "axios";
 import { Button } from "@/shared/ui";
 

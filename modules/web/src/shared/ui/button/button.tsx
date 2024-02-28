@@ -8,11 +8,11 @@ interface ButtonProps extends React.DetailedHTMLProps<React.ButtonHTMLAttributes
 
 export function Button(props: PropsWithChildren<ButtonProps>): JSX.Element {
     const { children, className, isLoading, disabled, ...rest } = props;
-    const isDisabled = disabled || isLoading;
+    // const isDisabled = disabled || isLoading;
 
     return (
-        <button disabled={isDisabled} {...rest} className={cl("base-button capitalize font-semibold", className)}>
-            {isDisabled ? <Spinner /> : children}
+        <button disabled={disabled} {...rest} className={cl("base-button capitalize font-semibold ", className)}>
+            {isLoading ? <Spinner /> : children}
         </button>
     );
 }
