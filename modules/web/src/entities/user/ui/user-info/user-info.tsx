@@ -23,6 +23,16 @@ export function UserInfo(): JSX.Element {
         trigger,
         watch,
     } = useFormInit();
+    const {
+        data,
+        register,
+        control,
+        errors,
+        handleSubmit,
+        isMutating,
+        trigger,
+        watch,
+    } = useFormInit();
     const picture = data?.data.picture;
     const [file, setFile] = useState<File | null>(null);
     const [isDirty] = useDirty<UserFormData>(control, watch, isMutating, file);
@@ -35,6 +45,13 @@ export function UserInfo(): JSX.Element {
         const formData = getFormData(data, file);
         const res = await trigger(formData);
 
+        onAfterFetch(
+            [
+                "User updates successfully",
+                res?.data.message ?? "Something went wrong",
+            ],
+            res.status
+        );
         onAfterFetch(
             [
                 "User updates successfully",
