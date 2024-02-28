@@ -45,19 +45,6 @@ export function SignUpByCredentialsForm(): JSX.Element {
         },
     });
 
-    function checkProfilePhoto(profilePhoto: File): void {
-        axios
-            .post("https://httpbin.org/post", { profilePhoto })
-            .then((response) => {
-                console.log(response);
-                if (response.status === 200) {
-                    // change the response.status to the confirmation response from the server
-                    setProfilePhotoVerified(true);
-                    setProfilePhoto(profilePhoto);
-                }
-            });
-    }
-
     const onSubmit: SubmitHandler<RegistrationData> = async (data) => {
         const {
             name,
