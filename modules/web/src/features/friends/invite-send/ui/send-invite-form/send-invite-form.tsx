@@ -8,7 +8,7 @@ import { Button, Text } from "@/shared/ui";
 import { useWhoami } from "@/features/auth";
 
 interface SendInviteFormProps {
-    setShowInvites: React.Dispatch<React.SetStateAction<boolean>>;
+    setShowInvites: (i: boolean) => void;
     showInvites: boolean;
 }
 
@@ -28,6 +28,8 @@ export function SendInviteForm({
         e: React.FormEvent<HTMLFormElement>
     ): Promise<void> {
         e.preventDefault();
+
+        setError("");
 
         if (!nicknameRef.current) {
             return;
