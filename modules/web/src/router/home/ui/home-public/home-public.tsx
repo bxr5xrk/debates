@@ -19,6 +19,7 @@ export function HomePublic(): JSX.Element {
                 <Text
                     Tag="h1"
                     classes={[
+                        "text-6xl",
                         "sm:text-7xl",
                         "md:text-8xl",
                         "lg:text-9xl",
@@ -28,10 +29,11 @@ export function HomePublic(): JSX.Element {
                 >
                     DEBATE NIGHT
                 </Text>
-                <Link href="/sign-in"
-                    className="max-w-80 w-fit font-bold text-5xl 
+                <Link
+                    href="/sign-in"
+                    className="max-w-80 w-full flex justify-center font-bold text-5xl base-button capitalize
             mx-auto mt-11 p-2 transition duration-1000 after:hover:bg-blackLight
-            after:content-[''] after:transition"
+            after:content-[''] after:transition hover:text-white"
                 >
                     Play
                 </Link>

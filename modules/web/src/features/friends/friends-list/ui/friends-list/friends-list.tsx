@@ -1,23 +1,26 @@
 "use client";
 
 import { useFriends } from "@/entities/friend";
-import { useWhoami } from "@/features/auth";
 import { FriendRemoveAction } from "@/features/friends/friends-remove";
+import { Text } from "@/shared/ui";
+import ProfileImg from "@/shared/ui/profileImg/profileImg";
 
 export function FriendsList(): JSX.Element {
     const { data } = useFriends();
-    const { data: whoami } = useWhoami();
     const friends = data?.data;
+    console.log(friends);
 
     return (
-        <div className="border border-slate-300 p-10 rounded-md">
-            <p>my nickname: @{whoami?.data.nickname}</p>
-            <ul className="grid grid-cols-3 gap-2">
+        <div className="bp-10 w-3/5">
+            <Text classes={["text-2xl"]}>Your friends</Text>
+            <ul className="">
                 {friends?.map((friend) => (
-                    <li key={friend.id} className="bg-gray-100 p-4 rounded-lg">
-                        <p>name: {friend.friend.name}</p>
-                        <p>nickname: @{friend.friend.nickname}</p>
-                        <p>email: {friend.friend.email}</p>
+                    <li
+                        key={friend.id}
+                        className="bg-gray-100 p-4 rounded-lg flex gap-[20px] items-center"
+                    >
+                        <ProfileImg src={friend.friend.picture} />
+                        <p>{friend.friend.name}</p>
                         <FriendRemoveAction friendId={friend.id} />
                     </li>
                 ))}

@@ -15,6 +15,32 @@ const config: Config = {
             },
         },
         extend: {
+            backgroundColor: {
+                white: "#f8fafc",
+                whiteLight: "#e2e8f0",
+                whiteDark: "#cbd5e1",
+                gray: "#64748b",
+                grayDark: "#334155",
+                blackLight: "#1E3A8A",
+                blackDark: "#020617",
+                green: "#65A30D",
+                red: "#EF4444",
+                darkRed: "#991B1B",
+                blue: "#3B82F6",
+            },
+            color: {
+                white: "#f8fafc",
+                whiteLight: "#e2e8f0",
+                whiteDark: "#cbd5e1",
+                gray: "#64748b",
+                grayDark: "#334155",
+                blackLight: "#1E3A8A",
+                blackDark: "#020617",
+                green: "#65A30D",
+                red: "#EF4444",
+                darkRed: "#991B1B",
+                blue: "#3B82F6",
+            },
             colors: {
                 border: "hsl(var(--border))",
                 input: "hsl(var(--input))",
@@ -66,8 +92,6 @@ const config: Config = {
             },
         },
     },
-    plugins: [
-        require("tailwindcss-animate"),
-    ]
+    plugins: [require("tailwindcss-animate")],
 };
 export default config;

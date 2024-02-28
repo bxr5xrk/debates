@@ -1,19 +1,30 @@
 import { useSentInvites } from "../../api";
+import ProfileImg from "@/shared/ui/profileImg/profileImg";
+import { useWhoami } from "@/features/auth";
+import { Text } from "@/shared/ui";
 
 export function SentInvitesList(): JSX.Element {
     const { data } = useSentInvites();
     const invites = data?.data;
+    const { data: whoami } = useWhoami();
+    console.log(invites?.[0]);
+    console.log(whoami);
 
     return (
-        <div className="border border-slate-300 p-10 rounded-md">
-            <p>sent invites list</p>
-            <ul className="grid grid-cols-3 gap-4">
+        <div className="w-2/5">
+            <Text classes={["text-2xl"]}>Sent Invitions</Text>
+            <ul className="flex-col gap-1">
                 {invites?.map((invite) => (
-                    <li key={invite.id} className="bg-gray-100 p-4 rounded-lg">
-                        <p>from</p>
-                        <p>{invite.receiver.name}</p>
-                        <p>{invite.receiver.nickname}</p>
-                        <p>{invite.receiver.email}</p>
+                    <li
+                        key={invite.id}
+                        className="flex gap-[30px] items-center p-3"
+                    >
+                        <ProfileImg
+                            src={invite.receiver.picture}
+                        />
+                        <p className="h-min font-bold">
+                            {invite.receiver.nickname}
+                        </p>
                     </li>
                 ))}
             </ul>
