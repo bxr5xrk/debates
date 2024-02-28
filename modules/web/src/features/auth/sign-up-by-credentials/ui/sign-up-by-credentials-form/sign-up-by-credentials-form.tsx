@@ -34,8 +34,6 @@ export function SignUpByCredentialsForm(): JSX.Element {
     const {
         register,
         handleSubmit,
-        reset,
-        formState: { isSubmitSuccessful },
     } = useForm<RegistrationData>({
         defaultValues: {
             name: "",
