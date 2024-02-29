@@ -23,7 +23,7 @@ export function Button(props: PropsWithChildren<ButtonProps>): JSX.Element {
                 className
             )}
         >
-            {isDisabled ? <Spinner /> : children}
+            {isLoading ? <Spinner /> : children}
         </button>
     );
 }
