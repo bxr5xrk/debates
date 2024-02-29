@@ -1,22 +1,36 @@
 import { API } from "@/shared/api/api-routes";
 import { useAfterFetch } from "@/shared/hooks";
 import { useInviteReject } from "../../api";
+import { Button } from "@/shared/ui";
 
 interface RejectInviteActionProps {
-  inviteId: number;
+    inviteId: number;
 }
 
-export function RejectInviteAction(props: RejectInviteActionProps): JSX.Element {
+export function RejectInviteAction(
+    props: RejectInviteActionProps
+): JSX.Element {
     const { inviteId } = props;
     const { trigger, isMutating } = useInviteReject(inviteId);
-    const { onAfterFetch } = useAfterFetch({ revalidate: [API.FRIENDS_ROUTES.invites] });
+    const { onAfterFetch } = useAfterFetch({
+        revalidate: [API.FRIENDS_ROUTES.invites],
+    });
 
     async function onAccept(): Promise<void> {
         const res = await trigger();
-        onAfterFetch(["Invite rejected successfully", "Failed to send invite"], res.status);
+        onAfterFetch(
+            ["Invite rejected successfully", "Failed to send invite"],
+            res.status
+        );
     }
 
     return (
-        <button onClick={onAccept} disabled={isMutating}>{isMutating ? "Loading..." : "Reject"}</button>
+        <Button
+            className="after:bg-darkRed hover:text-white"
+            onClick={onAccept}
+            disabled={isMutating}
+        >
+            {isMutating ? "Loading..." : "Reject"}
+        </Button>
     );
 }

@@ -7,10 +7,12 @@ import { Page } from "@/shared/layout/page";
 
 export function FriendsPage(): JSX.Element {
     return (
-        <Page protect>
-            <FriendsList />
+        <Page protect className="relative">
             <InvitesList />
-            <SentInvitesList />
+            <div className="flex">
+                <SentInvitesList />
+                <FriendsList />
+            </div>
         </Page>
     );
 }
