@@ -5,3 +5,8 @@ export * from './get-room';
 export * from './is-live';
 export * from './check-is-room-valid';
 export * from './grade-room';
+export * from './get-public-rooms';
+export * from './publish-room';
+export * from './unpublish-room';
+export * from './like-public-room';
+export * from './unlike-public-room';

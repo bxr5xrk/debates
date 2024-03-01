@@ -8,9 +8,12 @@ import {
   JoinColumn,
   ManyToMany,
   JoinTable,
+  RelationCount,
+  OneToMany,
 } from 'typeorm';
 import { User } from './user';
 import { RoomStatusEnum } from 'db/enums/room-status';
+import { Like } from './like';
 
 @Entity()
 export class Room {
@@ -55,6 +58,12 @@ export class Room {
 
   @Column({type: 'boolean', default: true})
   notGraded: boolean;
+
+  @Column({type: 'boolean', default: false})
+  isPublic: boolean;
+
+  @OneToMany(() => Like, (like) => like.room)
+  likes: Like[];
 
   @CreateDateColumn()
   createdAt: Date;
