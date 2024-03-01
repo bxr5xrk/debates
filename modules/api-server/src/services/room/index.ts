@@ -1,6 +1,6 @@
 import { db } from "connectors/db";
 import { Room } from "db/models/room";
-import { CreateRoomPayload } from "./types";
+import { CreateRoomPayload, Pagination } from "./types";
 import { RoomStatusEnum } from "db/enums/room-status";
 import { In } from "typeorm";
 import { userService } from "services/user";
@@ -9,6 +9,7 @@ import { friendService } from "services/friend";
 import { TeamsEnum } from "db/enums/teams";
 import { OrderDirectionEnum } from "db/enums/order-direction";
 import { likeService } from "services/like";
+import { Like } from "db/models/like";
 
 class RoomService {
   private roomRepository = db.getRepository(Room);
@@ -289,16 +290,26 @@ class RoomService {
     return await this.roomRepository.save(room);
   }
 
-  public async getPublicRooms(userId: number, orderDirection?: OrderDirectionEnum): Promise<Room[]> {
-    const rooms = await this.roomRepository 
+  public async getPublicRooms(userId: number, limit: number = 10, page: number = 1, orderDirection?: OrderDirectionEnum): Promise<Pagination> {
+    const [rooms, total] = await this.roomRepository 
     .createQueryBuilder('room')
     .loadRelationCountAndMap('room.likesCount', 'room.likes')
     .where('room.isPublic = :isPublic', { isPublic: true })
     .andWhere('room.status = :status', { status: RoomStatusEnum.ENDED })
+    .leftJoin('room.likes', 'likes')
+    .addSelect((subQuery) => {
+      return subQuery
+      .select('COUNT(likes.id)', 'count')
+      .from('like', 'likes')
+      .where('likes.roomId = room.id');
+    }, 'count')
     .groupBy('room.id') 
-    .orderBy('COUNT(likes.id)', orderDirection || OrderDirectionEnum.DESC)
-    .leftJoin('room.likes', 'likes') 
-    .getMany(); 
+    .orderBy('count', orderDirection || OrderDirectionEnum.DESC)
+    .skip((page - 1) * limit)
+    .take(limit)
+    .getManyAndCount(); 
+
+    const totalPages = Math.ceil(total / limit);
 
     const roomsWithIsLikedByCurrentUser: Room[] = await Promise.all(
       rooms.map(async (room) => {
@@ -310,7 +321,11 @@ class RoomService {
       })
     );
 
-    return roomsWithIsLikedByCurrentUser;
+    return {
+      data: roomsWithIsLikedByCurrentUser,
+      pagesCount: totalPages,
+      currentPage: page,
+    };
   }
 
   public async publishRoom(roomId: number, userId: number): Promise<Room> {

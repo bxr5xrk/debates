@@ -29,7 +29,7 @@ export async function applicationApi(server: FastifyInstance): Promise<void> {
   server.get("/rooms/:id", room.getRoom);
   server.get("/rooms/is-live", room.isLive);
   server.get("/rooms/check-is-valid/:id", room.checkRoom);
-  server.get("/rooms/public/:order?", room.getPublicRooms);
+  server.get("/rooms/public", room.getPublicRooms);
   server.put("/rooms/:id/publish", room.publishRoom);
   server.put("/rooms/:id/unpublish", room.unpublishRoom);
   server.put("/rooms/:id/like", room.likeRoom);

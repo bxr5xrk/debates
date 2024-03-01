@@ -8,7 +8,6 @@ import {
   JoinColumn,
   ManyToMany,
   JoinTable,
-  RelationCount,
   OneToMany,
 } from 'typeorm';
 import { User } from './user';
