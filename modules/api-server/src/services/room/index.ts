@@ -1,12 +1,15 @@
 import { db } from "connectors/db";
 import { Room } from "db/models/room";
-import { CreateRoomPayload } from "./types";
+import { CreateRoomPayload, Pagination } from "./types";
 import { RoomStatusEnum } from "db/enums/room-status";
 import { In } from "typeorm";
 import { userService } from "services/user";
 import { User } from "db/models/user";
 import { friendService } from "services/friend";
 import { TeamsEnum } from "db/enums/teams";
+import { OrderDirectionEnum } from "db/enums/order-direction";
+import { likeService } from "services/like";
+import { Like } from "db/models/like";
 
 class RoomService {
   private roomRepository = db.getRepository(Room);
@@ -283,6 +286,84 @@ class RoomService {
     room.notGraded = false;
     room.winners = team === TeamsEnum.PRO_TEAM ? room.proTeam : room.conTeam;
     room.status = RoomStatusEnum.ENDED;
+
+    return await this.roomRepository.save(room);
+  }
+
+  public async getPublicRooms(userId: number, limit: number = 10, page: number = 1, orderDirection?: OrderDirectionEnum): Promise<Pagination> {
+    const [rooms, total] = await this.roomRepository 
+    .createQueryBuilder('room')
+    .loadRelationCountAndMap('room.likesCount', 'room.likes')
+    .where('room.isPublic = :isPublic', { isPublic: true })
+    .andWhere('room.status = :status', { status: RoomStatusEnum.ENDED })
+    .leftJoin('room.likes', 'likes')
+    .addSelect((subQuery) => {
+      return subQuery
+      .select('COUNT(likes.id)', 'count')
+      .from('like', 'likes')
+      .where('likes.roomId = room.id');
+    }, 'count')
+    .groupBy('room.id') 
+    .orderBy('count', orderDirection || OrderDirectionEnum.DESC)
+    .skip((page - 1) * limit)
+    .take(limit)
+    .getManyAndCount(); 
+
+    const totalPages = Math.ceil(total / limit);
+
+    const roomsWithIsLikedByCurrentUser: Room[] = await Promise.all(
+      rooms.map(async (room) => {
+          const isLiked = await likeService.findLike(room.id, userId);
+          return {
+              ...room,
+              isLikedByCurrentUser: isLiked ? true : false,
+          };
+      })
+    );
+
+    return {
+      data: roomsWithIsLikedByCurrentUser,
+      pagesCount: totalPages,
+      currentPage: page,
+    };
+  }
+
+  public async publishRoom(roomId: number, userId: number): Promise<Room> {
+    if (!userId || !roomId) {
+      throw new Error("Ids are required");
+    }
+
+    const room = await this.getRoomById(roomId);
+
+    if (room.owner.id != userId) {
+      throw new Error("User is not a owner");
+    }
+
+    if (room.isPublic) {
+      throw new Error("Room is already public");
+    }
+
+    room.isPublic = true;
+
+    return await this.roomRepository.save(room);
+  }
+
+  public async unpublishRoom(roomId: number, userId: number): Promise<Room> {
+    if (!userId || !roomId) {
+      throw new Error("Ids are required");
+    }
+
+    const room = await this.getRoomById(roomId);
+
+    if (room.owner.id != userId) {
+      throw new Error("User is not a owner");
+    }
+
+    if (!room.isPublic) {
+      throw new Error("Room is already non-public");
+    }
+
+    room.isPublic = false;
 
     return await this.roomRepository.save(room);
   }
