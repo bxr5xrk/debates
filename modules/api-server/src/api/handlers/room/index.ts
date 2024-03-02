@@ -10,3 +10,5 @@ export * from './publish-room';
 export * from './unpublish-room';
 export * from './like-public-room';
 export * from './unlike-public-room';
+export * from './get-own-charts';
+export * from './get-compared-wins-chart';

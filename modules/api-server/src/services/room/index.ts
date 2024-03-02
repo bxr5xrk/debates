@@ -1,6 +1,6 @@
 import { db } from "connectors/db";
 import { Room } from "db/models/room";
-import { CreateRoomPayload, Pagination } from "./types";
+import { CreateRoomPayload, Pagination, ParticipationsChartData, UserAndFriendWinsChartData, WinsAndLossesChartData } from "./types";
 import { RoomStatusEnum } from "db/enums/room-status";
 import { In } from "typeorm";
 import { userService } from "services/user";
@@ -9,7 +9,7 @@ import { friendService } from "services/friend";
 import { TeamsEnum } from "db/enums/teams";
 import { OrderDirectionEnum } from "db/enums/order-direction";
 import { likeService } from "services/like";
-import { Like } from "db/models/like";
+import { compareByYearAndMonth, formatDate } from "../../lib/helpers";
 
 class RoomService {
   private roomRepository = db.getRepository(Room);
@@ -366,6 +366,116 @@ class RoomService {
     room.isPublic = false;
 
     return await this.roomRepository.save(room);
+  }
+
+  public async getWinsAndLossesChartData(userId: number): Promise <WinsAndLossesChartData[]> {
+    if (!userId) {
+      throw new Error("UserId is required");
+    }
+
+    const history = await this.getUserEndedRooms(userId);
+    const chartData: WinsAndLossesChartData[] = [];
+    
+    history.forEach((debate) => {
+      const monthYear = formatDate(debate.createdAt);
+      let chartEntry = chartData.find((entry) => entry.date === monthYear);
+      const conTeam = debate.conTeam.some((user) => user.id === userId);
+      const proTeam = debate.proTeam.some((user) => user.id === userId);
+
+      if (conTeam || proTeam) {
+        if (!chartEntry) {
+          chartEntry = { date: monthYear, wins: 0, losses: 0 };
+          chartData.push(chartEntry);
+        }
+
+        if (debate.winners.some((winner) => winner.id === userId)) {
+          chartEntry.wins++;
+        } else {
+          chartEntry.losses++;
+        }
+      }
+    });
+
+    chartData.sort(compareByYearAndMonth);
+    const trimmedChartData = chartData.slice(-12);
+
+    return trimmedChartData;
+  }
+
+  public async getUserAndFriendWinsChartData(userId: number, friendNickname: string): Promise<UserAndFriendWinsChartData[]> {
+    if (!userId || !friendNickname) {
+      throw new Error("UserId and FriendNickname are required");
+    }
+  
+    const myHistory = await this.getUserEndedRooms(userId);
+    const friend = await userService.getUserByNickname(friendNickname)
+    
+    if (!friend) {
+      throw new Error("Friend not found")
+    }
+
+    const friendHistory = await this.getUserEndedRooms(friend.id);
+    const chartData: UserAndFriendWinsChartData[] = [];
+  
+    myHistory.forEach((debate) => {
+      const monthYear = formatDate(debate.createdAt);
+      let chartEntry = chartData.find((entry) => entry.date === monthYear);
+      const isMyWin = debate.winners.some((winner) => winner.id === userId);
+  
+      if (isMyWin) {
+        if (!chartEntry) {
+          chartEntry = { date: monthYear, userWins: 0, friendWins: 0 };
+          chartData.push(chartEntry);
+        }
+
+      chartEntry.userWins++;
+      }
+    });
+  
+    friendHistory.forEach((debate) => {
+      const monthYear = formatDate(debate.createdAt);
+      let chartEntry = chartData.find((entry) => entry.date === monthYear);
+      const isFriendWin = debate.winners.some((winner) => winner.id === friend.id);
+  
+      if (isFriendWin) {
+        if (!chartEntry) {
+          chartEntry = { date: monthYear, userWins: 0, friendWins: 0 };
+          chartData.push(chartEntry);
+        }
+  
+        chartEntry.friendWins++;
+      }
+    });
+  
+    chartData.sort(compareByYearAndMonth);
+    const trimmedChartData = chartData.slice(-12);
+
+    return trimmedChartData;
+  }
+
+  public async getParticipationsChartData(userId: number): Promise <ParticipationsChartData[]> {
+    if (!userId) {
+      throw new Error("UserId is required");
+    }
+
+    const history = await this.getUserEndedRooms(userId);
+    const chartData: ParticipationsChartData[] = [];
+    
+    history.forEach((debate) => {
+      const monthYear = formatDate(debate.createdAt);
+      let chartEntry = chartData.find((entry) => entry.date === monthYear);
+        if (!chartEntry) {
+          chartEntry = { date: monthYear, participationsNumber: 0 };
+          chartData.push(chartEntry);
+        }
+
+      chartEntry.participationsNumber++;
+    });
+
+    chartData.sort(compareByYearAndMonth);
+    const trimmedChartData = chartData.slice(-12);
+
+    return trimmedChartData;
   }
 }
 

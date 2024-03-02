@@ -34,6 +34,8 @@ export async function applicationApi(server: FastifyInstance): Promise<void> {
   server.put("/rooms/:id/unpublish", room.unpublishRoom);
   server.put("/rooms/:id/like", room.likeRoom);
   server.put("/rooms/:id/unlike", room.unlikeRoom);
+  server.get("/rooms/own-charts", room.getOwnCharts);
+  server.get("/rooms/compared-wins-chart/:nickname", room.getComparedWinsChart);
 }
 
 export async function authApi(server: FastifyInstance): Promise<void> {

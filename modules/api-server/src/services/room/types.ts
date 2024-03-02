@@ -14,3 +14,20 @@ export interface Pagination {
   pagesCount: number,
   currentPage: number
 }
+
+export interface WinsAndLossesChartData {
+  date: string,
+  wins: number,
+  losses: number
+}
+
+export interface UserAndFriendWinsChartData {
+  date: string,
+  userWins: number,
+  friendWins: number
+}
+
+export interface ParticipationsChartData {
+  date: string,
+  participationsNumber: number,
+}
