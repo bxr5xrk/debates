@@ -1,5 +1,6 @@
 import { Friend } from "db/models/friend";
 import { Invite } from "db/models/invite";
+import { Like } from "db/models/like";
 import { Room } from "db/models/room";
 import { User } from "db/models/user";
 import { ENV } from "platform/env";
@@ -14,5 +15,5 @@ export const db = new DataSource({
   database: ENV.PG.DATABASE,
   synchronize: true,
   logging: true,
-  entities: [User, Friend, Invite, Room],
+  entities: [User, Friend, Invite, Room, Like],
 });
