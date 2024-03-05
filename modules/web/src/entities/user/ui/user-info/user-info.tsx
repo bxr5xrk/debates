@@ -12,7 +12,7 @@ import { useDirty } from "./hooks/use-dirty";
 import { getFormData } from "./lib/get-form-data";
 import { ProfilePhoto } from "@/shared/ui/profile-photo";
 
-export function UserInfo(): JSX.Element {
+export function AccountSettings(): JSX.Element {
     const {
         data,
         register,

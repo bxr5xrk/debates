@@ -6,12 +6,20 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
     {
+        href: '/edit-profile',
+        label: 'Edit profile',
+    },
+    {
         href: '/',
         label: 'Dashboard',
     },
     {
         href: '/friends',
         label: 'Friends',
+    },
+    {
+        href: '/games',
+        label: 'Games',
     },
     {
         href: '/history',

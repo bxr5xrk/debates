@@ -21,6 +21,8 @@ const ROOM_ROUTES = {
     isRoomValid: "/rooms/check-is-valid",
     room: "/rooms",
     roomHistory: "/rooms/own-history",
+    publicRooms: "/rooms/public",
+    
 };
 
 export const API = {

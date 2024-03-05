@@ -1,7 +1,7 @@
 "use client";
 
 import { useWhoami } from "@/features/auth";
-import { useRooms, usePublicRooms } from "../..";
+import { useRooms, usePublicRooms } from "..";
 import { cl } from "@/shared/lib/cl";
 import { GradeRoomAction } from "@/features/room";
 import { formatTime } from "@/shared/lib";
@@ -12,12 +12,11 @@ import { PublishRoomAction } from "./publish-room";
 import { ProfileImg } from "@/shared/ui/profileImg";
 
 export function RoomList({ children }: any): JSX.Element {
-    const { data: rooms } = useRooms();
-    const { data: publicRooms } = usePublicRooms();
-    console.log("History:");
+    // const { data: rooms } = useRooms();
+    const { data: rooms } = usePublicRooms();
     console.log(rooms);
-    console.log("Public rooms:");
-    console.log(publicRooms);
+    console.log("data");
+    // console.log(publicRooms);
     const { data } = useWhoami();
     const userId = data?.data.id;
     const { mutate } = useSWRConfig();
