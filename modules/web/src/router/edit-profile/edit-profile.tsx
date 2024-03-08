@@ -2,11 +2,14 @@
 
 import { AccountSettings } from "@/entities/user";
 import { Page } from "@/shared/layout/page";
+import { ComponentContainer } from "@/shared/ui";
 
 export function EditProfilePage(): JSX.Element {
     return (
         <Page>
-            <AccountSettings />
+            <ComponentContainer className="flex justify-center items-center">
+                <AccountSettings />
+            </ComponentContainer>
         </Page>
     );
 }

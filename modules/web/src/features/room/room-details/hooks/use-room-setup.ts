@@ -1,4 +1,5 @@
-import { Room, useRoom } from "@/entities/room";
+import { Room } from "@/shared/types";
+import { useRoom } from "@/entities/games";
 import { useSocket } from "./use-socket";
 import { Socket } from "socket.io-client";
 

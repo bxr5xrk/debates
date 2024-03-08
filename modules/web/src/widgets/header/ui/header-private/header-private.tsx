@@ -21,10 +21,6 @@ const navItems = [
         href: '/games',
         label: 'Games',
     },
-    {
-        href: '/history',
-        label: 'History',
-    }
 ];
 
 export function HeaderPrivate(): JSX.Element {

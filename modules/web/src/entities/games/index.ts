@@ -1,3 +1,3 @@
-export * from './types';
 export * from './api';
-export * from './ui';
+export * from './ui/history-list';
+export * from './ui/public-rooms-list';

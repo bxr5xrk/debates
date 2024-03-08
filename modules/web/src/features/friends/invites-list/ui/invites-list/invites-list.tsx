@@ -12,6 +12,7 @@ export function InvitesList(): JSX.Element {
     const { data } = useInvites();
     const invites = data?.data;
     const [showInvites, setShowInvites] = useState(false);
+    
 
    
 

@@ -3,7 +3,7 @@ import { useCreateRoom } from "../../../../../api";
 import { CreateRoomFormData, CreateRoomPayload } from "../../../../../types";
 import { TriggerWithArgs } from "swr/mutation";
 import { AxiosError, AxiosResponse } from "axios";
-import { Room } from "@/entities/room";
+import { Room } from "@/shared/types";
 import { BaseResponse } from "@/shared/types";
 import { conTeamIdsRules, proTeamIdsRules } from "../../../const";
 

@@ -1,4 +1,4 @@
-import { RoomStatusEnum } from "@/entities/room";
+import { RoomStatusEnum } from "@/shared/types";
 import { User } from "@/entities/user";
 import { useEffect } from "react";
 import { Socket } from "socket.io-client";
@@ -55,7 +55,7 @@ export function useEventListener(props: useEventListenerProps): void {
 
         socket.on('status', (data) => {
             if (data === RoomStatusEnum.ENDED) {
-                push("/history");
+                push("/games");
             }
 
             setStatus(data);
