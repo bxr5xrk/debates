@@ -18,14 +18,8 @@ export function PublicRoomsList({ sortOrder }: PublicRoomsListProps): JSX.Elemen
     const { data: rooms } = usePublicRooms(currentPage, sortOrder);
     const { data } = useWhoami();
     const userId = data?.data.id;
-    const { mutate } = useSWRConfig();
     const pagesCount = rooms?.data.pagesCount || 1;
-    console.log("rendered");
-    console.log(rooms);
 
-    useEffect(() => {
-        mutate(API.ROOM_ROUTES.onAir);
-    }, []);
 
     return (
         <div>

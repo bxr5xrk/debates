@@ -29,6 +29,7 @@ export function UnlikeRoomAction(
             className="after:bg-red hover:text-white p-2"
             onClick={onAccept}
             disabled={isMutating}
+            isLoading={isMutating}
         >
             {isMutating ? "Loading..." : "Unlike"}
         </Button>

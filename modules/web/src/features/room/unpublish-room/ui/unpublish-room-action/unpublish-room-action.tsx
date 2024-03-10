@@ -29,6 +29,7 @@ export function UnpublishRoomAction(
             className="after:bg-red hover:text-white p-2"
             onClick={onAccept}
             disabled={isMutating}
+            isLoading={isMutating}
         >
             {isMutating ? "Loading..." : "Unpublish"}
         </Button>

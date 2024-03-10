@@ -29,6 +29,7 @@ export function LikeRoomAction(
             className="after:bg-green hover:text-white p-2"
             onClick={onAccept}
             disabled={isMutating}
+            isLoading={isMutating}
         >
             {isMutating ? "Loading..." : "Like"}
         </Button>
