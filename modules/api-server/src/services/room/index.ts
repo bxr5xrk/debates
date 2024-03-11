@@ -294,6 +294,7 @@ class RoomService {
     const [rooms, total] = await this.roomRepository 
     .createQueryBuilder('room')
     .loadRelationCountAndMap('room.likesCount', 'room.likes')
+    .leftJoinAndSelect('room.owner', 'owner')
     .where('room.isPublic = :isPublic', { isPublic: true })
     .andWhere('room.status = :status', { status: RoomStatusEnum.ENDED })
     .leftJoin('room.likes', 'likes')
@@ -303,7 +304,7 @@ class RoomService {
       .from('like', 'likes')
       .where('likes.roomId = room.id');
     }, 'count')
-    .groupBy('room.id') 
+    .groupBy('room.id, owner.id')
     .orderBy('count', orderDirection || OrderDirectionEnum.DESC)
     .skip((page - 1) * limit)
     .take(limit)
