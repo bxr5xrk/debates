@@ -8,7 +8,6 @@ import ProfileImg from "@/shared/ui/profileImg/profileImg";
 export function FriendsList(): JSX.Element {
     const { data } = useFriends();
     const friends = data?.data;
-    console.log(friends);
 
     return (
         <div className="bp-10 w-3/5">

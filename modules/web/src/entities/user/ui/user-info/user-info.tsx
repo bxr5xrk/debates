@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useAfterFetch } from "@/shared/hooks";
 import { API } from "@/shared/api/api-routes";
 import { onUpload, validations } from "@/shared/lib";
-import Image from "next/image";
 import { Button, Input, InputGroup, InputWithLabel } from "@/shared/ui";
 import { useFormInit } from "./hooks/use-form-init";
 import { useDirty } from "./hooks/use-dirty";
@@ -23,16 +22,16 @@ export function UserInfo(): JSX.Element {
         trigger,
         watch,
     } = useFormInit();
-    const {
-        data,
-        register,
-        control,
-        errors,
-        handleSubmit,
-        isMutating,
-        trigger,
-        watch,
-    } = useFormInit();
+    // const {
+    //     data,
+    //     register,
+    //     control,
+    //     errors,
+    //     handleSubmit,
+    //     isMutating,
+    //     trigger,
+    //     watch,
+    // } = useFormInit();
     const picture = data?.data.picture;
     const [file, setFile] = useState<File | null>(null);
     const [isDirty] = useDirty<UserFormData>(control, watch, isMutating, file);

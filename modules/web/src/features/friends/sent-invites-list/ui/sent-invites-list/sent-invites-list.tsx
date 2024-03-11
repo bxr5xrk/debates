@@ -1,14 +1,10 @@
 import { useSentInvites } from "../../api";
 import ProfileImg from "@/shared/ui/profileImg/profileImg";
-import { useWhoami } from "@/features/auth";
 import { Text } from "@/shared/ui";
 
 export function SentInvitesList(): JSX.Element {
     const { data } = useSentInvites();
     const invites = data?.data;
-    const { data: whoami } = useWhoami();
-    console.log(invites?.[0]);
-    console.log(whoami);
 
     return (
         <div className="w-2/5">
