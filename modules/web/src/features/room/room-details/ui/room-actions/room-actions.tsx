@@ -1,4 +1,4 @@
-import { RoomStatusEnum } from "@/entities/room";
+import { RoomStatusEnum } from "@/shared/types";
 import { User } from "@/entities/user";
 import { Socket } from "socket.io-client";
 import { useEmit } from "../../hooks/use-emit";

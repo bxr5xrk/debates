@@ -64,7 +64,7 @@ export function useEmit(socket: Socket | null, isAdmin: boolean): UseEmit {
 
         mutate(API.ROOM_ROUTES.onAir);
         socket.emit("rate", team);
-        push(`/history`);
+        push(`/games`);
     }
 
     function onSkip(): void {

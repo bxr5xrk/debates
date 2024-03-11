@@ -90,6 +90,9 @@ const config: Config = {
                 "accordion-down": "accordion-down 0.2s ease-out",
                 "accordion-up": "accordion-up 0.2s ease-out",
             },
+            boxShadow: {
+                '3xl': '4px 3px 0 0 rgb(2, 6, 23)',
+            }
         },
     },
     plugins: [require("tailwindcss-animate")],

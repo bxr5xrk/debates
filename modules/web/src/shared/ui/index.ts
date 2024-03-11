@@ -8,3 +8,6 @@ export * from './label';
 export * from './select';
 export * from './input-with-label';
 export * from './dynamic-select';
+export * from './room-info';
+export * from './component-container';
+export * from './pagination';

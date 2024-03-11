@@ -12,7 +12,7 @@ export function InputWithLabel(props: PropsWithChildren<InputWithLabelProps>): J
     const { htmlFor, label, children, className, errorMessage, ...rest } = props;
 
     return (
-        <div {...rest} className={cl("grid w-full max-w-sm lg:max-w-full items-center gap-1.5 relative", className)}>
+        <div {...rest} className={cl("grid w-full max-w-sm lg:max-w-full items-center gap-1.5 relative lg:w-96", className)}>
             <Label htmlFor={htmlFor}>
                 <span className="input-with-label">{label}</span>
             </Label>
