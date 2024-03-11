@@ -1,4 +1,4 @@
-import { useFieldsSetup } from "@/features/room/room-details/hooks/use-fields-setup";
+// import { useFieldsSetup } from "@/features/room/room-details/hooks/use-fields-setup";
 import Image from "next/image";
 import { cl } from "@/shared/lib/cl";
 

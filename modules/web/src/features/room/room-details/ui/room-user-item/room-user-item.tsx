@@ -1,5 +1,5 @@
 import { cl } from "@/shared/lib/cl";
-import ProfileImg from "@/shared/ui/profileImg/profileImg";
+import { ProfileImg } from "@/shared/ui/profileImg";
 
 interface RoomUserItemProps {
     nickname: string;
