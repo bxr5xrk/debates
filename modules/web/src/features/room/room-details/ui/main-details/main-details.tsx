@@ -1,4 +1,4 @@
-import { Room, RoomStatusEnum } from "@/entities/room";
+import { Room, RoomStatusEnum } from "@/shared/types";
 import { formatSeconds } from "@/shared/lib";
 
 interface MainDetailsProps {

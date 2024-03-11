@@ -19,11 +19,11 @@ export function Button(props: PropsWithChildren<ButtonProps>): JSX.Element {
             disabled={isDisabled}
             {...rest}
             className={cl(
-                "base-button capitalize pointer font-semibold transform transition-scale duration-1000 hover:scale-105",
+                "base-button capitalize font-semibold pointer hover:scale-[1.02] disabled:hover:scale-100",
                 className
             )}
         >
-            {isDisabled ? <Spinner /> : children}
+            {isLoading ? <Spinner /> : children}
         </button>
     );
 }

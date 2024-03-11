@@ -1,12 +1,15 @@
 import { db } from "connectors/db";
 import { Room } from "db/models/room";
-import { CreateRoomPayload } from "./types";
+import { CreateRoomPayload, Pagination, ParticipationsChartData, UserAndFriendWinsChartData, WinsAndLossesChartData } from "./types";
 import { RoomStatusEnum } from "db/enums/room-status";
 import { In } from "typeorm";
 import { userService } from "services/user";
 import { User } from "db/models/user";
 import { friendService } from "services/friend";
 import { TeamsEnum } from "db/enums/teams";
+import { OrderDirectionEnum } from "db/enums/order-direction";
+import { likeService } from "services/like";
+import { compareByYearAndMonth, formatDate } from "../../lib/helpers";
 
 class RoomService {
   private roomRepository = db.getRepository(Room);
@@ -285,6 +288,195 @@ class RoomService {
     room.status = RoomStatusEnum.ENDED;
 
     return await this.roomRepository.save(room);
+  }
+
+  public async getPublicRooms(userId: number, limit: number = 10, page: number = 1, orderDirection?: OrderDirectionEnum): Promise<Pagination> {
+    const [rooms, total] = await this.roomRepository 
+    .createQueryBuilder('room')
+    .loadRelationCountAndMap('room.likesCount', 'room.likes')
+    .leftJoinAndSelect('room.owner', 'owner')
+    .where('room.isPublic = :isPublic', { isPublic: true })
+    .andWhere('room.status = :status', { status: RoomStatusEnum.ENDED })
+    .leftJoin('room.likes', 'likes')
+    .addSelect((subQuery) => {
+      return subQuery
+      .select('COUNT(likes.id)', 'count')
+      .from('like', 'likes')
+      .where('likes.roomId = room.id');
+    }, 'count')
+    .groupBy('room.id, owner.id')
+    .orderBy('count', orderDirection || OrderDirectionEnum.DESC)
+    .skip((page - 1) * limit)
+    .take(limit)
+    .getManyAndCount(); 
+
+    const totalPages = Math.ceil(total / limit);
+
+    const roomsWithIsLikedByCurrentUser: Room[] = await Promise.all(
+      rooms.map(async (room) => {
+          const isLiked = await likeService.findLike(room.id, userId);
+          return {
+              ...room,
+              isLikedByCurrentUser: isLiked ? true : false,
+          };
+      })
+    );
+
+    return {
+      data: roomsWithIsLikedByCurrentUser,
+      pagesCount: totalPages,
+      currentPage: page,
+    };
+  }
+
+  public async publishRoom(roomId: number, userId: number): Promise<Room> {
+    if (!userId || !roomId) {
+      throw new Error("Ids are required");
+    }
+
+    const room = await this.getRoomById(roomId);
+
+    if (room.owner.id != userId) {
+      throw new Error("User is not a owner");
+    }
+
+    if (room.isPublic) {
+      throw new Error("Room is already public");
+    }
+
+    room.isPublic = true;
+
+    return await this.roomRepository.save(room);
+  }
+
+  public async unpublishRoom(roomId: number, userId: number): Promise<Room> {
+    if (!userId || !roomId) {
+      throw new Error("Ids are required");
+    }
+
+    const room = await this.getRoomById(roomId);
+
+    if (room.owner.id != userId) {
+      throw new Error("User is not a owner");
+    }
+
+    if (!room.isPublic) {
+      throw new Error("Room is already non-public");
+    }
+
+    room.isPublic = false;
+
+    return await this.roomRepository.save(room);
+  }
+
+  public async getWinsAndLossesChartData(userId: number): Promise <WinsAndLossesChartData[]> {
+    if (!userId) {
+      throw new Error("UserId is required");
+    }
+
+    const history = await this.getUserEndedRooms(userId);
+    const chartData: WinsAndLossesChartData[] = [];
+    
+    history.forEach((debate) => {
+      const monthYear = formatDate(debate.createdAt);
+      let chartEntry = chartData.find((entry) => entry.date === monthYear);
+      const conTeam = debate.conTeam.some((user) => user.id === userId);
+      const proTeam = debate.proTeam.some((user) => user.id === userId);
+
+      if (conTeam || proTeam) {
+        if (!chartEntry) {
+          chartEntry = { date: monthYear, wins: 0, losses: 0 };
+          chartData.push(chartEntry);
+        }
+
+        if (debate.winners.some((winner) => winner.id === userId)) {
+          chartEntry.wins++;
+        } else {
+          chartEntry.losses++;
+        }
+      }
+    });
+
+    chartData.sort(compareByYearAndMonth);
+    const trimmedChartData = chartData.slice(-12);
+
+    return trimmedChartData;
+  }
+
+  public async getUserAndFriendWinsChartData(userId: number, friendNickname: string): Promise<UserAndFriendWinsChartData[]> {
+    if (!userId || !friendNickname) {
+      throw new Error("UserId and FriendNickname are required");
+    }
+  
+    const myHistory = await this.getUserEndedRooms(userId);
+    const friend = await userService.getUserByNickname(friendNickname)
+    
+    if (!friend) {
+      throw new Error("Friend not found")
+    }
+
+    const friendHistory = await this.getUserEndedRooms(friend.id);
+    const chartData: UserAndFriendWinsChartData[] = [];
+  
+    myHistory.forEach((debate) => {
+      const monthYear = formatDate(debate.createdAt);
+      let chartEntry = chartData.find((entry) => entry.date === monthYear);
+      const isMyWin = debate.winners.some((winner) => winner.id === userId);
+  
+      if (isMyWin) {
+        if (!chartEntry) {
+          chartEntry = { date: monthYear, userWins: 0, friendWins: 0 };
+          chartData.push(chartEntry);
+        }
+
+      chartEntry.userWins++;
+      }
+    });
+  
+    friendHistory.forEach((debate) => {
+      const monthYear = formatDate(debate.createdAt);
+      let chartEntry = chartData.find((entry) => entry.date === monthYear);
+      const isFriendWin = debate.winners.some((winner) => winner.id === friend.id);
+  
+      if (isFriendWin) {
+        if (!chartEntry) {
+          chartEntry = { date: monthYear, userWins: 0, friendWins: 0 };
+          chartData.push(chartEntry);
+        }
+  
+        chartEntry.friendWins++;
+      }
+    });
+  
+    chartData.sort(compareByYearAndMonth);
+    const trimmedChartData = chartData.slice(-12);
+
+    return trimmedChartData;
+  }
+
+  public async getParticipationsChartData(userId: number): Promise <ParticipationsChartData[]> {
+    if (!userId) {
+      throw new Error("UserId is required");
+    }
+
+    const history = await this.getUserEndedRooms(userId);
+    const chartData: ParticipationsChartData[] = [];
+    
+    history.forEach((debate) => {
+      const monthYear = formatDate(debate.createdAt);
+      let chartEntry = chartData.find((entry) => entry.date === monthYear);
+        if (!chartEntry) {
+          chartEntry = { date: monthYear, participationsNumber: 0 };
+          chartData.push(chartEntry);
+        }
+
+      chartEntry.participationsNumber++;
+    });
+
+    chartData.sort(compareByYearAndMonth);
+    const trimmedChartData = chartData.slice(-12);
+
+    return trimmedChartData;
   }
 }
 

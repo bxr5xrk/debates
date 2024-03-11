@@ -18,9 +18,9 @@ export function CreateRoomDialog(): JSX.Element {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger>Create Room</DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-10/12">
                 <DialogHeader>
-                    <DialogTitle>Create new room</DialogTitle>
+                    {/* <DialogTitle>Create new room</DialogTitle> */}
                     <CreateRoomForm afterCreate={() => setOpen(false)} />
                 </DialogHeader>
             </DialogContent>

@@ -1,6 +1,2 @@
-export interface BaseResponse<T> {
-  data: T;
-  message?: string;
-  status?: "success";
-  error?: string;
-}
+export * from "./base-response";
+export * from "./room";

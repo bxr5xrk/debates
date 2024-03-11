@@ -14,7 +14,7 @@ interface MembersSelectProps {
     conTeamIds: UseFieldArrayReturn<CreateRoomFormData, "conTeamIds", "id">;
     setValue: UseFormSetValue<CreateRoomFormData>;
     watch: UseFormWatch<CreateRoomFormData>;
-    triggerField: UseFormTrigger<CreateRoomFormData>
+    triggerField: UseFormTrigger<CreateRoomFormData>;
 }
 
 export function MembersSelect(props: MembersSelectProps): JSX.Element {
@@ -24,7 +24,7 @@ export function MembersSelect(props: MembersSelectProps): JSX.Element {
     const friends = data?.data ?? [];
     const [blacklistIds, setBlacklistIds] = useState<string[]>([]);
 
-    function onValue(e: string, name: 'proTeamIds' | 'conTeamIds' | 'judgeId', index: number): void {
+    function onValue(e: string, name: "proTeamIds" | "conTeamIds" | "judgeId", index: number): void {
         switch (name) {
         case "judgeId":
             setValue("judgeId", e);
@@ -44,16 +44,16 @@ export function MembersSelect(props: MembersSelectProps): JSX.Element {
         setBlacklistIds([watch("judgeId"), ...watch("conTeamIds").map((id) => id.id), ...watch("proTeamIds").map((id) => id.id)].filter(Boolean));
     }
 
-    function onRemove(index: number, name: 'proTeamIds' | 'conTeamIds'): void {
-        const isOneExists = name === 'proTeamIds' ? proTeamIds.fields.length > 1 : conTeamIds.fields.length > 1;
+    function onRemove(index: number, name: "proTeamIds" | "conTeamIds"): void {
+        const isOneExists = name === "proTeamIds" ? proTeamIds.fields.length > 1 : conTeamIds.fields.length > 1;
 
         if (!isOneExists) {
             return;
         }
 
-        const field = name === 'proTeamIds' ? proTeamIds.fields[index] : conTeamIds.fields[index];
+        const field = name === "proTeamIds" ? proTeamIds.fields[index] : conTeamIds.fields[index];
 
-        name === 'proTeamIds' ? proTeamIds.remove(index) : conTeamIds.remove(index);
+        name === "proTeamIds" ? proTeamIds.remove(index) : conTeamIds.remove(index);
 
         setBlacklistIds((prev) => prev.filter((id) => id !== field.id));
     }
@@ -61,32 +61,47 @@ export function MembersSelect(props: MembersSelectProps): JSX.Element {
     const options = getOptions(friends, blacklistIds, whoami?.data.id);
 
     return (
-        <>
-            <InputWithLabel label="Judge" htmlFor="judgeId" errorMessage={errors['judgeId']?.message} >
+        <div className="flex flex-col gap-5 lg:w-1/2">
+            <InputWithLabel label="Judge" htmlFor="judgeId" errorMessage={errors["judgeId"]?.message}>
                 <Select onValueChange={(e) => onValue(e, "judgeId", 0)}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Select a judge" />
                     </SelectTrigger>
                     <SelectContent options={options} {...register("judgeId", { ...validations.required })} />
                 </Select>
-            </InputWithLabel >
+            </InputWithLabel>
 
-            {/* proTeamIds */}
-            <DynamicSelect label="Pro Team" htmlFor="proTeamIds"
-                fields={proTeamIds} onAppend={() => proTeamIds.append({ id: '' })
-                }
-                onRemove={(index) => onRemove(index, 'proTeamIds')} register={register}
-                options={options} onUpdate={(index, e) => onValue(e, "proTeamIds", index)}
-                value={(index) => `proTeamIds.${index}.id`} watch={watch} errorMessage={errors.proTeamIds?.root?.message}
-            />
+            <div className="flex flex-col gap-5 lg:flex-row lg:w-full">
+                {/* proTeamIds */}
+                <DynamicSelect
+                    label="Pro Team"
+                    htmlFor="proTeamIds"
+                    fields={proTeamIds}
+                    onAppend={() => proTeamIds.append({ id: "" })}
+                    onRemove={(index) => onRemove(index, "proTeamIds")}
+                    register={register}
+                    options={options}
+                    onUpdate={(index, e) => onValue(e, "proTeamIds", index)}
+                    value={(index) => `proTeamIds.${index}.id`}
+                    watch={watch}
+                    errorMessage={errors.proTeamIds?.root?.message}
+                />
 
-            {/* conTeamIds */}
-            <DynamicSelect label="Con Team" htmlFor="conTeamIds"
-                fields={conTeamIds} onAppend={() => conTeamIds.append({ id: '' })}
-                onRemove={(index) => onRemove(index, 'conTeamIds')} register={register}
-                options={options} onUpdate={(index, e) => onValue(e, "conTeamIds", index)}
-                value={(index) => `conTeamIds.${index}.id`} watch={watch} errorMessage={errors.conTeamIds?.root?.message}
-            />
-        </>
+                {/* conTeamIds */}
+                <DynamicSelect
+                    label="Con Team"
+                    htmlFor="conTeamIds"
+                    fields={conTeamIds}
+                    onAppend={() => conTeamIds.append({ id: "" })}
+                    onRemove={(index) => onRemove(index, "conTeamIds")}
+                    register={register}
+                    options={options}
+                    onUpdate={(index, e) => onValue(e, "conTeamIds", index)}
+                    value={(index) => `conTeamIds.${index}.id`}
+                    watch={watch}
+                    errorMessage={errors.conTeamIds?.root?.message}
+                />
+            </div>
+        </div>
     );
 }

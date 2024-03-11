@@ -29,6 +29,13 @@ export async function applicationApi(server: FastifyInstance): Promise<void> {
   server.get("/rooms/:id", room.getRoom);
   server.get("/rooms/is-live", room.isLive);
   server.get("/rooms/check-is-valid/:id", room.checkRoom);
+  server.get("/rooms/public", room.getPublicRooms);
+  server.put("/rooms/:id/publish", room.publishRoom);
+  server.put("/rooms/:id/unpublish", room.unpublishRoom);
+  server.put("/rooms/:id/like", room.likeRoom);
+  server.put("/rooms/:id/unlike", room.unlikeRoom);
+  server.get("/rooms/own-charts", room.getOwnCharts);
+  server.get("/rooms/compared-wins-chart/:nickname", room.getComparedWinsChart);
 }
 
 export async function authApi(server: FastifyInstance): Promise<void> {

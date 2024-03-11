@@ -3,8 +3,15 @@ import { CreateRoomDialog, OnAirAction } from "@/features/room";
 import { cl } from "@/shared/lib/cl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSWRConfig } from "swr";
+import { useEffect } from "react";
+import { API } from "@/shared/api/api-routes";
 
 const navItems = [
+    {
+        href: '/edit-profile',
+        label: 'Edit profile',
+    },
     {
         href: '/',
         label: 'Dashboard',
@@ -14,13 +21,18 @@ const navItems = [
         label: 'Friends',
     },
     {
-        href: '/history',
-        label: 'History',
-    }
+        href: '/games',
+        label: 'Games',
+    },
 ];
 
 export function HeaderPrivate(): JSX.Element {
     const pathname = usePathname();
+    const { mutate } = useSWRConfig();
+
+    useEffect(() => {
+        mutate(API.ROOM_ROUTES.onAir);
+    }, []);
 
     return (
         <header className="flex border-b w-full h-14 items-center">

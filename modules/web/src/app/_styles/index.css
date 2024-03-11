@@ -3,12 +3,17 @@
 @tailwind utilities;
 @import url("./reset.css");
 
+:root {
+    --btn-transition-time: 300ms;
+}
+
 .base-button {
     padding: 12px;
     border-radius: 10px;
     position: relative;
     z-index: 1;
-    transition: color 300ms ease-in-out;
+    transition: color var(--btn-transition-time) ease-in-out, 
+                transform 100ms ease-in-out;
 }
 
 .base-button:hover {
@@ -34,15 +39,13 @@
     border-radius: 1.5em;
     z-index: -1;
     background-color: white;
-    transition: background-color 300ms ease-in-out,
-        border-color 300ms ease-in-out;
+    transition: background-color var(--btn-transition-time) ease-in-out, border-color var(--btn-transition-time) ease-in-out;
 }
 
 .base-button:hover:not([disabled])::after {
     background-color: #334155;
-    border-color: #f8fafc;
-    transition: background-color 300ms ease-in-out,
-        border-color 300ms ease-in-out;
+    /* border-color: #f8fafc; */
+    transition: background-color var(--btn-transition-time) ease-in-out, border-color var(--btn-transition-time) ease-in-out;
 }
 
 .base-button::before {
@@ -52,13 +55,13 @@
 }
 
 .input-with-label {
-  color: rgba(52, 66, 86, 0.9);
-  display: block;
-  position: absolute;
-  top: -1%;
-  left: 3%;
-  font-size: 0.8em;
-  text-transform: lowercase;
+    color: rgba(52, 66, 86, 0.9);
+    display: block;
+    position: absolute;
+    top: -1%;
+    left: 1em;
+    font-size: 0.8em;
+    text-transform: lowercase;
 }
 .border-text {
     -webkit-text-stroke: 2px black;

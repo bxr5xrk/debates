@@ -1,5 +1,5 @@
 import { useSentInvites } from "../../api";
-import ProfileImg from "@/shared/ui/profileImg/profileImg";
+import { ProfileImg } from "@/shared/ui/profileImg";
 import { Text } from "@/shared/ui";
 
 export function SentInvitesList(): JSX.Element {
@@ -15,9 +15,7 @@ export function SentInvitesList(): JSX.Element {
                         key={invite.id}
                         className="flex gap-[30px] items-center p-3"
                     >
-                        <ProfileImg
-                            src={invite.receiver.picture}
-                        />
+                        <ProfileImg src={invite.receiver.picture} />
                         <p className="h-min font-bold">
                             {invite.receiver.nickname}
                         </p>

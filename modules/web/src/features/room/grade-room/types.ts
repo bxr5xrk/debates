@@ -1,4 +1,4 @@
-import { Room } from "@/entities/room";
+import { Room } from "@/shared/types";
 import { BaseResponse } from "@/shared/types";
 
 export interface GradeRoomPayload {

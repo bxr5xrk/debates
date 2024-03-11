@@ -26,7 +26,7 @@ export function RejectInviteAction(
 
     return (
         <Button
-            className="hover:after:bg-darkRed hover:text-white"
+            className="after:bg-darkRed hover:text-white"
             onClick={onAccept}
             disabled={isMutating}
         >

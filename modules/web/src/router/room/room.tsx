@@ -1,6 +1,6 @@
 "use client";
 
-import { useRoomValid } from "@/entities/room";
+import { useRoomValid } from "@/entities/games";
 import { useWhoami } from "@/features/auth";
 import { RoomDetails } from "@/features/room";
 import { Page } from "@/shared/layout/page";
@@ -28,7 +28,8 @@ export function RoomPage(props: RoomPageProps): JSX.Element {
 
     // If the room is not valid, redirect to the history page
     if (!data?.data && !isLoading) {
-        push("/history");
+        // push("/history");
+        push("/games");
     }
 
     return (
