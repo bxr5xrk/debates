@@ -20,11 +20,11 @@ export function RoomInfoCard({ room, isWin, isLoose, children}: RoomInfoCardProp
                 <p>Number - {room.reportsNumber}</p>
             </div>
 
-            <div className="flex justify-between items-center pt-3.5">
+            <div className="flex justify-between items-center pt-3.5 w-full">
                 {room.owner ? (
-                    <div className="flex items-center">
-                        <ProfileImg src={room.owner.picture} className="w-11 h-11" />
-                        <p className="ml-1 text-xl">{room.owner.nickname}</p>
+                    <div className="flex items-centerw-2/3 min-[730px]:w-3/5" title={`Room owner - ${room.owner.nickname}`}>
+                        <ProfileImg src={room.owner.picture} className="w-8 h-8" />
+                        <p className="ml-1 text-xl overflow-hidden whitespace-nowrap text-ellipsis w-3/4" >{room.owner.nickname}</p>
                     </div>
                 ) : (
                     <p className="ml-1 text-xl">Likes - {room.likesCount}</p>
