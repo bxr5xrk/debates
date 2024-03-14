@@ -10,7 +10,7 @@ export function FriendsList(): JSX.Element {
     const friends = data?.data;
 
     return (
-        <div className="bp-10 w-3/5">
+        <div className="bp-10 w-full flex  flex-col lg:w-3/5">
             <Text classes={["text-2xl"]}>Your friends</Text>
             <ul>
                 {friends?.map((friend) => (

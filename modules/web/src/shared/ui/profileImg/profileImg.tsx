@@ -11,11 +11,11 @@ export function ProfileImg(props: ProfileImgProps): JSX.Element {
     const { className, src } = props;
     return (
         <div
-            className={cl("border-2 border-black rounded-full w-[80px] h-[80px] overflow-hidden", className)}
+            className={cl("border-2 border-black rounded-full  md:w-[80px] md:h-[80px] overflow-hidden", className,"w-[50px] h-[50px]")}
         >
             <Image
-                width={800}
-                height={800}
+                width={100}
+                height={100}
                 className="w-full h-full object-cover"
                 src={src || "/anonymous.webp"}
                 alt="profile photo"

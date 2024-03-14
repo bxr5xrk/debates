@@ -14,7 +14,7 @@ interface RoomTeamListProps
 
 export function RoomTeamList(props: RoomTeamListProps): JSX.Element {
     const { team, className, currentUserId, ...meta} = props;
-
+    
     return (
         <div
             className={cl(
@@ -25,6 +25,7 @@ export function RoomTeamList(props: RoomTeamListProps): JSX.Element {
 
         >
             {team.map((member) => (
+            
                 <RoomUserItem
                     key={member.id}
                     {...member}

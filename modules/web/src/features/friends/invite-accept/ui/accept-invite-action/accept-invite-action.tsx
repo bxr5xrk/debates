@@ -2,6 +2,7 @@ import { useInviteAccept } from "@/features/friends/invite-accept/api";
 import { API } from "@/shared/api/api-routes";
 import { useAfterFetch } from "@/shared/hooks";
 import { Button } from "@/shared/ui";
+import Image from "next/image";
 
 interface AcceptInviteActionProps {
     inviteId: number;
@@ -25,12 +26,8 @@ export function AcceptInviteAction(
     }
 
     return (
-        <Button
-            className="after:bg-green hover:text-white"
-            onClick={onAccept}
-            disabled={isMutating}
-        >
-            {isMutating ? "Loading..." : "Accept"}
-        </Button>
+        <div className="w-[20px] h-[20px]">
+            <Image src={"/cross.svg"} width={100} height={100} alt={"cross"} onClick={onAccept} className="cursor-pointer w-[30px] hover:scale-[1.1]"/>
+        </div>
     );
 }
