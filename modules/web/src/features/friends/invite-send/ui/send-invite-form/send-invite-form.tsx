@@ -15,29 +15,20 @@ export function SendInviteForm(): JSX.Element {
     const { onAfterFetch } = useAfterFetch({
         revalidate: [API.FRIENDS_ROUTES.sentInvites],});
     const { data: whoami } = useWhoami();
-    const [error, setError] = useState<string | null>(null);
-    const [isInvites, setIsInvites] = useState(false);
-
-    
+    const [error, setError] = useState<string | null>(null); 
     const [showInvites, setShowInvites] = useState(false);
 
-    
+
     function handleClickOutsideModal(event: MouseEvent): void {
         if (!modalRef || !modalRef.current?.contains(event.target as Node)) {
             setShowInvites(false);
         }
     }
-    const { data } = useInvites();
-    const invites = data?.data;
-
-    // invites? setIsInvites(true) : setIsInvites(false);
-    const notlification =invites? invites.length : 0;
-    console.log(invites?.length);
-    
-
-
     window.addEventListener("click", handleClickOutsideModal);    
 
+    const { data } = useInvites();
+    const invites = data?.data;
+    const notlification =invites? invites.length : 0;
 
     async function onSubmit(e: React.FormEvent<HTMLFormElement>): Promise<void> {
         e.preventDefault();

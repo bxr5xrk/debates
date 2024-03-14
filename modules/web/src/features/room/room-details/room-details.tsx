@@ -14,6 +14,8 @@ interface RoomDetailsProps {
     userId: number;
 }
 
+export const onlineMembersArr: number[] = [];
+
 export function RoomDetails(props: RoomDetailsProps): JSX.Element {
     const { roomId, userId } = props;
     const { isJudge, socket, room } = useRoomSetup(roomId, userId);
@@ -49,15 +51,19 @@ export function RoomDetails(props: RoomDetailsProps): JSX.Element {
     if (!room) {
         return <></>;
     }
-    onlineMembers.map((member) => (
-        <RoomUserItem
-            key={member.id}
-            {...member}
-            isCurrentUser={member.id === userId}
 
-        />
-    ));
-        
+    onlineMembers.map((member) => {
+        onlineMembersArr.push(member.id);
+
+        return (
+            <RoomUserItem
+                key={member.id}
+                {...member}
+                isCurrentUser={member.id === userId}
+            />
+        );
+    });
+
     return (
         <div className="flex flex-col gap-2 relative h-full top-0">
             <RoomActions
@@ -80,16 +86,6 @@ export function RoomDetails(props: RoomDetailsProps): JSX.Element {
                 currentTeamType={currentTeam?.currentTeamType}
             />
 
-            {/* <p className="text-xl font-bold">online</p>
-            <ul className="border-2 rounded-xl p-2 flex flex-col gap-2">
-                {onlineMembers.map((member) => (
-                    <RoomUserItem
-                        key={member.id}
-                        {...member}
-                        isCurrentUser={member.id === userId}
-                    />
-                ))}
-            </ul> */}
             <div className="flex justify-between  h-[100vh] w-[100vw] z-[-1] absolute">
                 <div
                     className={cl(

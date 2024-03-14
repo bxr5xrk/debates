@@ -1,7 +1,6 @@
 import { useInviteAccept } from "@/features/friends/invite-accept/api";
 import { API } from "@/shared/api/api-routes";
 import { useAfterFetch } from "@/shared/hooks";
-import { Button } from "@/shared/ui";
 import Image from "next/image";
 
 interface AcceptInviteActionProps {
@@ -12,7 +11,7 @@ export function AcceptInviteAction(
     props: AcceptInviteActionProps
 ): JSX.Element {
     const { inviteId } = props;
-    const { trigger, isMutating } = useInviteAccept(inviteId);
+    const { trigger } = useInviteAccept(inviteId);
     const { onAfterFetch } = useAfterFetch({
         revalidate: [API.FRIENDS_ROUTES.invites, API.FRIENDS_ROUTES.friends],
     });

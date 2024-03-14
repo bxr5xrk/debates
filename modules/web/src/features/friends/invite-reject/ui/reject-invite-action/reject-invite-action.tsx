@@ -1,7 +1,6 @@
 import { API } from "@/shared/api/api-routes";
 import { useAfterFetch } from "@/shared/hooks";
 import { useInviteReject } from "../../api";
-import { Button } from "@/shared/ui";
 import Image from "next/image";
 
 interface RejectInviteActionProps {
@@ -12,7 +11,7 @@ export function RejectInviteAction(
     props: RejectInviteActionProps
 ): JSX.Element {
     const { inviteId } = props;
-    const { trigger, isMutating } = useInviteReject(inviteId);
+    const { trigger } = useInviteReject(inviteId);
     const { onAfterFetch } = useAfterFetch({
         revalidate: [API.FRIENDS_ROUTES.invites],
     });
