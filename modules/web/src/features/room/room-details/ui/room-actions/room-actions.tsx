@@ -8,6 +8,7 @@ import { Button } from "@/shared/ui";
 import Link from "next/link";
 import { cl } from "@/shared/lib/cl";
 import { useState } from "react";
+import { Modal } from "./modalRoom";
 
 interface RoomActionsProps {
     onlineMembers: User[];
@@ -37,17 +38,19 @@ export function RoomActions(props: RoomActionsProps): JSX.Element {
 
     const modalJoin  = ():void => {
         setModal(!modal);
-        onJoin();
-        onStart();
-
     };
     
-
+    
+    
     return (
-        <div className="absolute left-0 top-0 w-full h-full flex flex-col justify-between p-6">
+        <div className="absolute left-0 top-0 w-full h-full flex flex-col justify-between p-2 sm:p-6">
+            {
+                modal && !(status === RoomStatusEnum.PAUSED || status === RoomStatusEnum.STARTED) && (
+                    <Modal setModal={setModal} modal={modal} modalJoin={modalJoin} userId={userId} onJoin={onJoin} onStart={onStart} onlineMembers={onlineMembers} status={status} isAdmin={isAdmin}/>
+                )}
             <div className="flex justify-between">
                 <Link
-                    className="w-[150px] text-center base-button capitalize"
+                    className="w-[100px] sm:w-[150px] text-center base-button capitalize"
                     href="./dashboard"
                 >
                     leave
@@ -57,40 +60,12 @@ export function RoomActions(props: RoomActionsProps): JSX.Element {
                         status === RoomStatusEnum.PAUSED) && (
                     <Button
                         onClick={onEnd}
-                        className="w-[165px] after:bg-darkRed after:border-white text-white"
+                        className="w-[115px] sm:w-[165px] after:bg-darkRed after:border-white text-white"
                     >
                             End game
                     </Button>
                 )}
             </div>
-            {
-                modal && (
-                    <>
-                        <div className="absolute w-full h-full top-0 left-0 z-10 bg-slate-50 opacity">
-                            <div className="self-center border-4 border-black w-1/2  rounded-[50px] mx-auto mt-[200px] p-[90px] bg-slate-500">
-                                <p className="text-[30px] text-center text-white border-text font-bold">join the room? </p> 
-                                <div className="flex justify-between">
-                                    <Link
-                                        className="w-[150px] text-center base-button h-min font-bold"
-                                        href="./dashboard"
-                                    >
-                    leave
-                                    </Link>
-                                    {!onlineMembers.find((i) => i.id === userId) && (
-                                        <Button onClick={()=>modalJoin()} className="w-[130px] h-min">
-                    join
-                                        </Button>
-                                    )}
-                                </div>
-                                {isAdmin && status === RoomStatusEnum.PENDING && (
-                                    <Button onClick={onStart} className="w-130px h-min">
-                    start
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    </>
-                )}
             <div>
                 <div className={cl("w-1/4 flex",
                     currentTeamType === "conTeam"
@@ -116,7 +91,7 @@ export function RoomActions(props: RoomActionsProps): JSX.Element {
                     {isAdmin && status === RoomStatusEnum.STARTED && (
                         <Button
                             onClick={onPause}
-                            className="w-[165px] after:bg-white after:bord"
+                            className="sm:w-[165px] w-[100px] after:bg-white after:bord"
                         >
                             Stop
                         </Button>
@@ -125,7 +100,7 @@ export function RoomActions(props: RoomActionsProps): JSX.Element {
                     {isAdmin && status === RoomStatusEnum.PAUSED && (
                         <Button
                             onClick={onResume}
-                            className="w-[165px] after:bg-darkRed after:border-white text-white"
+                            className="sm:w-[165px] w-[100px] after:bg-darkRed after:border-white text-white"
                         >
                             resume
                         </Button>

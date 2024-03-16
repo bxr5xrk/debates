@@ -7,7 +7,7 @@ export function SentInvitesList(): JSX.Element {
     const invites = data?.data;
 
     return (
-        <div className="w-full flex  flex-col lg:w-2/5">
+        <div className="w-full flex  flex-col lg:w-2/5 align-middle md:align-baseline">
             <Text classes={["text-2xl"]}>Sent Invitions</Text>
             <ul className="flex-col gap-1">
                 {invites?.map((invite) => (

@@ -25,6 +25,6 @@ export function RejectInviteAction(
     }
 
     return (
-        <Image src={"/tick.svg"} alt={"tick"} width={100} height={100} onClick={onAccept} className="cursor-pointer w-[30px] hover:scale-[1.1]"/>
+        <Image src={"/cross.svg"} alt={"tick"} width={100} height={100} onClick={onAccept} className="cursor-pointer w-[30px] hover:scale-[1.1]"/>
     );
 }

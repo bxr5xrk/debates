@@ -12,9 +12,9 @@ export function ProfileImg(props: ProfileImgProps): JSX.Element {
     const { className, src, online } = props;
     return (
         <div className="relative">
-            {online && <div className="rounded-full absolute z-[100] bottom-[0px] right-[0px] w-[20px] h-[20px] bg-green"></div>}
+            {online && <div className="border-black border-2 rounded-full absolute z-[99] bottom-[0px] right-[0px] w-[15px] h-[15px] md:w-[20px] md:h-[20px] bg-green"></div>}
             <div
-                className={cl("border-2 border-black rounded-full  overflow-hidden md:w-[80px] md:h-[80px]", className,"w-[50px] h-[50px]")}
+                className={cl(className,"border-2 border-black rounded-full  overflow-hidden lg:w-[80px] lg:h-[80px] md:w-[60px] md:h-[60px] w-[40px] h-[40px]")}
             >
                 <Image
                     width={100}

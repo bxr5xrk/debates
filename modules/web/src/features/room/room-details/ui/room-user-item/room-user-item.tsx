@@ -16,11 +16,11 @@ export function RoomUserItem(props: RoomUserItemProps): JSX.Element {
     return (
         <div
             className={cl(
-                isCurrentUser && "bg-green-100", "flex items-center gap-3 w-max"
+                isCurrentUser && "bg-green-100", "flex items-center gap-2 sm:gap-3 w-max"
             )}
         >
-            <ProfileImg src={picture} online={onlineMembersArr.includes(id)}/>
-            <p className="flex items-center text-2xl">{nickname}</p>
+            <ProfileImg src={picture} online={onlineMembersArr.includes(id)} className=""/>
+            <p className="flex items-center text-[10px] sm:text-[15px] md:text-[18px] lg:text-2xl ">{nickname}</p>
         </div>
     );
 }

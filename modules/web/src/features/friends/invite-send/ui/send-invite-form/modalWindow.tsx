@@ -24,7 +24,6 @@ export function ModalWindow(): JSX.Element {
                         </div>
                     </li>
                 ))}
-                {!invites?.length && <p className="base-button">no invites</p>}
             </ul>
         </div>
     );
