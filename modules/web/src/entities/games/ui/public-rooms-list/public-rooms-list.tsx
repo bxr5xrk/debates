@@ -32,7 +32,7 @@ export function PublicRoomsList({ sortOrder }: PublicRoomsListProps): JSX.Elemen
                     );
                 })}
             </RoomInfoContainer>
-            <Pagination pagesCount={pagesCount} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+            {pagesCount > 1 && (<Pagination pagesCount={pagesCount} currentPage={currentPage} setCurrentPage={setCurrentPage} />)}
         </div>
     );
 }

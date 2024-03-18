@@ -48,7 +48,7 @@ export function InvitesList(): JSX.Element {
                                 key={invite.id}
                                 className="bg-gray-100 p-4 rounded-lg flex gap-[20px] items-center"
                             >
-                                <ProfileImg src={invite.sender.picture} />
+                                <ProfileImg className="w-[80px] h-[80px]" src={invite.sender.picture} />
                                 <p>{invite.sender.nickname}</p>
 
                                 <div className="grid grid-cols-2 gap-2">

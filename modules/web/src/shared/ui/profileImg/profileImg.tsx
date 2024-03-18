@@ -10,7 +10,7 @@ export function ProfileImg(props: ProfileImgProps): JSX.Element {
     const { className, src } = props;
     return (
         <div
-            className={cl("border-2 border-black rounded-full w-[80px] h-[80px] overflow-hidden", className)}
+            className={cl("border-2 border-black rounded-full overflow-hidden", className)}
         >
             <Image
                 width={800}
