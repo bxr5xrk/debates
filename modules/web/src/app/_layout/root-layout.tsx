@@ -15,7 +15,7 @@ export async function RootLayout(
 
     return (
 
-        <body className={cl(arvo.className, "grid grid-rows-[auto_1fr_auto] min-h-screen w-screen bg-slate-50")}>
+        <body className={cl(arvo.className, "grid grid-rows-[auto_1fr_auto] min-h-screen bg-slate-50")}>
             <Header />
             {children}
             <Footer hide />

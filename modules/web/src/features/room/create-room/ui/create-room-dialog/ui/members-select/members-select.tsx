@@ -60,21 +60,26 @@ export function MembersSelect(props: MembersSelectProps): JSX.Element {
 
     const options = getOptions(friends, blacklistIds, whoami?.data.id);
 
-    return (
-        <div className="flex flex-col gap-5 lg:w-1/2">
-            <InputWithLabel label="Judge" htmlFor="judgeId" errorMessage={errors["judgeId"]?.message}>
-                <Select onValueChange={(e) => onValue(e, "judgeId", 0)}>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select a judge" />
-                    </SelectTrigger>
-                    <SelectContent options={options} {...register("judgeId", { ...validations.required })} />
-                </Select>
-            </InputWithLabel>
+    console.log(proTeamIds.fields);
 
-            <div className="flex flex-col gap-5 lg:flex-row lg:w-full">
+    return (
+        <div className="flex flex-col gap-5 lg:w-full lg:h-full">
+            <div className="flex-[0_0_120px]">
+                <InputWithLabel label="" htmlFor="judgeId" errorMessage={errors["judgeId"]?.message}>
+                    <Select onValueChange={(e) => onValue(e, "judgeId", 0)}>
+                        <h2 className="text-2xl">Judge</h2>
+                        <SelectTrigger className="w-[180px] shadow-3xl">
+                            <SelectValue placeholder="Select a judge" />
+                        </SelectTrigger>
+                        <SelectContent options={options} {...register("judgeId", { ...validations.required })} />
+                    </Select>
+                </InputWithLabel>
+            </div>
+
+            <div className="flex flex-col gap-5 lg:flex-row lg:w-full lg:h-full">
                 {/* proTeamIds */}
                 <DynamicSelect
-                    label="Pro Team"
+                    label="RED"
                     htmlFor="proTeamIds"
                     fields={proTeamIds}
                     onAppend={() => proTeamIds.append({ id: "" })}
@@ -89,7 +94,7 @@ export function MembersSelect(props: MembersSelectProps): JSX.Element {
 
                 {/* conTeamIds */}
                 <DynamicSelect
-                    label="Con Team"
+                    label="BLUE"
                     htmlFor="conTeamIds"
                     fields={conTeamIds}
                     onAppend={() => conTeamIds.append({ id: "" })}

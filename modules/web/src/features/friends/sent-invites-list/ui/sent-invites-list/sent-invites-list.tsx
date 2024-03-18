@@ -15,7 +15,7 @@ export function SentInvitesList(): JSX.Element {
                         key={invite.id}
                         className="flex gap-[30px] items-center p-3"
                     >
-                        <ProfileImg src={invite.receiver.picture} />
+                        <ProfileImg className="w-[80px] h-[80px]" src={invite.receiver.picture} />
                         <p className="h-min font-bold">
                             {invite.receiver.nickname}
                         </p>

@@ -2,15 +2,17 @@ import { API } from "@/shared/api/api-routes";
 import { useAfterFetch } from "@/shared/hooks";
 import { Button } from "@/shared/ui";
 import { useLikeRoom } from "../../api";
+import Image from "next/image";
 
 interface LikeRoomActionProps {
     roomId: number;
+    likesCount: number;
 }
 
 export function LikeRoomAction(
     props: LikeRoomActionProps
 ): JSX.Element {
-    const { roomId } = props;
+    const { roomId, likesCount } = props;
     const { trigger, isMutating } = useLikeRoom(roomId);
     const { onAfterFetch } = useAfterFetch({
         revalidate: [API.ROOM_ROUTES.roomHistory, API.ROOM_ROUTES.publicRooms],
@@ -25,13 +27,13 @@ export function LikeRoomAction(
     }
 
     return (
-        <Button
-            className="after:bg-green hover:text-white p-2"
+        <button
+            className="flex gap-1.5 p-2"
             onClick={onAccept}
             disabled={isMutating}
-            isLoading={isMutating}
         >
-            {isMutating ? "Loading..." : "Like"}
-        </Button>
+            <Image src="/icons/heart.svg" alt="Like the room" width={24} height={24} />
+            {likesCount}
+        </button>
     );
 }
