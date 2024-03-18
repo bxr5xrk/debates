@@ -1,9 +1,11 @@
 import Image from "next/image";
+import { cl } from "@/shared/lib/cl";
 
 export interface PaginationProps {
     pagesCount: number;
     currentPage: number;
     setCurrentPage: (page: number) => void;
+    className?: string;
 }
 
 export function PageNumberButton(page: number, onClick: () => void): JSX.Element {
@@ -42,9 +44,9 @@ const nextPages = (currentPage: number, pagesCount: number, setCurrentPage: (pag
     return nextPages;
 };
 
-export function Pagination({ pagesCount, currentPage, setCurrentPage }: PaginationProps): JSX.Element {
+export function Pagination({ pagesCount, currentPage, setCurrentPage, className }: PaginationProps): JSX.Element {
     return (
-        <div className="w-full flex items-center justify-center gap-3 mt-6">
+        <div className={cl("w-full flex items-center justify-center gap-3 mt-6", className)}>
             <button className="w-5 h-5 border-none" onClick={() => currentPage - 1 >= 1 && setCurrentPage(currentPage - 1)}>
                 <Image className="rotate-180" src="/icons/painted-arrow.svg" width={50} height={50} alt="Previous Page" />
             </button>

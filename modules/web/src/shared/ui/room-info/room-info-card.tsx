@@ -3,6 +3,7 @@ import { cl } from "@/shared/lib/cl";
 import { ProfileImg } from "../profileImg";
 import { formatDate } from "@/shared/lib";
 import { PropsWithChildren } from "react";
+import Image from "next/image";
 
 interface RoomInfoCardProps extends PropsWithChildren {
     room: Room;
@@ -23,9 +24,15 @@ export function RoomInfoCard({ room, isWin, isLoose, children }: RoomInfoCardPro
             <h2 className="text-center font-bold text-2xl pt-2.5">{room.topic}</h2>
             <div>
                 <p className="pt-1 text-2xl">Report:</p>
-                <div className="flex justify-between text-2xl pt-2.5">
-                    <p>Time - {room.reportTime}m</p>
-                    <p>Number - {room.reportsNumber}</p>
+                <div className="flex justify-evenly text-2xl pt-2.5">
+                    <div className="flex items-center justify-center gap-[5px]" title="Round duration">
+                        <Image src="/icons/clock.svg" alt="Time" width={35} height={35}></Image>  
+                        <p>{room.reportTime}m</p>
+                    </div>
+                    <div className="flex items-center justify-center gap-[5px]" title="Rounds played by each team">
+                        <Image src="/icons/cross-swords.svg" alt="Number" width={35} height={35}></Image>
+                        <p>{room.reportsNumber}</p>
+                    </div>
                 </div>
             </div>
 

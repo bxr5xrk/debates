@@ -29,7 +29,7 @@ export function PublicRoomsList({ sortOrder }: PublicRoomsListProps): JSX.Elemen
                     <Spinner w={"w-5"} h={"h-5"} />
                 </div>
             ) : (
-                <div>
+                <div className="flex flex-col w-full h-full">
                     <RoomInfoContainer>
                         {rooms?.data.data.toReversed().map((room) => {
                             return (
@@ -39,7 +39,7 @@ export function PublicRoomsList({ sortOrder }: PublicRoomsListProps): JSX.Elemen
                             );
                         })}
                     </RoomInfoContainer>
-                    {pagesCount > 1 && <Pagination pagesCount={pagesCount} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
+                    {pagesCount > 1 && <Pagination pagesCount={pagesCount} currentPage={currentPage} setCurrentPage={setCurrentPage} className="self-end mt-auto" />}
                 </div>
             )}
         </div>
