@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export function HomePublic(): JSX.Element {
     return (
-        <Page className="p-8">
+        <Page className="p-8 bg-[url('/background.png')] bg-no-repeat bg-cover bg-center">
             <div className="flex justify-center items-center flex-col gap-6 mt-9 h-5/6">
                 <Image
                     src="/swords.svg"

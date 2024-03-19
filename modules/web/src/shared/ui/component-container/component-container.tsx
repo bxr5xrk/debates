@@ -7,5 +7,5 @@ export interface ComponentContainerProps extends PropsWithChildren {
 
 export function ComponentContainer(props: ComponentContainerProps): JSX.Element {
     const { className, children } = props;
-    return <div className={cl("border-2 border-slate-700 shadow-3xl rounded-md m-4 p-4 py-7 lg:py-10 w-auto", className)}>{children}</div>;
+    return <div className={cl("border-2 border-slate-700 shadow-3xl rounded-md m-4 p-4 py-7 lg:py-10 max-lg:w-[97%] w-[98%] bg-slate-50", className)}>{children}</div>;
 }

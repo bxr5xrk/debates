@@ -15,12 +15,12 @@ export interface PublicRoomsListProps {
 }
 
 export function PublicRoomsList({ sortOrder }: PublicRoomsListProps): JSX.Element {
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const { data: rooms, isLoading } = usePublicRooms(currentPage, sortOrder);
+    const [ like, setLike ] = useState<boolean>(false);
     const { data } = useWhoami();
     const userId = data?.data.id;
     const pagesCount = rooms?.data.pagesCount || 1;
-
 
     return (
         <div className="w-full h-full">
@@ -34,12 +34,12 @@ export function PublicRoomsList({ sortOrder }: PublicRoomsListProps): JSX.Elemen
                         {rooms?.data.data.toReversed().map((room) => {
                             return (
                                 <RoomInfoCard key={room.id} room={room}>
-                                    {!room.isLikedByCurrentUser ? <LikeRoomAction roomId={room.id} likesCount={room.likesCount} /> : <UnlikeRoomAction roomId={room.id} likesCount={room.likesCount} />}
+                                    {!room.isLikedByCurrentUser ? <LikeRoomAction roomId={room.id} likesCount={room.likesCount} like={like} setLike={setLike} /> : <UnlikeRoomAction roomId={room.id} likesCount={room.likesCount} like={like} setLike={setLike} />}
                                 </RoomInfoCard>
                             );
                         })}
                     </RoomInfoContainer>
-                    {pagesCount > 1 && <Pagination pagesCount={pagesCount} currentPage={currentPage} setCurrentPage={setCurrentPage} className="self-end mt-auto" />}
+                    {pagesCount > 1 && <Pagination pagesCount={pagesCount} currentPage={currentPage} setCurrentPage={setCurrentPage} className="self-end mt-auto py-4 max-lg:mb-4" />}
                 </div>
             )}
         </div>
