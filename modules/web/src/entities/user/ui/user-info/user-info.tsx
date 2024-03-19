@@ -45,10 +45,10 @@ export function AccountSettings(): JSX.Element {
             </div>
             <div className="w-full flex flex-col items-center justify-center gap-5 lg:items-start">
                 <h1 className="font-bold text-center text-3xl lg:text-left lg:text-4xl lg:pb-6">Edit profile</h1>
-                <InputWithLabel label="Name" htmlFor="name" errorMessage={errors["name"]?.message}>
+                <InputWithLabel label="Name" htmlFor="name" errorMessage={errors["name"]?.message} className="lg:w-96">
                     <Input {...register("name", { ...validations.required })} placeholder="Name" id="name" />
                 </InputWithLabel>
-                <InputWithLabel label="Nickname" errorMessage={errors["nickname"]?.message} htmlFor="nickname">
+                <InputWithLabel label="Nickname" errorMessage={errors["nickname"]?.message} htmlFor="nickname" className="lg:w-96">
                     <InputGroup.Input
                         {...register("nickname", {
                             ...validations.required,
@@ -57,7 +57,7 @@ export function AccountSettings(): JSX.Element {
                         id="nickname"
                     />
                 </InputWithLabel>
-                <InputWithLabel label="Email" errorMessage={errors["email"]?.message} htmlFor="email">
+                <InputWithLabel label="Email" errorMessage={errors["email"]?.message} htmlFor="email" className="lg:w-96">
                     <InputGroup.Input {...register("email", { ...validations.required })} placeholder="Email" type="email" id="email" />
                 </InputWithLabel>
                 <Button className="w-1/2 sm:w-1/3 lg:w-96 lg:mt-12" isLoading={isMutating} disabled={isDirty ? false : true} type="submit">

@@ -2,15 +2,17 @@ import { API } from "@/shared/api/api-routes";
 import { useAfterFetch } from "@/shared/hooks";
 import { Button } from "@/shared/ui";
 import { useUnlikeRoom } from "../../api";
+import Image from "next/image";
 
 interface UnlikeRoomActionProps {
     roomId: number;
+    likesCount: number;
 }
 
 export function UnlikeRoomAction(
     props: UnlikeRoomActionProps
 ): JSX.Element {
-    const { roomId } = props;
+    const { roomId, likesCount } = props;
     const { trigger, isMutating } = useUnlikeRoom(roomId);
     const { onAfterFetch } = useAfterFetch({
         revalidate: [API.ROOM_ROUTES.roomHistory, API.ROOM_ROUTES.publicRooms],
@@ -25,13 +27,13 @@ export function UnlikeRoomAction(
     }
 
     return (
-        <Button
-            className="after:bg-red hover:text-white p-2"
+        <button
+            className="flex gap-1.5 p-2"
             onClick={onAccept}
             disabled={isMutating}
-            isLoading={isMutating}
         >
-            {isMutating ? "Loading..." : "Unlike"}
-        </Button>
+            <Image src="/icons/heart-active.svg" alt="Unlike the room" width={24} height={24} />
+            {likesCount}
+        </button>
     );
 }
