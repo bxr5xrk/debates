@@ -53,49 +53,55 @@ export function CreateRoomForm(props: CreateRoomFormProps): JSX.Element {
     }
 
     return (
-        <form className="space-y-5 flex flex-col items-center justify-center w-full p-2 lg:p-4" noValidate onSubmit={handleSubmit(onSubmit)}>
-            <div className="w-full">
-                <InputWithLabel label="Topic" htmlFor="topic" errorMessage={errors["topic"]?.message} className="w-full">
-                    <InputWithLabel.Input {...register("topic", { ...validations.required })} placeholder="Topic" />
+        <form className="flex flex-col items-center w-full h-full p-2 lg:p-4" noValidate onSubmit={handleSubmit(onSubmit)}>
+            <div className="w-full sm:flex-[0_0_87px]">
+                <InputWithLabel label="" htmlFor="topic" errorMessage={errors["topic"]?.message} className="w-full">
+                    <InputWithLabel.Input {...register("topic", { ...validations.required })} placeholder="Debate topic" />
                 </InputWithLabel>
             </div>
 
-            <div className="w-full flex flex-col gap-5 lg:flex-row lg:justify-between">
-                <MembersSelect
-                    setValue={setValue}
-                    register={register}
-                    errors={errors}
-                    proTeamIds={proTeamIds}
-                    conTeamIds={conTeamIds}
-                    watch={watch}
-                    triggerField={triggerField}
-                />
+            <div className="w-full flex flex-col grow gap-5 lg:flex-row lg:justify-between">
+                <div className="lg:w-[85%] xl:w-[75%]">
+                    <MembersSelect
+                        setValue={setValue}
+                        register={register}
+                        errors={errors}
+                        proTeamIds={proTeamIds}
+                        conTeamIds={conTeamIds}
+                        watch={watch}
+                        triggerField={triggerField}
+                    />
+                </div>
 
-                <div className="flex flex-col gap-5">
-                    <InputWithLabel label="Report Time" htmlFor="reportTime" errorMessage={errors["reportTime"]?.message}>
-                        <InputWithLabel.Input
-                            {...register("reportTime", {
-                                ...validations.required,
-                            })}
-                            placeholder="Report Time"
-                            type="number"
-                        />
-                    </InputWithLabel>
+                <div className="flex flex-col gap-5 max-lg:mt-3 xl:w-[20%]">
+                    <div className="flex-[0_0_90px]">
+                        <InputWithLabel label="Report Time" htmlFor="reportTime" errorMessage={errors["reportTime"]?.message}>
+                            <InputWithLabel.Input
+                                {...register("reportTime", {
+                                    ...validations.required,
+                                })}
+                                placeholder="Report Time"
+                                type="number"
+                            />
+                        </InputWithLabel>
+                    </div>
 
-                    <InputWithLabel label="Reports Number" htmlFor="reportsNumber" errorMessage={errors["reportsNumber"]?.message}>
-                        <InputWithLabel.Input
-                            {...register("reportsNumber", {
-                                ...validations.required,
-                            })}
-                            placeholder="Reports Number"
-                            type="number"
-                        />
-                    </InputWithLabel>
+                    <div className="flex-[0_0_100px]">
+                        <InputWithLabel label="Reports Number" htmlFor="reportsNumber" errorMessage={errors["reportsNumber"]?.message}>
+                            <InputWithLabel.Input
+                                {...register("reportsNumber", {
+                                    ...validations.required,
+                                })}
+                                placeholder="Reports Number"
+                                type="number"
+                            />
+                        </InputWithLabel>
+                    </div>
                 </div>
             </div>
 
             {isMeSelected === false && <p className="text-red-500">You need to select yourself</p>}
-            <Button isLoading={isMutating} type="submit" className="w-full lg:w-64 lg:self-end">
+            <Button isLoading={isMutating} type="submit" className="w-full sm:flex-[0_0_48px] lg:w-64 lg:self-end lg:mt-auto">
                 Play
             </Button>
         </form>

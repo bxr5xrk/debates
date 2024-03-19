@@ -29,12 +29,12 @@ export function GamesPage(): JSX.Element {
                         <Image src="/icons/sort-arrows.svg" width={40} height={40} alt="sort"/>
                     </button> : <div></div>}
 
-                    <div className="text-3xl lg:text-4xl font-bold max-[730px]:row-start-1 max-[730px]:col-start-1 max-[730px]:row-end-2 max-[730px]:col-end-4">
+                    <div className="text-3xl justify-self-center min-[731px]:w-60 lg:text-4xl lg:w-64 font-bold max-[730px]:row-start-1 max-[730px]:col-start-1 max-[730px]:row-end-2 max-[730px]:col-end-4">
                         {historyOpened ? "My History" : "Public Rooms"}
                     </div>
 
                     <Button
-                        className="justify-self-end max-[730px]:row-start-2 max-[730px]:col-start-3 max-[730px]:row-end-3 max-[730px]:col-end-4"
+                        className="justify-self-end w-36 max-[730px]:row-start-2 max-[730px]:col-start-3 max-[730px]:row-end-3 max-[730px]:col-end-4"
                         onClick={() => setHistoryOpened(!historyOpened)}
                     >
                         {historyOpened ? "Public rooms" : "My history"}
