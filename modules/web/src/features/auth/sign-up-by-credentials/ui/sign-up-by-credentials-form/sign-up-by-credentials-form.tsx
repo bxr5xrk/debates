@@ -20,6 +20,32 @@ export interface RegistrationData {
     passwordConfirmation: string;
 }
 
+const isEmailValid = (email: string): boolean => !!email.length;
+const checkRegistrationData = (registrationData: RegistrationData): boolean => {
+    if (!isEmailValid(registrationData.email)) {
+        console.log("email");
+        return false;
+    }
+
+    if (!registrationData.password.trim()) {
+        console.log("password missed");
+        return false;
+    }
+    
+    if (!registrationData.passwordConfirmation.trim()) {
+        console.log("Confirm the password");
+        return false;
+    }
+
+
+    if (registrationData.password !== registrationData.passwordConfirmation) {
+        return false;
+    }
+
+
+    return true;
+};
+
 export function SignUpByCredentialsForm(): JSX.Element {
     const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
     const [profilePhotoVerified, setProfilePhotoVerified] =
@@ -46,6 +72,10 @@ export function SignUpByCredentialsForm(): JSX.Element {
     });
 
     const onSubmit: SubmitHandler<RegistrationData> = async (data) => {
+        if (!checkRegistrationData(data)) {
+            return;
+        }
+
         const {
             name,
             surname,

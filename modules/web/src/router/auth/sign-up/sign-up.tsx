@@ -10,8 +10,8 @@ const arvo = Arvo({
 
 export function SignUpPage(): JSX.Element {
     return (
-        <Page className={`w-full ${arvo.className}`}>
-            <div className="flex flex-col items-center max-w-full lg:w-full p-4">
+        <Page className={`w-full h-full ${arvo.className} bg-[url('/background.png')] bg-no-repeat bg-cover bg-center`}>
+            <div className="flex flex-col items-center justify-center max-w-full max-lg:h-full lg:w-full p-4">
                 <SignUpByCredentialsForm />
                 <div className="flex flex-col items-center gap-3 mt-5 sm:flex-row lg:ml-96">
                     <p>Have an account?</p>

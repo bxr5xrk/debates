@@ -78,7 +78,7 @@ export function SendInviteForm({
                     after:content-[''] after:transition hover:text-white"
                         type="button"
                     >
-                        {!showInvites ? "Show" : "Hide"} received invantions
+                        {!showInvites ? "Show" : "Hide"} received invitations
                     </Button>
                 </div>
                 <Text classes={["text-rose-600 text-1xl"]}>{error}</Text>

@@ -6,7 +6,7 @@ import { ComponentContainer } from "@/shared/ui";
 
 export function EditProfilePage(): JSX.Element {
     return (
-        <Page>
+        <Page className="w-full h-full max-w-screen-2xl mx-auto">
             <ComponentContainer className="flex justify-center items-center">
                 <AccountSettings />
             </ComponentContainer>
