@@ -1,8 +1,7 @@
 "use client";
 
 import { useWhoami } from "@/features/auth";
-import { useRooms, usePublicRooms } from "../..";
-import { cl } from "@/shared/lib/cl";
+import { useRooms } from "../..";
 import { useSWRConfig } from "swr";
 import { useEffect } from "react";
 import { API } from "@/shared/api/api-routes";
@@ -44,7 +43,7 @@ export function HistoryList(): JSX.Element {
                                 <PublishRoomAction roomId={room.id} />
                             )
                         ) : isJudge ? (
-                            <GradeRoomAction roomId={room.id} />
+                            <GradeRoomAction roomId={room.id} room={room}/>
                         ) : (
                             "Not graded"
                         )}

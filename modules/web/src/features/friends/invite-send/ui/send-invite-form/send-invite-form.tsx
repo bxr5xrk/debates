@@ -18,6 +18,8 @@ export function SendInviteForm(): JSX.Element {
     const [error, setError] = useState<string | null>(null); 
     const [showInvites, setShowInvites] = useState(false);
 
+    
+
 
     function handleClickOutsideModal(event: MouseEvent): void {
         if (!modalRef || !modalRef.current?.contains(event.target as Node)) {
@@ -27,6 +29,9 @@ export function SendInviteForm(): JSX.Element {
     window.addEventListener("click", handleClickOutsideModal);    
 
     const { data } = useInvites();
+
+    console.log(data);
+
     const invites = data?.data;
     const notlification =invites? invites.length : 0;
 

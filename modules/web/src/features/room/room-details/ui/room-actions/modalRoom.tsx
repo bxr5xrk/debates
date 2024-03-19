@@ -44,7 +44,7 @@ export const Modal: React.FC<ModalProps> = ({
         <>  {!(status === RoomStatusEnum.STARTED) &&
             <div className={cl(!joinRoom && "bg-white", "absolute w-full h-full top-0 left-0 z-[100] opacity")}>
                 <div className="self-center border-4 border-black w-max md:w-1/2 rounded-[50px] mx-auto mt-[200px] p-[20px] md:p-[90px] bg-slate-500">
-                    <p className="text-[20px] md:text-[30px] text-center text-white border-text font-bold">{!joinRoom ?"join the room?" : "start game!" }</p>
+                    <p className="text-[20px] md:text-[30px] text-center text-white border-text font-bold">{!joinRoom ?"join the room?" : isAdmin && isAdmin && status === RoomStatusEnum.PENDING && "start game!" }</p>
                     <div className="flex justify-between gap-2 mt-3">
                         <Link
                             className="w-[150px] text-center base-button h-min font-bold"

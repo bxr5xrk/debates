@@ -1,4 +1,4 @@
-import { RoomStatusEnum } from "@/shared/types";
+import { Room, RoomStatusEnum } from "@/shared/types";
 import { User } from "@/entities/user";
 import { Socket } from "socket.io-client";
 import { useEmit } from "../../hooks/use-emit";
@@ -18,7 +18,8 @@ interface RoomActionsProps {
     isJudge: boolean;
     status: RoomStatusEnum | null;
     isCurrentTeamMember: boolean;
-    currentTeamType: string | undefined | null
+    currentTeamType: string | undefined | null;
+    room: Room;
 }
 
 export function RoomActions(props: RoomActionsProps): JSX.Element {
@@ -30,7 +31,8 @@ export function RoomActions(props: RoomActionsProps): JSX.Element {
         isJudge,
         status,
         isCurrentTeamMember,
-        currentTeamType
+        currentTeamType,
+        room
     } = props;
     const { onEnd, onJoin, onPause, onRate, onResume, onStart, onSkip } =
         useEmit(socket, isAdmin);
@@ -40,12 +42,13 @@ export function RoomActions(props: RoomActionsProps): JSX.Element {
         setModal(!modal);
     };
     
-    
+    const isRoomInProgress = status === RoomStatusEnum.GRADING || status === RoomStatusEnum.PAUSED || status === RoomStatusEnum.STARTED || status === RoomStatusEnum.ENDED;
+
     
     return (
         <div className="absolute left-0 top-0 w-full h-full flex flex-col justify-between p-2 sm:p-6">
             {
-                modal && !(status === RoomStatusEnum.PAUSED || status === RoomStatusEnum.STARTED) && (
+                modal && !isRoomInProgress && (
                     <Modal setModal={setModal} modal={modal} modalJoin={modalJoin} userId={userId} onJoin={onJoin} onStart={onStart} onlineMembers={onlineMembers} status={status} isAdmin={isAdmin}/>
                 )}
             <div className="flex justify-between">
@@ -107,12 +110,14 @@ export function RoomActions(props: RoomActionsProps): JSX.Element {
                     )}
                 </div>
             </div>
-            {isJudge && status === RoomStatusEnum.GRADING && (
-                <GradeRoomDialog isOpen onSelect={onRate} />
-            )}
-            {!isJudge && status === RoomStatusEnum.GRADING && (
-                <EndRoomDialog isOpen />
-            )}
+            <div className="absolute z-[101]">
+                {isJudge && status === RoomStatusEnum.GRADING && (
+                    <GradeRoomDialog isOpen onSelect={onRate} room={room}/>
+                )}
+                {!isJudge && status === RoomStatusEnum.GRADING && (
+                    <EndRoomDialog isOpen />
+                )}
+            </div>
         </div>
     );
 }
