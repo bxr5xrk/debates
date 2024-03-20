@@ -93,7 +93,7 @@ export function SendInviteForm(): JSX.Element {
                                 after:content-[''] after:transition hover:text-white nowrap relative"
                             type="button"
                         >
-                            <p className="static-text">received invantions</p>
+                            <p className="static-text">received invitations</p>
                             <div className="absolute  w-[25px] flex justify-center items-center h-[25px] rounded-full bg-red top-[-5px] right-[-5px] text-[14px] p-1">+{notlification}</div>
                         </Button>
                         {showInvites && (
