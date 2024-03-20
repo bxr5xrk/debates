@@ -10,12 +10,8 @@ import { useMe } from "@/entities/user";
 
 const navItems = [
     {
-        href: '/edit-profile',
-        label: 'Edit profile',
-    },
-    {
         href: '/',
-        label: 'Dashboard',
+        label: 'Edit profile',
     },
     {
         href: '/friends',
