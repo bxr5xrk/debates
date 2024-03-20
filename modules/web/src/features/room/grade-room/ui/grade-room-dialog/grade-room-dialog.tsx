@@ -43,14 +43,14 @@ export function GradeRoomDialog(props: PropsWithChildren<GradeRoomDialogProps>):
 
     return (
         <Dialog  open={open} onOpenChange={setOpen}>
-            <div onClick={() => setOpen(true)}>{children || "Grade"}</div>
+            <div onClick={() => setOpen(true)}>{children || ""}</div>
             <DialogContent>
                 <DialogHeader className="flex flex-col items-center">
-                    <DialogTitle className="!text-[70px] text-center mx-auto mt-[50px]">Сhoose the winner</DialogTitle>
+                    <DialogTitle className="lg:!text-[70px] md:!text-[50px] sm:!text-[40px] !text-[35px] text-center mx-auto mt-[50px] ">Сhoose the winner</DialogTitle>
                     <Judge room={room} className="absolute top-[-25%] mx-auto"/>
                     <div onClick={() => console.log(room)
-                    } className="bg-background w-full px-[50px] pb-10">
-                        <ul className="mx-auto flex justify-between max-w-[80%] w-full">
+                    } className="bg-background w-full lg:px-[25px] pb-10">
+                        <ul className="mx-auto flex justify-between lg:max-w-[90%] w-full">
                             <li onClick={() => handleSelect("proTeam")} className="p-2 font-bold bg-cover cursor-pointer flex flex-col items-center bg-center hover:bg-[url('/oval.jpeg')]">
                                 <p className=" relative text-[20px] md:text-[25px] lg:text-[40px] border-text text-red-600 font-bold">
                                     {selectedTeam === "proTeam" && (

@@ -121,7 +121,7 @@ export function RoomDetails(props: RoomDetailsProps): JSX.Element {
                         
                     />
                 </div>
-                <div className={cl(
+                <div className={cl("",
                     currentTeam?.currentTeamType === "conTeam" &&
                             " bg-rose-300", "h-full w-[55%] relative z-[-1]"
                 )}>

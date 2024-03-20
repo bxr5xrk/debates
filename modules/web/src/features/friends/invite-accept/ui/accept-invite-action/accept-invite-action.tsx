@@ -25,8 +25,8 @@ export function AcceptInviteAction(
     }
 
     return (
-        <div className="w-[20px] h-[20px]">
-            <Image src={"/tick.svg"} width={100} height={100} alt={"cross"} onClick={onAccept} className="cursor-pointer w-[30px] hover:scale-[1.1]"/>
+        <div className="w-[30px] h-[30px]">
+            <Image src={"/tick.svg"} width={100} height={30} alt={"tick"} onClick={onAccept} className="cursor-pointer h-[40px] w-[35px] hover:scale-[1.1]"/>
         </div>
     );
 }

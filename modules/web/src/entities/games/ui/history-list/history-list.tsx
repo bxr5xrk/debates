@@ -51,7 +51,7 @@ export function HistoryList(): JSX.Element {
                                     ""
                                 )
                             ) : isJudge ? (
-                                <GradeRoomAction roomId={room.id} />
+                                <GradeRoomAction roomId={room.id} room={room} />
                             ) : (
                                 "Not graded"
                             )}

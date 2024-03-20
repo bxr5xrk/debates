@@ -18,7 +18,7 @@ export function RoomTeamList(props: RoomTeamListProps): JSX.Element {
     return (
         <div
             className={cl(
-                "top-0 z-[0] gap-5 p-2 flex flex-col justify-center h-screen max-h-full",
+                "top-0 z-[0] p-4 gap-5 flex flex-col justify-center h-screen max-h-full",
                 className
             )}
             {...meta}

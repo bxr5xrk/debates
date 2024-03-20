@@ -18,7 +18,7 @@ export function ModalWindow(): JSX.Element {
                     >
                         <ProfileImg src={invite.sender.picture} className="w-[40px] h-[40px] md:w-[60px] md:h-[60px] lg:w-[70px] lg:h-[70px]" />
                         <p className="text-[13px] lg:text-[25px]">{invite.sender.nickname}</p>
-                        <div className="grid grid-cols-2 gap-[10px] items-center">
+                        <div className="grid grid-cols-2 gap-[10px] items-center justify-center">
                             <AcceptInviteAction inviteId={invite.id} />
                             <RejectInviteAction inviteId={invite.id} />
                         </div>

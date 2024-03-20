@@ -18,7 +18,7 @@ export function FriendsList(): JSX.Element {
                         key={friend.id}
                         className="bg-gray-100 p-4 rounded-lg flex gap-[20px] items-center"
                     >
-                        <ProfileImg className="w-[80px] h-[80px]" src={friend.friend.picture}/>
+                        <ProfileImg className="lg:w-[80px] lg:h-[80px] md:w-[60px] md:h-[60px] w-[40px] h-[40px]" src={friend.friend.picture}/>
                         <p>{friend.friend.name}</p>
                         <FriendRemoveAction friendId={friend.id} />
                     </li>
