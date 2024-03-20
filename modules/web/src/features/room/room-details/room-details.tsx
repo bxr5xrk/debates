@@ -9,6 +9,7 @@ import { RoomUserItem } from "./ui/room-user-item";
 import { RoomTeamList } from "./ui/room-team-list";
 import { cl } from "@/shared/lib/cl";
 import Judge from "./ui/judge/judge";
+import { useEffect } from "react";
 
 interface RoomDetailsProps {
     roomId: string;
@@ -49,6 +50,18 @@ export function RoomDetails(props: RoomDetailsProps): JSX.Element {
         setStatus,
     });
 
+    useEffect(() => {
+        const scrollToBottom = ():void => {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth', 
+            });
+        };
+
+        scrollToBottom();
+    }, []); 
+
+
     if (!room) {
         return <></>;
     }
@@ -65,8 +78,10 @@ export function RoomDetails(props: RoomDetailsProps): JSX.Element {
         );
     });
 
+    
+
     return (
-        <div className="flex flex-col gap-2 relative h-full top-0">
+        <div className="flex flex-col gap-2 relative h-full top-0 max-w-[100vw] overflow-hidden">
             <RoomActions
                 status={status}
                 onlineMembers={onlineMembers}
@@ -88,7 +103,7 @@ export function RoomDetails(props: RoomDetailsProps): JSX.Element {
                 currentTeamType={currentTeam?.currentTeamType}
             />
 
-            <div className="flex justify-between  h-[100vh] w-[100vw] z-[-1] absolute">
+            <div className="flex justify-between  h-[100vh] w-full max-w-[100vw] z-[-1] absolute">
                 <div
                     className={cl(
                         currentTeam?.currentTeamType === "proTeam" &&
@@ -113,9 +128,9 @@ export function RoomDetails(props: RoomDetailsProps): JSX.Element {
                     <RoomTeamList
                         team={room.conTeam}
                         currentUserId={userId}
-                        className={cl("w-full  gap-5 items-end  bg-lightning border border-black border-r-2",
+                        className={cl("w-full  gap-5 items-end  bg-lightning border-r-2",
                             currentTeam?.currentTeamType === "proTeam"?
-                                "border-blue-300 bg-sky-300":"bg-white"
+                                "bg-sky-300":"bg-white"
                         )}
                     />
                 </div>

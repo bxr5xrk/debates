@@ -50,7 +50,7 @@ export function GradeRoomDialog(props: PropsWithChildren<GradeRoomDialogProps>):
                     <Judge room={room} className="absolute top-[-25%] mx-auto"/>
                     <div onClick={() => console.log(room)
                     } className="bg-background w-full px-[50px] pb-10">
-                        <ul className="flex justify-between w-full">
+                        <ul className="mx-auto flex justify-between max-w-[80%] w-full">
                             <li onClick={() => handleSelect("proTeam")} className="p-2 font-bold bg-cover cursor-pointer flex flex-col items-center bg-center hover:bg-[url('/oval.jpeg')]">
                                 <p className=" relative text-[20px] md:text-[25px] lg:text-[40px] border-text text-red-600 font-bold">
                                     {selectedTeam === "proTeam" && (
