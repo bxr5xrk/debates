@@ -62,6 +62,7 @@ export function SendInviteForm(): JSX.Element {
     
 
     return (
+<<<<<<< HEAD
         <form onSubmit={onSubmit} className="w-fullflex p-4 pt-[20px] pb-[30px] h-2xl">
             <div className="flex-col w-full">
                 <div className="flex gap-[20px] w-full h-min flex-col md:flex-row">
@@ -99,6 +100,36 @@ export function SendInviteForm(): JSX.Element {
                             <ModalWindow />
                         )}
                     </div>
+=======
+        <form onSubmit={onSubmit} className="flex pt-[20px] pb-[30px]">
+            <div className="flex-col">
+                <div className="flex gap-[20px]">
+                    <input
+                        required
+                        ref={nicknameRef}
+                        type="text"
+                        placeholder="nickname Id"
+                        className="border-2 border-black rounded-[10px] p-[10px] border-r-4 border-b-4 w-[900px]"
+                    />
+                    <button
+                        className="w-full base-button   max-w-[140px] flex justify-center text-2xl
+                    transition duration-1000 after:hover:bg-blackLight
+                    after:content-[''] after:transition hover:text-white"
+                        type="submit"
+                        disabled={isMutating}
+                    >
+                        {isMutating ? "Loading..." : "send"}
+                    </button>
+                    <Button
+                        onClick={() => setShowInvites(!showInvites)}
+                        className="w-1/2 base-button flex justify-center text-2xl after:bg-amber-400
+                    transition duration-1000 after:hover:bg-amber-500 font-normal
+                    after:content-[''] after:transition hover:text-white"
+                        type="button"
+                    >
+                        {!showInvites ? "Show" : "Hide"} received invitations
+                    </Button>
+>>>>>>> main
                 </div>
                 {error && <p className="text-rose-600 text-1xl">{error}</p>}
             </div>

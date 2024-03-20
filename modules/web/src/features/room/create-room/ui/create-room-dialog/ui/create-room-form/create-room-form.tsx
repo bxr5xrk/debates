@@ -80,7 +80,7 @@ export function CreateRoomForm(props: CreateRoomFormProps): JSX.Element {
                                 {...register("reportTime", {
                                     ...validations.required,
                                 })}
-                                placeholder="Report Time"
+                                placeholder="Enter a value"
                                 type="number"
                             />
                         </InputWithLabel>
@@ -92,7 +92,7 @@ export function CreateRoomForm(props: CreateRoomFormProps): JSX.Element {
                                 {...register("reportsNumber", {
                                     ...validations.required,
                                 })}
-                                placeholder="Reports Number"
+                                placeholder="Enter a value"
                                 type="number"
                             />
                         </InputWithLabel>

@@ -9,9 +9,10 @@ interface RoomInfoCardProps extends PropsWithChildren {
     room: Room;
     isWin?: boolean;
     isLoose?: boolean;
+    isOwner?: boolean;
 }
 
-export function RoomInfoCard({ room, isWin, isLoose, children }: RoomInfoCardProps): JSX.Element {
+export function RoomInfoCard({ room, isWin, isLoose, isOwner = true, children }: RoomInfoCardProps): JSX.Element {
     return (
         <li
             key={room.id}
@@ -38,7 +39,7 @@ export function RoomInfoCard({ room, isWin, isLoose, children }: RoomInfoCardPro
 
             <div className="flex justify-between items-center pt-3.5 w-full">
                 {room.owner ? (
-                    <div className="flex items-center w-1/2 min-[441px]:w-2/3 min-[730px]:w-3/5" title={`Room owner - ${room.owner.nickname}`}>
+                    <div className={cl("flex items-center", isOwner ? "w-1/2 min-[441px]:w-2/3 min-[730px]:w-3/5" : "w-full")} title={`Room owner - ${room.owner.nickname}`}>
                         <ProfileImg src={room.owner.picture} className="w-[35px] h-[35px]" />
                         <p className="ml-1 text-xl overflow-hidden whitespace-nowrap text-ellipsis w-3/4">{room.owner.nickname}</p>
                     </div>

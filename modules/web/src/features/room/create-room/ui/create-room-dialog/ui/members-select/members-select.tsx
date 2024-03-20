@@ -77,24 +77,9 @@ export function MembersSelect(props: MembersSelectProps): JSX.Element {
             </div>
 
             <div className="flex flex-col gap-5 lg:flex-row lg:w-full lg:h-full">
-                {/* proTeamIds */}
-                <DynamicSelect
-                    label="RED"
-                    htmlFor="proTeamIds"
-                    fields={proTeamIds}
-                    onAppend={() => proTeamIds.append({ id: "" })}
-                    onRemove={(index) => onRemove(index, "proTeamIds")}
-                    register={register}
-                    options={options}
-                    onUpdate={(index, e) => onValue(e, "proTeamIds", index)}
-                    value={(index) => `proTeamIds.${index}.id`}
-                    watch={watch}
-                    errorMessage={errors.proTeamIds?.root?.message}
-                />
-
                 {/* conTeamIds */}
                 <DynamicSelect
-                    label="BLUE"
+                    label="RED"
                     htmlFor="conTeamIds"
                     fields={conTeamIds}
                     onAppend={() => conTeamIds.append({ id: "" })}
@@ -105,6 +90,21 @@ export function MembersSelect(props: MembersSelectProps): JSX.Element {
                     value={(index) => `conTeamIds.${index}.id`}
                     watch={watch}
                     errorMessage={errors.conTeamIds?.root?.message}
+                />
+
+                {/* proTeamIds */}
+                <DynamicSelect
+                    label="BLUE"
+                    htmlFor="proTeamIds"
+                    fields={proTeamIds}
+                    onAppend={() => proTeamIds.append({ id: "" })}
+                    onRemove={(index) => onRemove(index, "proTeamIds")}
+                    register={register}
+                    options={options}
+                    onUpdate={(index, e) => onValue(e, "proTeamIds", index)}
+                    value={(index) => `proTeamIds.${index}.id`}
+                    watch={watch}
+                    errorMessage={errors.proTeamIds?.root?.message}
                 />
             </div>
         </div>

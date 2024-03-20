@@ -25,20 +25,16 @@ export function AccountSettings(): JSX.Element {
         const formData = getFormData(data, file);
         const res = await trigger(formData);
 
-        onAfterFetch(["User updates successfully", res?.data.message ?? "Something went wrong"], res.status);
+        onAfterFetch(["Information updated successfully", res?.data.message ?? "Something went wrong"], res.status);
 
         control._disableForm(false);
-    }
-    {
-        /* <h1>User Info</h1>
-    <pre>{JSON.stringify(data, null, 2)}</pre> */
     }
 
     return (
         <form
             noValidate
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col justify-center items-center w-full gap-5 lg:flex-row lg:justify-end lg:items-center lg:pt-15"
+            className="flex flex-col justify-center items-center w-full gap-5 lg:flex-row lg:justify-end lg:items-center lg:py-4"
         >
             <div className="w-full mb-6 lg:flex lg:justify-end lg:mr-24 lg:w-4/5">
                 <ProfilePhoto profilePhoto={profilePhoto} setProfilePhoto={setFile} />

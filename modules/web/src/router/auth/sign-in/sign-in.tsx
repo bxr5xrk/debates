@@ -10,7 +10,7 @@ const arvo = Arvo({
 
 export function SignInPage(): JSX.Element {
     return (
-        <Page className={`flex items-center justify-center ${arvo.className}`}>
+        <Page className={`flex items-center justify-center ${arvo.className} bg-[url('/background.png')] bg-no-repeat bg-cover bg-center`}>
             <div className="flex flex-col items-center w-full sm:w-80 lg:w-full p-4">
                 <SignInByCredentialsForm />
                 <div className="flex flex-col items-center gap-3 mt-5 sm:flex-row ">
