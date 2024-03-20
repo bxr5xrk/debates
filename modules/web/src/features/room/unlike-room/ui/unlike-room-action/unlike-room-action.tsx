@@ -7,12 +7,14 @@ import Image from "next/image";
 interface UnlikeRoomActionProps {
     roomId: number;
     likesCount: number;
+    like: boolean;
+    setLike: (like: boolean) => void;
 }
 
 export function UnlikeRoomAction(
     props: UnlikeRoomActionProps
 ): JSX.Element {
-    const { roomId, likesCount } = props;
+    const { roomId, likesCount, like, setLike } = props;
     const { trigger, isMutating } = useUnlikeRoom(roomId);
     const { onAfterFetch } = useAfterFetch({
         revalidate: [API.ROOM_ROUTES.roomHistory, API.ROOM_ROUTES.publicRooms],
@@ -29,7 +31,10 @@ export function UnlikeRoomAction(
     return (
         <button
             className="flex gap-1.5 p-2"
-            onClick={onAccept}
+            onClick={() => {
+                onAccept();
+                setLike(!like);
+            }}
             disabled={isMutating}
         >
             <Image src="/icons/heart-active.svg" alt="Unlike the room" width={24} height={24} />
