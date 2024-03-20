@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useAfterFetch } from "@/shared/hooks";
 import { API } from "@/shared/api/api-routes";
 import { onUpload, validations } from "@/shared/lib";
-import Image from "next/image";
 import { Button, Input, InputGroup, InputWithLabel } from "@/shared/ui";
 import { useFormInit } from "./hooks/use-form-init";
 import { useDirty } from "./hooks/use-dirty";

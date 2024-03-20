@@ -1,6 +1,5 @@
 import { API } from "@/shared/api/api-routes";
 import { useAfterFetch } from "@/shared/hooks";
-import { Button } from "@/shared/ui";
 import { useLikeRoom } from "../../api";
 import Image from "next/image";
 
