@@ -60,8 +60,6 @@ export function MembersSelect(props: MembersSelectProps): JSX.Element {
 
     const options = getOptions(friends, blacklistIds, whoami?.data.id);
 
-    console.log(proTeamIds.fields);
-
     return (
         <div className="flex flex-col gap-5 lg:w-full lg:h-full">
             <div className="flex-[0_0_120px]">

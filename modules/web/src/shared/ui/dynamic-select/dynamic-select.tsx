@@ -19,9 +19,6 @@ interface DynamicSelectProps<F extends object, T extends ArrayPath<F>> {
 export function DynamicSelect<F extends object, T extends ArrayPath<F>>(props: DynamicSelectProps<F, T>): JSX.Element {
     const { label, htmlFor, fields, onAppend, onRemove, register, options, onUpdate, value, watch, errorMessage } = props;
 
-    console.log("options");
-    console.log(options);
-
     return (
         <div className="w-full h-full">
             <h2 className="text-2xl">
